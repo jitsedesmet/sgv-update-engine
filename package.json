@@ -1,0 +1,27 @@
+{
+  "devDependencies": {
+    "@tsconfig/node18": "^18.2.2",
+    "@types/rdf-ext": "^2.5.0",
+    "@types/rdf-validate-shacl": "^0.4.5",
+    "@typescript-eslint/eslint-plugin": "^6.4.0",
+    "ts-node": "^10.9.2",
+    "typescript": "*"
+  },
+  "scripts": {
+    "start": "yarn run build:ts && node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "build:ts": "tsc"
+  },
+  "name": "sgv-comunica",
+  "version": "1.0.0",
+  "license": "MIT",
+  "dependencies": {
+    "@comunica/query-sparql-file": "^2.10.2",
+    "@rdfjs/parser-n3": "^2.0.2",
+    "@rdfjs/types": "^1.1.0",
+    "rdf-data-factory": "^1.1.2",
+    "rdf-ext": "^2.5.1",
+    "rdf-stores": "^1.0.0",
+    "rdf-validate-shacl": "0.4.5"
+  }
+}

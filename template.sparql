@@ -1,0 +1,8 @@
+prefix sgv: <https://thesis.jitsedesmet.be/solution/storage-guidance-vocabulary/#>
+
+select * where {
+    ?container sgv:resource-description [
+        a sgv:shacl-descriptor ;
+        sgv:shacl-shape ?shape ;
+    ] .
+}
