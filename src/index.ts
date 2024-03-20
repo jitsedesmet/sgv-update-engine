@@ -1,12 +1,12 @@
 import {QueryEngine} from "@comunica/query-sparql-file";
 import type * as RDF from '@rdfjs/types';
+import {Quad_Object, Quad_Predicate, Quad_Subject} from "@rdfjs/types";
 import {DataFactory} from "rdf-data-factory";
 import SHACLValidator from 'rdf-validate-shacl'
 
 import {RdfStore} from "rdf-stores";
 import {IDataSourceExpanded, IDataSourceSerialized} from "@comunica/types/lib/IDataSource";
 import * as fs from "fs";
-import {Quad_Object, Quad_Predicate, Quad_Subject} from "@rdfjs/types";
 
 type IDataSource = string | RDF.Source | IDataSourceExpanded | IDataSourceSerialized;
 type SourceList = [IDataSource, ...IDataSource[]];
@@ -44,11 +44,11 @@ async function matchShape(): Promise<void> {
         select * where { ?s ?p ?o }
     `, (bindings) => sgvStore.addQuad(
         DF.quad(
-            <Quad_Subject> bindings.get('s')!,
-            <Quad_Predicate> bindings.get('p')!,
-            <Quad_Object> bindings.get('o')!
+            <Quad_Subject>bindings.get('s')!,
+            <Quad_Predicate>bindings.get('p')!,
+            <Quad_Object>bindings.get('o')!
         )
-    ),{pods: ['http://localhost:3000/pods/00000000000000000096/sgv']});
+    ), {pods: ['http://localhost:3000/pods/00000000000000000096/sgv']});
 
     // Copy the resource data to a store
     const resourceStore = RdfStore.createDefault();
@@ -56,9 +56,9 @@ async function matchShape(): Promise<void> {
         select * where { ?s ?p ?o }
     `, (bindings) => resourceStore.addQuad(
         DF.quad(
-            <Quad_Subject> bindings.get('s')!,
-            <Quad_Predicate> bindings.get('p')!,
-            <Quad_Object> bindings.get('o')!
+            <Quad_Subject>bindings.get('s')!,
+            <Quad_Predicate>bindings.get('p')!,
+            <Quad_Object>bindings.get('o')!
         )
     ), {pods: ['./resource-to-insert.ttl']});
 
@@ -75,7 +75,7 @@ async function matchShape(): Promise<void> {
             ] .
         }
     `, (bindings) => shapes.push(
-        [<RDF.NamedNode> bindings.get('container'), <RDF.NamedNode> bindings.get('shape')]),
+            [<RDF.NamedNode>bindings.get('container'), <RDF.NamedNode>bindings.get('shape')]),
         {pods: [sgvStore]});
 
     /// Extract the shapes in their own store and set focus node in the shape stores
@@ -101,19 +101,80 @@ async function matchShape(): Promise<void> {
         return [container, focusStore];
     });
 
+    // Validate the resource store against the shapes
+    const matchedShapes = mappedShapes.filter(([container, store]) => {
+        const validator = new SHACLValidator(store.asDataset());
+        const report = validator.validate(resourceStore.asDataset());
+        for (const result of report.results) {
+            console.log(result.message);
+            console.log(result.sourceShape);
+            console.log(result.term);
+            console.log(result.sourceConstraintComponent);
+            console.log(result.path);
 
-    const validator = new SHACLValidator(mappedShapes[0][1].asDataset());
-    const report = validator.validate(resourceStore.asDataset());
-    console.log(report.conforms)
+        }
+        return report.conforms;
+    });
 
-    for (const result of report.results) {
-        // See https://www.w3.org/TR/shacl/#results-validation-result for details
-        // about each property
-        console.log(result.message)
+
+    // console.log(matchedShapes)
+
+    if (matchedShapes.length > 0) {
+        // For now, let's take the first match, and let's place it there
+        const [container, store] = matchedShapes[0];
+        console.log(`Resource conforms to shape ${container.value}`);
+
+        let uriTemplate = null;
+        await queryToDataset(`
+            prefix sgv: <https://thesis.jitsedesmet.be/solution/storage-guidance-vocabulary/#> 
+            select * where {
+                <${container.value}> sgv:group-strategy [
+                    sgv:uri-template ?uriTemplate ;
+                ] ;
+            }
+        `, (bindings) => {
+            uriTemplate = bindings.get('uriTemplate')!.value;
+        }, {pods: [sgvStore]});
+
+        console.log(uriTemplate);
+
+        if (uriTemplate) {
+            const {parseTemplate} = await import("url-template");
+            type PrimitiveValue = string | number | boolean | null;
+
+            const expansionContext: Record<string, PrimitiveValue | PrimitiveValue[] | Record<string, PrimitiveValue | PrimitiveValue[]>> = {};
+
+            resourceStore.getQuads().forEach(quad => {
+                expansionContext[encodeURIComponent(quad.predicate.value)] = quad.object.value;
+            });
+
+            const resultingUri = parseTemplate(uriTemplate).expand(expansionContext);
+
+            console.log(resultingUri);
+
+            let resourceAsString = fs.readFileSync('./resource-to-insert.ttl', 'utf8');
+            const prefixes = [];
+
+            for (const match of resourceAsString.matchAll(/@(prefix .*)\.\n/uig)) {
+                resourceAsString = resourceAsString.replace(match[0], '');
+                prefixes.push(match[1]);
+            }
+
+            const query = `
+                ${prefixes.join('\n')}
+                INSERT DATA {
+                    ${resourceAsString}
+                }
+            `;
+            console.log(query);
+
+            const result = await myEngine.queryVoid(query, {
+                sources: [resultingUri],
+                baseIRI: resultingUri,
+            });
+        }
+
     }
-
-    // myEngine.queryQuads()
-
 }
 
 // async function readSGV({pods}: QueryConfig): Promise<RDF.DatasetCore> {

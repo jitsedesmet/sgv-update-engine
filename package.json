@@ -22,6 +22,7 @@
     "rdf-data-factory": "^1.1.2",
     "rdf-ext": "^2.5.1",
     "rdf-stores": "^1.0.0",
-    "rdf-validate-shacl": "0.4.5"
+    "rdf-validate-shacl": "0.4.5",
+    "url-template": "^3.1.1"
   }
 }
