@@ -3,6 +3,7 @@ import type * as RDF from '@rdfjs/types';
 import {Quad_Object, Quad_Predicate, Quad_Subject} from "@rdfjs/types";
 import {DataFactory} from "rdf-data-factory";
 import SHACLValidator from 'rdf-validate-shacl'
+import {InsertDeleteOperation, Parser, UpdateOperation} from "sparqljs";
 
 import {RdfStore} from "rdf-stores";
 import * as fs from "fs";
@@ -37,21 +38,29 @@ async function matchShape(): Promise<void> {
     }
 
     // Copy the resource data to a store
-    const resourceStore = RdfStore.createDefault();
-    const baseIRI = "file:///home/jitsedesmet/Documents/school/2023-2024/thesis/sgv-comunica/resource-to-insert.ttl";
-    for await (const bindings of await myEngine.queryBindings(
-        `select * where { ?s ?p ?o }`,
-        { sources: ['./resource-to-insert.ttl'], baseIRI}
-    )) {
-        resourceStore.addQuad(
-            DF.quad(
-                <Quad_Subject>bindings.get('s')!,
-                <Quad_Predicate>bindings.get('p')!,
-                <Quad_Object>bindings.get('o')!
-            )
-        )
+    const baseIRI = "file:///8ea79435-ffe1-4357-9010-0970114970ad";
+    const parser = new Parser({
+        baseIRI
+    });
+    const query = fs.readFileSync('./INSERT_whole_post.sparql', 'utf8');
+    const parsedQuery = parser.parse(query);
+    if (parsedQuery.type !== 'update') {
+        throw new Error('Expected an update query');
     }
 
+    const resourceStore = RdfStore.createDefault();
+    const operation = <InsertDeleteOperation> parsedQuery.updates[0];
+    if (operation.updateType !== 'insert') {
+        throw new Error('Expected an insert operation');
+    }
+    const triples = operation.insert[0].triples;
+    for (const triple of triples) {
+        resourceStore.addQuad(DF.quad(
+            triple.subject,
+            <Quad_Predicate> triple.predicate,
+            triple.object,
+        ));
+    }
 
     // Get all shape URIs described by SGV.
     const shapes: [RDF.NamedNode, RDF.NamedNode][] = [];
@@ -142,23 +151,6 @@ async function matchShape(): Promise<void> {
             const resultingUri = parseTemplate(uriTemplate).expand(expansionContext);
 
             console.log(resultingUri);
-
-            let resourceAsString = fs.readFileSync('./resource-to-insert.ttl', 'utf8');
-            const prefixes = [];
-
-            for (const match of resourceAsString.matchAll(/@(prefix .*)\.\n/uig)) {
-                resourceAsString = resourceAsString.replace(match[0], '');
-                prefixes.push(match[1]);
-            }
-
-            const query = `
-                ${prefixes.join('\n')}
-                INSERT DATA {
-                    ${resourceAsString}
-                }
-            `;
-            console.log(query);
-
             const result = await myEngine.queryVoid(query, {
                 sources: [resultingUri],
                 baseIRI: resultingUri,
