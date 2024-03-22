@@ -8,25 +8,15 @@ import {InsertDeleteOperation, Parser, UpdateOperation} from "sparqljs";
 import {RdfStore} from "rdf-stores";
 import * as fs from "fs";
 
-type IDataSource = string | RDF.Source;
-type SourceList = [IDataSource, ...IDataSource[]];
-
-interface QueryConfig {
-    /**
-     * The root URL of the pods to query.
-     */
-    pods: SourceList;
-}
-
 const DF = new DataFactory();
 const myEngine = new QueryEngine();
 
-async function matchShape(): Promise<void> {
+async function main(pod: string, query_file: string): Promise<void> {
     // Copy the SGV data to a store
     const sgvStore = RdfStore.createDefault();
     for await (const bindings of await myEngine.queryBindings(
         `select * where { ?s ?p ?o }`,
-        { sources: ['http://localhost:3000/pods/00000000000000000096/sgv']}
+        { sources: [`${pod.trim()}sgv`]}
     )) {
         sgvStore.addQuad(
             DF.quad(
@@ -42,7 +32,7 @@ async function matchShape(): Promise<void> {
     const parser = new Parser({
         baseIRI
     });
-    const query = fs.readFileSync('./INSERT_whole_post.sparql', 'utf8');
+    const query = fs.readFileSync(query_file, 'utf8');
     const parsedQuery = parser.parse(query);
     if (parsedQuery.type !== 'update') {
         throw new Error('Expected an update query');
@@ -160,12 +150,4 @@ async function matchShape(): Promise<void> {
     }
 }
 
-async function main(config: QueryConfig): Promise<void> {
-    // const store = await readSGV(config);
-    // console.log(store.getQuads());
-    await matchShape()
-}
-
-main({
-    pods: ['http://localhost:3000/pods/00000000000000000096/'],
-}).catch(console.error);
+main('http://localhost:3000/pods/00000000000000000096/', './INSERT_whole_post.sparql').catch(console.error);
