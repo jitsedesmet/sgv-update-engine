@@ -3,6 +3,7 @@
     "@tsconfig/node18": "^18.2.2",
     "@types/rdf-ext": "^2.5.0",
     "@types/rdf-validate-shacl": "^0.4.5",
+    "@types/sparqljs": "^3.1.10",
     "@typescript-eslint/eslint-plugin": "^6.4.0",
     "ts-node": "^10.9.2",
     "typescript": "*"
@@ -16,13 +17,14 @@
   "version": "1.0.0",
   "license": "MIT",
   "dependencies": {
-    "@comunica/query-sparql-file": "^2.10.2",
+    "@comunica/query-sparql-file": "^3.0.1",
     "@rdfjs/parser-n3": "^2.0.2",
     "@rdfjs/types": "^1.1.0",
     "rdf-data-factory": "^1.1.2",
     "rdf-ext": "^2.5.1",
     "rdf-stores": "^1.0.0",
     "rdf-validate-shacl": "0.4.5",
+    "sparqljs": "^3.7.1",
     "url-template": "^3.1.1"
   }
 }

@@ -1,0 +1,18 @@
+prefix ns1: <http://localhost:3000/www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/>
+
+# Query to check what remains when editing the resource
+#CONSTRUCT {
+#    <http://localhost:3000/pods/00000000000000000096/posts/2024-05-08#416608218494388> ?x ?y .
+#} where {
+#    {
+#        <http://localhost:3000/pods/00000000000000000096/posts/2024-05-08#416608218494388> ?x ?y .
+#    } MINUS {
+#        <http://localhost:3000/pods/00000000000000000096/posts/2024-05-08#416608218494388> ns1:hasTag ?z .
+#    }
+#}
+
+DELETE {
+    <http://localhost:3000/pods/00000000000000000096/posts/2024-05-08#416608218494388> ns1:hasTag ?x
+} where {
+    <http://localhost:3000/pods/00000000000000000096/posts/2024-05-08#416608218494388> ns1:hasTag ?x
+}
