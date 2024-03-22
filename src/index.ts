@@ -28,6 +28,7 @@ async function main(pod: string, query_file: string): Promise<void> {
     }
 
     // Copy the resource data to a store
+    // Use a uuid_v4 as baseIRI
     const baseIRI = "file:///8ea79435-ffe1-4357-9010-0970114970ad";
     const parser = new Parser({
         baseIRI
