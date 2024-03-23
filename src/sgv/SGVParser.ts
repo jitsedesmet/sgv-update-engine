@@ -14,7 +14,7 @@ import {
 import {DefinedTriple, RootedCanonicalCollection} from "./treeStructure/StructuredCollection";
 import {UpdateCondition} from "./treeStructure/UpdateCondition";
 import {SaveCondition} from "./treeStructure/SaveCondition";
-import {ResourceDescription} from "./treeStructure/ResourceDescription";
+import {ResourceDescription, ResourceDescriptionSHACL} from "./treeStructure/ResourceDescription";
 import {GroupStrategy, GroupStrategyURITemplate} from "./treeStructure/GroupStrategy";
 import {getOne} from "../helpers/Helpers";
 
@@ -61,31 +61,10 @@ export class SGVParser {
         const type = getOne(sgv, resourceDescription.object, rdfTypePredicate);
 
         if (type.object.equals(typeResourceDescriptionShacl)) {
-            // Parse the shacl shape
-            const descriptions: RDF.DatasetCore[] = [];
-            for (const shapeLink of sgv.getQuads(resourceDescription.object, shaclShapeLink)) {
-                const rootShapes = shapeLink.object;
-
-                const focusStore = RdfStore.createDefault();
-                let storeSize = 0;
-                for (const quad of sgv.getQuads(rootShapes)) {
-                    focusStore.addQuad(quad);
-                }
-                while (storeSize !== focusStore.size) {
-                    storeSize = focusStore.size;
-                    for (const quad of focusStore.getQuads()) {
-                        for (const subjectQuad of sgv.getQuads(quad.object)) {
-                            focusStore.addQuad(subjectQuad);
-                        }
-                    }
-                }
-                descriptions.push(focusStore.asDataset())
-            }
-
-            return {
-                type: "SHACL",
-                descriptions
-            }
+            return new ResourceDescriptionSHACL(
+                sgv,
+                sgv.getQuads(resourceDescription.object, shaclShapeLink).map(x => x.object)
+            );
         }
         throw new Error("Unknown resource description");
     }
