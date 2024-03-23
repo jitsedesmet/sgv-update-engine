@@ -1,33 +1,81 @@
+import {ResourceDescription} from "./ResourceDescription";
+import {RdfStore} from "rdf-stores";
+
 /**
  * @deprecated
  */
-export interface UpdateConditionKeepAndAlwaysWidenIndex {
+export interface RawUpdateConditionKeepAndAlwaysWidenIndex {
     type: "keep and always widen index";
 }
 
 /**
  * @deprecated
  */
-export interface UpdateConditionKeepAndWidenForDistance {
+export interface RawUpdateConditionKeepAndWidenForDistance {
     type: "keep and widen for distance";
 }
 
-/**
- * @deprecated
- */
-export interface UpdateConditionPreferStatic {
+export interface RawUpdateConditionPreferStatic {
     type: "prefer static";
 }
 
-/**
- * @deprecated
- */
-export interface UpdateConditionMoveToBestMatched {
+export interface RawUpdateConditionMoveToBestMatched {
     type: "move to best matched";
 }
 
-export interface UpdateConditionDisallow {
+export interface RawUpdateConditionDisallow {
     type: "disallow";
 }
 
-export type UpdateCondition = UpdateConditionKeepAndAlwaysWidenIndex | UpdateConditionKeepAndWidenForDistance | UpdateConditionPreferStatic | UpdateConditionMoveToBestMatched | UpdateConditionDisallow;
+/**
+ * @deprecated
+ */
+export class UpdateConditionKeepAndAlwaysWidenIndex implements RawUpdateConditionKeepAndAlwaysWidenIndex {
+    public type: "keep and always widen index" = "keep and always widen index";
+    constructor() { }
+    public shouldRelocate(): boolean {
+        throw new Error();
+    }
+}
+
+/**
+ * @deprecated
+ */
+export class UpdateConditionKeepAndWidenForDistance implements RawUpdateConditionKeepAndWidenForDistance {
+    public type: "keep and widen for distance" = "keep and widen for distance";
+    constructor() { }
+    public shouldRelocate(): boolean {
+        throw new Error();
+    }
+}
+
+export class UpdateConditionPreferStatic implements RawUpdateConditionPreferStatic {
+    public type: "prefer static" = "prefer static";
+    constructor(private resourceDescription: ResourceDescription) { }
+    public shouldRelocate(resourceStore: RdfStore, resourceBaseUrl: string): boolean {
+        return this.resourceDescription.resourceMatchesDescription(resourceStore, resourceBaseUrl);
+    }
+}
+
+export class UpdateConditionMoveToBestMatched implements RawUpdateConditionMoveToBestMatched {
+    public type: "move to best matched" = "move to best matched";
+    constructor() { }
+    public shouldRelocate(): boolean {
+        return true;
+    }
+}
+
+export class UpdateConditionDisallow implements RawUpdateConditionDisallow {
+    public type: "disallow" = "disallow";
+    constructor() { }
+    public shouldRelocate(): boolean {
+        throw new Error("Update Condition disallows updates");
+    }
+}
+
+export type UpdateCondition =
+    UpdateConditionKeepAndAlwaysWidenIndex |
+    UpdateConditionKeepAndWidenForDistance |
+    UpdateConditionPreferStatic |
+    UpdateConditionMoveToBestMatched |
+    UpdateConditionDisallow;
