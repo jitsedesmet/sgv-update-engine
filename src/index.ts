@@ -1,17 +1,12 @@
 import {QueryEngine} from "@comunica/query-sparql-file";
-import type * as RDF from '@rdfjs/types';
-import {Quad_Object, Quad_Predicate, Quad_Subject} from "@rdfjs/types";
+import {Quad_Predicate} from "@rdfjs/types";
 import {DataFactory} from "rdf-data-factory";
-import SHACLValidator from 'rdf-validate-shacl'
-import {InsertDeleteOperation, Parser, UpdateOperation} from "sparqljs";
+import {InsertDeleteOperation, Parser as SparqlParser} from "sparqljs";
 
 import {RdfStore} from "rdf-stores";
 import * as fs from "fs";
 import {SGVParser} from "./sgv/SGVParser";
-import {getOne} from "./helpers/Helpers";
-import {rdfTypePredicate, shaclNodeShape} from "./sgv/consts";
-import {CanonicalCollection, RootedCanonicalCollection} from "./sgv/treeStructure/StructuredCollection";
-import {RawGroupStrategyURITemplate} from "./sgv/treeStructure/GroupStrategy";
+import {RootedCanonicalCollection} from "./sgv/treeStructure/StructuredCollection";
 
 const DF = new DataFactory();
 const myEngine = new QueryEngine();
@@ -21,29 +16,14 @@ function chooseCollection(collections: RootedCanonicalCollection[]): RootedCanon
 }
 
 async function main(pod: string, query_file: string): Promise<void> {
-    // Copy the SGV data to a store
-    const sgvStore = RdfStore.createDefault();
-    for await (const bindings of await myEngine.queryBindings(
-        `select * where { ?s ?p ?o }`,
-        { sources: [`${pod.trim()}sgv`]}
-    )) {
-        sgvStore.addQuad(
-            DF.quad(
-                <Quad_Subject>bindings.get('s')!,
-                <Quad_Predicate>bindings.get('p')!,
-                <Quad_Object>bindings.get('o')!
-            )
-        )
-    }
-
     // Copy the resource data to a store
     // Use a uuid_v4 as baseIRI
     const baseIRI = "file:///8ea79435-ffe1-4357-9010-0970114970ad";
-    const parser = new Parser({
+    const sparqlParser = new SparqlParser({
         baseIRI
     });
     const query = fs.readFileSync(query_file, 'utf8');
-    const parsedQuery = parser.parse(query);
+    const parsedQuery = sparqlParser.parse(query);
     if (parsedQuery.type !== 'update') {
         throw new Error('Expected an update query');
     }
@@ -62,38 +42,14 @@ async function main(pod: string, query_file: string): Promise<void> {
         ));
     }
 
-    const parsedSgv = new SGVParser().parseSGV(sgvStore)
+    const sgvParser = await SGVParser.init(pod)
+    const parsedSgv = sgvParser.parse();
 
     // Validate the resource store against the shapes
-    const matchedCollections = parsedSgv.collections.filter(collection => {
-        let allMatch = true;
-        for (const description of collection.resourceDescription.descriptions) {
-            // Add the focus node to the description, removing it again when we are done.
-            const nodeShape = getOne(sgvStore, undefined, rdfTypePredicate, shaclNodeShape).object;
-
-            const focusNodeLink = DF.quad(
-                <Quad_Subject> nodeShape,
-                rdfTypePredicate,
-                DF.namedNode(baseIRI)
-            );
-            description.add(focusNodeLink);
-
-            const validator = new SHACLValidator(description);
-
-            description.delete(focusNodeLink);
-
-            const report = validator.validate(resourceStore.asDataset());
-            for (const result of report.results) {
-                console.log(result.message);
-                console.log(result.sourceShape);
-                console.log(result.term);
-                console.log(result.sourceConstraintComponent);
-                console.log(result.path);
-
-            }
-            allMatch = allMatch && report.conforms;
-        }
-        return allMatch;
+    const matchedCollections = parsedSgv
+        .collections
+        .filter(collection => {
+        return collection.resourceDescription.resourceMatchesDescription(resourceStore, baseIRI);
     });
 
     if (matchedCollections.length == 0) {

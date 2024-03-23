@@ -1,5 +1,12 @@
 import * as RDF from "@rdfjs/types";
 import {RdfStore} from "rdf-stores";
+import {getOne} from "../../helpers/Helpers";
+import {rdfTypePredicate, shaclNodeShape} from "../consts";
+import {Quad_Subject} from "@rdfjs/types";
+import SHACLValidator from "rdf-validate-shacl";
+import {DataFactory} from "rdf-data-factory";
+
+const DF = new DataFactory();
 
 export interface RawResourceDescriptionSHACL {
     type: "SHACL";
@@ -10,7 +17,7 @@ export class ResourceDescriptionSHACL implements RawResourceDescriptionSHACL {
     public type: "SHACL" = "SHACL";
     public descriptions: RDF.DatasetCore[];
 
-    public constructor(sgvStore: RdfStore, shaclShapes: RDF.Quad_Object[]) {
+    public constructor(private sgvStore: RdfStore, shaclShapes: RDF.Quad_Object[]) {
         this.descriptions = [];
         for (const shapeId of shaclShapes) {
 
@@ -29,6 +36,37 @@ export class ResourceDescriptionSHACL implements RawResourceDescriptionSHACL {
             }
             this.descriptions.push(focusStore.asDataset())
         }
+    }
+
+    public resourceMatchesDescription(resourceStore: RdfStore, resourceBaseUrl: string): boolean {
+        let allMatch = true;
+        for (const description of this.descriptions) {
+            // Add the focus node to the description, removing it again when we are done.
+            const nodeShape = getOne(this.sgvStore, undefined, rdfTypePredicate, shaclNodeShape).object;
+
+            const focusNodeLink = DF.quad(
+                <Quad_Subject> nodeShape,
+                rdfTypePredicate,
+                DF.namedNode(resourceBaseUrl)
+            );
+            description.add(focusNodeLink);
+
+            const validator = new SHACLValidator(description);
+
+            description.delete(focusNodeLink);
+
+            const report = validator.validate(resourceStore.asDataset());
+            for (const result of report.results) {
+                console.log(result.message);
+                console.log(result.sourceShape);
+                console.log(result.term);
+                console.log(result.sourceConstraintComponent);
+                console.log(result.path);
+
+            }
+            allMatch = allMatch && report.conforms;
+        }
+        return allMatch;
     }
 
 }
