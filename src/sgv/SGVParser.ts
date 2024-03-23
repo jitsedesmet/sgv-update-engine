@@ -17,8 +17,8 @@ import {
     updateConditionPredicate
 } from "./consts";
 import {DefinedTriple, RootedCanonicalCollection} from "./treeStructure/StructuredCollection";
-import {UpdateCondition} from "./treeStructure/UpdateCondition";
-import {SaveCondition} from "./treeStructure/SaveCondition";
+import {UpdateCondition, UpdateConditionPreferStatic} from "./treeStructure/UpdateCondition";
+import {SaveCondition, SaveConditionAlwaysStored} from "./treeStructure/SaveCondition";
 import {ResourceDescription, ResourceDescriptionSHACL} from "./treeStructure/ResourceDescription";
 import {GroupStrategy, GroupStrategyURITemplate} from "./treeStructure/GroupStrategy";
 import {getOne} from "../helpers/Helpers";
@@ -62,13 +62,14 @@ export class SGVParser {
     }
 
     private parseCanonicalCollection(container: DefinedTriple): RootedCanonicalCollection {
+        const resourceDescription = this.parseResourceDescription(container);
         return {
             type: "Canonical Collection",
             uri: container,
             oneFileOneResource: false,
-            updateCondition: this.parseUpdateCondition(container),
+            resourceDescription,
+            updateCondition: this.parseUpdateCondition(container, resourceDescription),
             saveCondition: this.parseSaveCondition(container),
-            resourceDescription: this.parseResourceDescription(container),
             groupStrategy: this.parseGroupStrategy(container),
         }
     }
@@ -108,26 +109,20 @@ export class SGVParser {
         const type = this.getOne(saveCondition.object, rdfTypePredicate);
 
         if (type.object.equals(typeSaveConditionAlwaysStore)) {
-            return {
-                type: "always stored"
-            }
+            return new SaveConditionAlwaysStored();
         }
         if (type.object.equals(typeSaveConditionAlwaysStore)) {
-            return {
-                type: "always stored"
-            }
+            return new SaveConditionAlwaysStored();
         }
         throw new Error("Unknown save condition");
     }
 
-    private parseUpdateCondition(container: DefinedTriple): UpdateCondition {
+    private parseUpdateCondition(container: DefinedTriple, resourceDescription: ResourceDescription): UpdateCondition {
         const updateCondition = this.getOne(container, updateConditionPredicate);
         const type = this.getOne(updateCondition.object, rdfTypePredicate);
 
         if (type.object.equals(typeUpdateConditionPreferStatic)) {
-            return {
-                type: "prefer static"
-            }
+            return new UpdateConditionPreferStatic(resourceDescription);
         }
         throw new Error("Unknown update condition");
     }

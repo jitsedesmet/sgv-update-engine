@@ -25,6 +25,7 @@ export interface CanonicalCollection extends BaseStructuredContainer {
     type: "Canonical Collection";
     resourceDescription: ResourceDescription;
     saveCondition: SaveCondition;
+    updateCondition: UpdateCondition;
 }
 
 /**

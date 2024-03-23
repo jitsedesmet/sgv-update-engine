@@ -39,7 +39,7 @@ export interface RawSaveConditionNeverStored {
 export class SaveConditionStateRequired implements RawSaveConditionStateRequired {
     public type: "state required" = "state required";
     public constructor(public sparqlQuery: string) { }
-    public wantsGivenCompetitors(competitors: SaveCondition[]): boolean {
+    public wantsGivenCompetitors(competitors: RootedCanonicalCollection[]): boolean {
         throw new Error();
     }
 }
@@ -47,7 +47,7 @@ export class SaveConditionStateRequired implements RawSaveConditionStateRequired
 export class SaveConditionAlwaysStored implements RawSaveConditionAlwaysStored {
     public type: "always stored" = "always stored";
     public constructor() { }
-    public wantsGivenCompetitors(competitors: SaveCondition[]): boolean {
+    public wantsGivenCompetitors(competitors: RootedCanonicalCollection[]): boolean {
         return true;
     }
 }
@@ -75,7 +75,7 @@ export class SaveConditionPreferOther implements RawSaveConditionPreferOther {
 export class SaveConditionPreferMostSpecific implements RawSaveConditionPreferMostSpecific {
     public type: "prefer most specific" = "prefer most specific";
     public constructor() {}
-    public wantsGivenCompetitors(competitors: SaveCondition[]): boolean {
+    public wantsGivenCompetitors(competitors: RootedCanonicalCollection[]): boolean {
         throw new Error();
     }
 }
@@ -83,10 +83,10 @@ export class SaveConditionPreferMostSpecific implements RawSaveConditionPreferMo
 export class SaveConditionOnlyStoredWhenNotRedundant implements RawSaveConditionOnlyStoredWhenNotRedundant {
     public type: "only stored when not redundant" = "only stored when not redundant";
     public constructor() { }
-    public wantsGivenCompetitors(competitors: SaveCondition[]): boolean {
+    public wantsGivenCompetitors(competitors: RootedCanonicalCollection[]): boolean {
         let othersSeenThatWantToStore = false;
 
-        for (const competitor of competitors) {
+        for (const competitor of competitors.map(x => x.saveCondition)) {
             if (competitor.type === "always stored" || competitor.type === "prefer other" || competitor.type === "prefer most specific") {
                 othersSeenThatWantToStore = true;
             }
@@ -100,7 +100,7 @@ export class SaveConditionOnlyStoredWhenNotRedundant implements RawSaveCondition
 export class SaveConditionNeverStored implements RawSaveConditionNeverStored {
     public type: "never stored" = "never stored";
     public constructor() { }
-    public wantsGivenCompetitors(competitors: SaveCondition[]): boolean {
+    public wantsGivenCompetitors(competitors: RootedCanonicalCollection[]): boolean {
         return false;
     }
 }
