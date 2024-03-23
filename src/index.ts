@@ -11,7 +11,7 @@ import {SGVParser} from "./sgv/SGVParser";
 import {getOne} from "./helpers/Helpers";
 import {rdfTypePredicate, shaclNodeShape} from "./sgv/consts";
 import {CanonicalCollection, RootedCanonicalCollection} from "./sgv/treeStructure/StructuredCollection";
-import {GroupStrategyURITemplate} from "./sgv/treeStructure/GroupStrategy";
+import {RawGroupStrategyURITemplate} from "./sgv/treeStructure/GroupStrategy";
 
 const DF = new DataFactory();
 const myEngine = new QueryEngine();
@@ -106,27 +106,14 @@ async function main(pod: string, query_file: string): Promise<void> {
 
     console.log(`Resource conforms to shape ${collection.uri.value}`);
 
-    const uriTemplate = (<GroupStrategyURITemplate> collection.groupStrategy).template;
-    console.log(uriTemplate);
+    const resultingUri = await collection.groupStrategy.getResourceURI(resourceStore);
 
-    if (uriTemplate) {
-        const {parseTemplate} = await import("url-template");
-        type PrimitiveValue = string | number | boolean | null;
 
-        const expansionContext: Record<string, PrimitiveValue | PrimitiveValue[] | Record<string, PrimitiveValue | PrimitiveValue[]>> = {};
-
-        resourceStore.getQuads().forEach(quad => {
-            expansionContext[encodeURIComponent(quad.predicate.value)] = quad.object.value;
-        });
-
-        const resultingUri = parseTemplate(uriTemplate).expand(expansionContext);
-
-        console.log(resultingUri);
-        const result = await myEngine.queryVoid(query, {
-            sources: [resultingUri],
-            baseIRI: resultingUri,
-        });
-    }
+    console.log(resultingUri);
+    const result = await myEngine.queryVoid(query, {
+        sources: [resultingUri],
+        baseIRI: resultingUri,
+    });
 }
 
 main('http://localhost:3000/pods/00000000000000000096/', './INSERT_whole_post.sparql').catch(console.error);

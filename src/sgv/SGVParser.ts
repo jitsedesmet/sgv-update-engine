@@ -15,7 +15,7 @@ import {DefinedTriple, RootedCanonicalCollection} from "./treeStructure/Structur
 import {UpdateCondition} from "./treeStructure/UpdateCondition";
 import {SaveCondition} from "./treeStructure/SaveCondition";
 import {ResourceDescription} from "./treeStructure/ResourceDescription";
-import {GroupStrategy} from "./treeStructure/GroupStrategy";
+import {GroupStrategy, GroupStrategyURITemplate} from "./treeStructure/GroupStrategy";
 import {getOne} from "../helpers/Helpers";
 
 
@@ -49,10 +49,9 @@ export class SGVParser {
         const type = getOne(sgv, groupStrategy.object, rdfTypePredicate);
 
         if (type.object.equals(typeGroupStrategyUriTemplate)) {
-            return {
-                type: "URI template",
-                template: getOne(sgv, groupStrategy.object, groupStrategyUriTemplate).object.value
-            }
+            return new GroupStrategyURITemplate(
+                getOne(sgv, groupStrategy.object, groupStrategyUriTemplate).object.value
+            );
         }
         throw new Error("Unknown group strategy");
     }
@@ -120,7 +119,4 @@ export class SGVParser {
         }
         throw new Error("Unknown update condition");
     }
-
-
-
 }

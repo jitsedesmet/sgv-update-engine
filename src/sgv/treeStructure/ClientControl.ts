@@ -36,4 +36,8 @@ export interface ClientControlNoControl {
 /**
  * @deprecated
  */
-export type ClientControl = ClientControlFree | ClientControlAdditionalAllowed | ClientControlAllowedWhenNotPreferred | ClientControlAllowedWhenNotClaimed | ClientControlNoControl;
+export type ClientControl = ClientControlFree
+    | ClientControlAdditionalAllowed
+    | ClientControlAllowedWhenNotPreferred
+    | ClientControlAllowedWhenNotClaimed
+    | ClientControlNoControl;
