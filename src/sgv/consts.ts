@@ -2,11 +2,15 @@ import {DataFactory} from "rdf-data-factory";
 
 const prefix = "https://thesis.jitsedesmet.be/solution/storage-guidance-vocabulary/";
 const rdfPrefix = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+const shaclPrefix = "http://www.w3.org/ns/shacl#";
+
 
 const DF = new DataFactory();
 
-export const rdfTypeURL = `${rdfPrefix}#type`;
-export const rdfType = DF.namedNode(rdfTypeURL);
+export const rdfTypePredicateURL = `${rdfPrefix}type`;
+export const rdfTypePredicate = DF.namedNode(rdfTypePredicateURL);
+export const shaclNodeShapeUrl = `${shaclPrefix}NodeShape`;
+export const shaclNodeShape = DF.namedNode(shaclNodeShapeUrl);
 
 // Containers
 export const typeCanonicalCollectionURL = `${prefix}#canonical-collection`;
@@ -21,7 +25,7 @@ export const typeUpdateConditionPreferStatic = DF.namedNode(typeUpdateConditionP
 // Save Conditions
 export const saveConditionPredicateURL = `${prefix}#save-condition`;
 export const saveConditionPredicate = DF.namedNode(saveConditionPredicateURL);
-export const typeSaveConditionAlwaysStoreURL = `${prefix}#save-stored`;
+export const typeSaveConditionAlwaysStoreURL = `${prefix}#always-stored`;
 export const typeSaveConditionAlwaysStore = DF.namedNode(typeSaveConditionAlwaysStoreURL);
 
 
@@ -32,4 +36,13 @@ export const typeResourceDescriptionShaclURL = `${prefix}#shacl-descriptor`;
 export const typeResourceDescriptionShacl = DF.namedNode(typeResourceDescriptionShaclURL);
 export const shaclShapeLinkUrl = `${prefix}#shacl-shape`;
 export const shaclShapeLink = DF.namedNode(shaclShapeLinkUrl);
+
+
+// Group strategies
+export const groupStrategyPredicateURL = `${prefix}#group-strategy`;
+export const groupStrategyPredicate = DF.namedNode(groupStrategyPredicateURL);
+export const typeGroupStrategyUriTemplateURL = `${prefix}#group-strategty-uri-template`;
+export const typeGroupStrategyUriTemplate = DF.namedNode(typeGroupStrategyUriTemplateURL);
+export const groupStrategyUriTemplateUrl = `${prefix}#uri-template`;
+export const groupStrategyUriTemplate = DF.namedNode(groupStrategyUriTemplateUrl);
 

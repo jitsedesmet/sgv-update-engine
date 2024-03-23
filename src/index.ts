@@ -7,9 +7,18 @@ import {InsertDeleteOperation, Parser, UpdateOperation} from "sparqljs";
 
 import {RdfStore} from "rdf-stores";
 import * as fs from "fs";
+import {SGVParser} from "./sgv/SGVParser";
+import {getOne} from "./helpers/Helpers";
+import {rdfTypePredicate, shaclNodeShape} from "./sgv/consts";
+import {CanonicalCollection, RootedCanonicalCollection} from "./sgv/treeStructure/StructuredCollection";
+import {GroupStrategyURITemplate} from "./sgv/treeStructure/GroupStrategy";
 
 const DF = new DataFactory();
 const myEngine = new QueryEngine();
+
+function chooseCollection(collections: RootedCanonicalCollection[]): RootedCanonicalCollection {
+    return collections[0];
+}
 
 async function main(pod: string, query_file: string): Promise<void> {
     // Copy the SGV data to a store
@@ -53,101 +62,70 @@ async function main(pod: string, query_file: string): Promise<void> {
         ));
     }
 
-    // Get all shape URIs described by SGV.
-    const shapes: [RDF.NamedNode, RDF.NamedNode][] = [];
-    for await (const bindings of await myEngine.queryBindings(`
-        prefix sgv: <https://thesis.jitsedesmet.be/solution/storage-guidance-vocabulary/#>
-        select * where {
-            ?container sgv:resource-description [
-                a sgv:shacl-descriptor ;
-                sgv:shacl-shape ?shape ;
-            ] .
-        }
-    `, { sources: [sgvStore]}
-    )) {
-        shapes.push([<RDF.NamedNode>bindings.get('container'), <RDF.NamedNode>bindings.get('shape')]);
-    }
-
-    /// Extract the shapes in their own store and set focus node in the shape stores
-    const mappedShapes: [RDF.NamedNode, RdfStore][] = shapes.map(([container, shape]) => {
-        const focusStore = RdfStore.createDefault();
-        let storeSize = 0;
-        for (const quad of sgvStore.getQuads(shape)) {
-            focusStore.addQuad(quad);
-        }
-        while (storeSize !== focusStore.size) {
-            storeSize = focusStore.size;
-            for (const quad of focusStore.getQuads()) {
-                for (const subjectQuad of sgvStore.getQuads(quad.object)) {
-                    focusStore.addQuad(subjectQuad);
-                }
-            }
-        }
-        focusStore.addQuad(DF.quad(
-            shape,
-            DF.namedNode('http://www.w3.org/ns/shacl#targetNode'),
-            DF.namedNode(baseIRI),
-        ));
-        return [container, focusStore];
-    });
+    const parsedSgv = new SGVParser().parseSGV(sgvStore)
 
     // Validate the resource store against the shapes
-    const matchedShapes = mappedShapes.filter(([container, store]) => {
-        const validator = new SHACLValidator(store.asDataset());
-        const report = validator.validate(resourceStore.asDataset());
-        for (const result of report.results) {
-            console.log(result.message);
-            console.log(result.sourceShape);
-            console.log(result.term);
-            console.log(result.sourceConstraintComponent);
-            console.log(result.path);
+    const matchedCollections = parsedSgv.collections.filter(collection => {
+        let allMatch = true;
+        for (const description of collection.resourceDescription.descriptions) {
+            // Add the focus node to the description, removing it again when we are done.
+            const nodeShape = getOne(sgvStore, undefined, rdfTypePredicate, shaclNodeShape).object;
 
+            const focusNodeLink = DF.quad(
+                <Quad_Subject> nodeShape,
+                rdfTypePredicate,
+                DF.namedNode(baseIRI)
+            );
+            description.add(focusNodeLink);
+
+            const validator = new SHACLValidator(description);
+
+            description.delete(focusNodeLink);
+
+            const report = validator.validate(resourceStore.asDataset());
+            for (const result of report.results) {
+                console.log(result.message);
+                console.log(result.sourceShape);
+                console.log(result.term);
+                console.log(result.sourceConstraintComponent);
+                console.log(result.path);
+
+            }
+            allMatch = allMatch && report.conforms;
         }
-        return report.conforms;
+        return allMatch;
     });
 
+    if (matchedCollections.length == 0) {
+        console.log("No matching shape found");
+    }
+    const collection = chooseCollection(
+        <RootedCanonicalCollection[]> matchedCollections
+            .filter(x => x.type === 'Canonical Collection')
+    );
 
-    // console.log(matchedShapes)
+    console.log(`Resource conforms to shape ${collection.uri.value}`);
 
-    if (matchedShapes.length > 0) {
-        // For now, let's take the first match, and let's place it there
-        const [container, store] = matchedShapes[0];
-        console.log(`Resource conforms to shape ${container.value}`);
+    const uriTemplate = (<GroupStrategyURITemplate> collection.groupStrategy).template;
+    console.log(uriTemplate);
 
-        let uriTemplate = null;
-        for await (const bindings of await myEngine.queryBindings(`
-            prefix sgv: <https://thesis.jitsedesmet.be/solution/storage-guidance-vocabulary/#> 
-            select * where {
-                <${container.value}> sgv:group-strategy [
-                    sgv:uri-template ?uriTemplate ;
-                ] ;
-            }
-        `, { sources: [sgvStore]}
-        )) {
-            uriTemplate = bindings.get('uriTemplate')!.value;
-            break;
-        }
-        console.log(uriTemplate);
+    if (uriTemplate) {
+        const {parseTemplate} = await import("url-template");
+        type PrimitiveValue = string | number | boolean | null;
 
-        if (uriTemplate) {
-            const {parseTemplate} = await import("url-template");
-            type PrimitiveValue = string | number | boolean | null;
+        const expansionContext: Record<string, PrimitiveValue | PrimitiveValue[] | Record<string, PrimitiveValue | PrimitiveValue[]>> = {};
 
-            const expansionContext: Record<string, PrimitiveValue | PrimitiveValue[] | Record<string, PrimitiveValue | PrimitiveValue[]>> = {};
+        resourceStore.getQuads().forEach(quad => {
+            expansionContext[encodeURIComponent(quad.predicate.value)] = quad.object.value;
+        });
 
-            resourceStore.getQuads().forEach(quad => {
-                expansionContext[encodeURIComponent(quad.predicate.value)] = quad.object.value;
-            });
+        const resultingUri = parseTemplate(uriTemplate).expand(expansionContext);
 
-            const resultingUri = parseTemplate(uriTemplate).expand(expansionContext);
-
-            console.log(resultingUri);
-            const result = await myEngine.queryVoid(query, {
-                sources: [resultingUri],
-                baseIRI: resultingUri,
-            });
-        }
-
+        console.log(resultingUri);
+        const result = await myEngine.queryVoid(query, {
+            sources: [resultingUri],
+            baseIRI: resultingUri,
+        });
     }
 }
 

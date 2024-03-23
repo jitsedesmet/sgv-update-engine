@@ -2,11 +2,12 @@ import {ParsedSGV} from "./treeStructure/ParsedSGV";
 import type * as RDF from '@rdfjs/types';
 import {RdfStore} from "rdf-stores";
 import {
-    rdfType,
-    rdfTypeURL,
+    groupStrategyPredicate, groupStrategyUriTemplate,
+    rdfTypePredicate,
+    rdfTypePredicateURL,
     resourceDescriptionPredicate,
     saveConditionPredicate, shaclShapeLink,
-    typeCanonicalCollection, typeResourceDescriptionShacl,
+    typeCanonicalCollection, typeGroupStrategyUriTemplate, typeResourceDescriptionShacl,
     typeSaveConditionAlwaysStore,
     typeSaveConditionAlwaysStoreURL, typeUpdateConditionPreferStatic, updateConditionPredicate
 } from "./consts";
@@ -14,21 +15,15 @@ import {DefinedTriple, RootedCanonicalCollection} from "./treeStructure/Structur
 import {UpdateCondition} from "./treeStructure/UpdateCondition";
 import {SaveCondition} from "./treeStructure/SaveCondition";
 import {ResourceDescription} from "./treeStructure/ResourceDescription";
+import {GroupStrategy} from "./treeStructure/GroupStrategy";
+import {getOne} from "../helpers/Helpers";
 
 
 export class SGVParser {
-    public functionParseSGV(sgv: RdfStore): ParsedSGV {
-        // Get a list of containers and parse them
-
-
-        // Get the shape IRIs and the shape we should match for them
-
-
-
-        // Get the group strategies
-
+    public parseSGV(sgv: RdfStore): ParsedSGV {
+        console.log(typeCanonicalCollection);
         return {
-            collections: sgv.getQuads(typeCanonicalCollection).map(quad => {
+            collections: sgv.getQuads(undefined, undefined, typeCanonicalCollection).map(quad => {
                 if (quad.subject.termType !== "NamedNode" && quad.subject.termType !== "BlankNode") {
                     throw new Error("Expected a NamedNode or BlankNode as subject");
                 }
@@ -39,18 +34,32 @@ export class SGVParser {
 
     private parseCanonicalCollection(sgv: RdfStore, container: DefinedTriple): RootedCanonicalCollection {
         return {
-            type: "Canonical collection",
+            type: "Canonical Collection",
             uri: container,
             oneFileOneResource: false,
             updateCondition: this.parseUpdateCondition(sgv, container),
             saveCondition: this.parseSaveCondition(sgv, container),
             resourceDescription: this.parseResourceDescription(sgv, container),
+            groupStrategy: this.parseGroupStrategy(sgv, container),
         }
     }
 
+    private parseGroupStrategy(sgv: RdfStore, container: DefinedTriple): GroupStrategy {
+        const groupStrategy = getOne(sgv, container, groupStrategyPredicate);
+        const type = getOne(sgv, groupStrategy.object, rdfTypePredicate);
+
+        if (type.object.equals(typeGroupStrategyUriTemplate)) {
+            return {
+                type: "URI template",
+                template: getOne(sgv, groupStrategy.object, groupStrategyUriTemplate).object.value
+            }
+        }
+        throw new Error("Unknown group strategy");
+    }
+
     private parseResourceDescription(sgv: RdfStore, container: DefinedTriple): ResourceDescription {
-        const resourceDescription = this.getOne(sgv, container, resourceDescriptionPredicate);
-        const type = this.getOne(sgv, resourceDescription.object, rdfType);
+        const resourceDescription = getOne(sgv, container, resourceDescriptionPredicate);
+        const type = getOne(sgv, resourceDescription.object, rdfTypePredicate);
 
         if (type.object.equals(typeResourceDescriptionShacl)) {
             // Parse the shacl shape
@@ -84,9 +93,14 @@ export class SGVParser {
 
 
     private parseSaveCondition(sgv: RdfStore, container: DefinedTriple): SaveCondition {
-        const saveCondition = this.getOne(sgv, container, saveConditionPredicate);
-        const type = this.getOne(sgv, saveCondition.object, rdfType);
+        const saveCondition = getOne(sgv, container, saveConditionPredicate);
+        const type = getOne(sgv, saveCondition.object, rdfTypePredicate);
 
+        if (type.object.equals(typeSaveConditionAlwaysStore)) {
+            return {
+                type: "always stored"
+            }
+        }
         if (type.object.equals(typeSaveConditionAlwaysStore)) {
             return {
                 type: "always stored"
@@ -96,8 +110,8 @@ export class SGVParser {
     }
 
     private parseUpdateCondition(sgv: RdfStore, container: DefinedTriple): UpdateCondition {
-        const updateCondition = this.getOne(sgv, container, updateConditionPredicate);
-        const type = this.getOne(sgv, updateCondition.object, rdfType);
+        const updateCondition = getOne(sgv, container, updateConditionPredicate);
+        const type = getOne(sgv, updateCondition.object, rdfTypePredicate);
 
         if (type.object.equals(typeUpdateConditionPreferStatic)) {
             return {
@@ -107,12 +121,6 @@ export class SGVParser {
         throw new Error("Unknown update condition");
     }
 
-    private getOne(sgv: RdfStore, subject?: RDF.Quad_Object, predicate?: RDF.Quad_Predicate, object?: RDF.Quad_Subject): RDF.Quad {
-        const quads = sgv.getQuads(subject, predicate, object);
-        if (quads.length !== 1) {
-            throw new Error(`Expected one quad, got ${quads.length}`);
-        }
-        return quads[0];
-    }
+
 
 }
