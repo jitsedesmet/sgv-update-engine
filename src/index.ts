@@ -13,4 +13,4 @@ async function main(pod: string, query_file: string): Promise<void> {
 }
 
 // main('http://localhost:3000/pods/00000000000000000096/', './INSERT_whole_post.sparql').catch(console.error);
-main('http://localhost:3000/pods/00000000000000000096/', './INSERT_tag.sparql').catch(console.error);
+main('http://localhost:3000/pods/00000000000000000096/', './INSERT_append_tag.sparql').catch(console.error);

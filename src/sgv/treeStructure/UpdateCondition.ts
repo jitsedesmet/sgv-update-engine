@@ -1,4 +1,5 @@
 import {ResourceDescription} from "./ResourceDescription";
+import * as RDF from "@rdfjs/types";
 import {RdfStore} from "rdf-stores";
 
 /**
@@ -33,7 +34,7 @@ export interface RawUpdateConditionDisallow {
 export class UpdateConditionKeepAndAlwaysWidenIndex implements RawUpdateConditionKeepAndAlwaysWidenIndex {
     public type: "keep and always widen index" = "keep and always widen index";
     constructor() { }
-    public shouldRelocate(): boolean {
+    public wantsRelocation(resourceStore: RdfStore, resourceBaseUrl: RDF.NamedNode): boolean {
         throw new Error();
     }
 }
@@ -44,7 +45,7 @@ export class UpdateConditionKeepAndAlwaysWidenIndex implements RawUpdateConditio
 export class UpdateConditionKeepAndWidenForDistance implements RawUpdateConditionKeepAndWidenForDistance {
     public type: "keep and widen for distance" = "keep and widen for distance";
     constructor() { }
-    public shouldRelocate(): boolean {
+    public wantsRelocation(resourceStore: RdfStore, resourceBaseUrl: RDF.NamedNode): boolean {
         throw new Error();
     }
 }
@@ -52,7 +53,7 @@ export class UpdateConditionKeepAndWidenForDistance implements RawUpdateConditio
 export class UpdateConditionPreferStatic implements RawUpdateConditionPreferStatic {
     public type: "prefer static" = "prefer static";
     constructor(private resourceDescription: ResourceDescription) { }
-    public shouldRelocate(resourceStore: RdfStore, resourceBaseUrl: string): boolean {
+    public wantsRelocation(resourceStore: RdfStore, resourceBaseUrl: RDF.NamedNode): boolean {
         return this.resourceDescription.resourceMatchesDescription(resourceStore, resourceBaseUrl);
     }
 }
@@ -60,7 +61,7 @@ export class UpdateConditionPreferStatic implements RawUpdateConditionPreferStat
 export class UpdateConditionMoveToBestMatched implements RawUpdateConditionMoveToBestMatched {
     public type: "move to best matched" = "move to best matched";
     constructor() { }
-    public shouldRelocate(): boolean {
+    public wantsRelocation(resourceStore: RdfStore, resourceBaseUrl: RDF.NamedNode): boolean {
         return true;
     }
 }
@@ -68,7 +69,7 @@ export class UpdateConditionMoveToBestMatched implements RawUpdateConditionMoveT
 export class UpdateConditionDisallow implements RawUpdateConditionDisallow {
     public type: "disallow" = "disallow";
     constructor() { }
-    public shouldRelocate(): boolean {
+    public wantsRelocation(resourceStore: RdfStore, resourceBaseUrl: RDF.NamedNode): boolean {
         throw new Error("Update Condition disallows updates");
     }
 }

@@ -38,7 +38,7 @@ export class ResourceDescriptionSHACL implements RawResourceDescriptionSHACL {
         }
     }
 
-    public resourceMatchesDescription(resourceStore: RdfStore, resourceBaseUrl: string): boolean {
+    public resourceMatchesDescription(resourceStore: RdfStore, baseResource: RDF.NamedNode): boolean {
         let allMatch = true;
         for (const description of this.descriptions) {
             // Add the focus node to the description, removing it again when we are done.
@@ -47,7 +47,7 @@ export class ResourceDescriptionSHACL implements RawResourceDescriptionSHACL {
             const focusNodeLink = DF.quad(
                 <Quad_Subject> nodeShape,
                 rdfTypePredicate,
-                DF.namedNode(resourceBaseUrl)
+                baseResource
             );
             description.add(focusNodeLink);
 
