@@ -8,3 +8,25 @@ export function getOne(sgv: RdfStore, subject?: RDF.Quad_Object, predicate?: RDF
     }
     return quads[0];
 }
+
+export function termToString(rdf: RDF.Term): string {
+    if (rdf.termType === 'NamedNode') {
+        return `<${rdf.value}>`;
+    } else if (rdf.termType === 'Literal') {
+        if (rdf.language) {
+            return `"${rdf.value}"@${rdf.language}`;
+        }
+        if (rdf.datatype) {
+            return `"${rdf.value}"^^<${rdf.datatype.value}>`;
+        }
+        return `"${rdf.value}"`;
+    } else if (rdf.termType === 'BlankNode') {
+        return `_:${rdf.value}`;
+    } else {
+        return rdf.value;
+    }
+}
+
+export function quadToString(rdf: RDF.Quad): string {
+    return `${termToString(rdf.subject)} ${termToString(rdf.predicate)} ${termToString(rdf.object)} .`;
+}
