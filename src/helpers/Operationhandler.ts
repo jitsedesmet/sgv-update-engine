@@ -147,9 +147,9 @@ export class OperationAddToResourceHandler implements Operationhandler {
             sources: [ resourceToGet.value ]
         })) {
             completeStore.addQuad(DF.quad(
-                <RDF.Quad_Subject> quad.get('?s'),
-                <RDF.Quad_Predicate> quad.get('?p'),
-                <RDF.Quad_Object> quad.get('?o'),
+                <RDF.Quad_Subject> quad.get('s'),
+                <RDF.Quad_Predicate> quad.get('p'),
+                <RDF.Quad_Object> quad.get('o'),
             ));
         }
 
