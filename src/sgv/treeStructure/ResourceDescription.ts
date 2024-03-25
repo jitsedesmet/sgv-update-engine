@@ -1,7 +1,7 @@
 import * as RDF from "@rdfjs/types";
 import {RdfStore} from "rdf-stores";
 import {getOne} from "../../helpers/Helpers";
-import {rdfTypePredicate, shaclNodeShape} from "../consts";
+import {rdfTypePredicate, shaclNodeShape, shaclTargetNode} from "../consts";
 import {Quad_Subject} from "@rdfjs/types";
 import SHACLValidator from "rdf-validate-shacl";
 import {DataFactory} from "rdf-data-factory";
@@ -42,20 +42,20 @@ export class ResourceDescriptionSHACL implements RawResourceDescriptionSHACL {
         let allMatch = true;
         for (const description of this.descriptions) {
             // Add the focus node to the description, removing it again when we are done.
-            const nodeShape = getOne(this.sgvStore, undefined, rdfTypePredicate, shaclNodeShape).object;
+            const nodeShape = getOne(this.sgvStore, undefined, rdfTypePredicate, shaclNodeShape).subject;
 
             const focusNodeLink = DF.quad(
-                <Quad_Subject> nodeShape,
-                rdfTypePredicate,
+                nodeShape,
+                shaclTargetNode,
                 baseResource
             );
             description.add(focusNodeLink);
 
             const validator = new SHACLValidator(description);
 
-            description.delete(focusNodeLink);
-
             const report = validator.validate(resourceStore.asDataset());
+
+            description.delete(focusNodeLink);
             for (const result of report.results) {
                 console.log(result.message);
                 console.log(result.sourceShape);

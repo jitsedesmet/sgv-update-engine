@@ -11,6 +11,8 @@ export const rdfTypePredicateURL = `${rdfPrefix}type`;
 export const rdfTypePredicate = DF.namedNode(rdfTypePredicateURL);
 export const shaclNodeShapeUrl = `${shaclPrefix}NodeShape`;
 export const shaclNodeShape = DF.namedNode(shaclNodeShapeUrl);
+export const shaclTargetNodeUrl = `${shaclPrefix}targetNode`;
+export const shaclTargetNode = DF.namedNode(shaclTargetNodeUrl);
 
 // Containers
 export const typeCanonicalCollectionURL = `${prefix}#canonical-collection`;

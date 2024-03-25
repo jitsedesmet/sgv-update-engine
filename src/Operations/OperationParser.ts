@@ -4,7 +4,7 @@ import {BaseOperationhandler, NonUpdateOperationHandler} from "./BaseOperationha
 import {InsertResourceOperationHandler} from "./InsertResourceHandler";
 import {OperationAddToResourceHandler} from "./InsertAppendHandler";
 import {DataFactory} from "rdf-data-factory";
-import {OpertionRemoveHandler} from "./OpertionRemoveHandler";
+import {OperationRemoveHandler} from "./OperationRemoveHandler";
 
 const DF = new DataFactory();
 
@@ -38,7 +38,7 @@ export class OperationParser {
                     }
                 }
                 if (operation.updateType === 'delete') {
-                    return new OpertionRemoveHandler(operation);
+                    return new OperationRemoveHandler(operation);
                 }
             }
             // We have an update to handle

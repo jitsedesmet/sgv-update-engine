@@ -39,7 +39,7 @@ export abstract class BaseOperationhandler {
             });
         if (matchedCollections.length == 0) {
             // TODO: you should ask for a new SGV collection?
-            console.log("No matching shape found, cannot update resource!");
+            throw new Error("No matching shape found, cannot update resource!");
         }
 
         const RootedCanCol = <RootedCanonicalCollection[]> matchedCollections;

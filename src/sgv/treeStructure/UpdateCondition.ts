@@ -54,7 +54,7 @@ export class UpdateConditionPreferStatic implements RawUpdateConditionPreferStat
     public type: "prefer static" = "prefer static";
     constructor(private resourceDescription: ResourceDescription) { }
     public wantsRelocation(resourceStore: RdfStore, resourceBaseUrl: RDF.NamedNode): boolean {
-        return this.resourceDescription.resourceMatchesDescription(resourceStore, resourceBaseUrl);
+        return !this.resourceDescription.resourceMatchesDescription(resourceStore, resourceBaseUrl);
     }
 }
 

@@ -4,7 +4,7 @@ import {RdfStore} from "rdf-stores";
 import {storeFromTriples, storeMinus} from "../helpers/Helpers";
 import {EditResourceOperation} from "./EditResourceOperation";
 
-export class OpertionRemoveHandler extends EditResourceOperation {
+export class OperationRemoveHandler extends EditResourceOperation {
     public operation: SgvOperation = "remove";
 
     public constructor(private parsedOperation: ParserDeleteType) {
