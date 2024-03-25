@@ -9,7 +9,7 @@ import {DataFactory} from "rdf-data-factory";
 
 const DF = new DataFactory();
 
-export type SgvOperation = "non-update" | "insert resource" | "append to resource";
+export type SgvOperation = "non-update" | "insert resource" | "append to resource" | "remove";
 
 export abstract class BaseOperationhandler {
     public abstract operation: SgvOperation;
@@ -90,4 +90,10 @@ export interface ParserInsertType {
     updateType: "insert";
     graph?: GraphOrDefault;
     insert: Quads[];
+}
+
+export interface ParserDeleteType {
+    updateType: "delete";
+    graph?: GraphOrDefault;
+    delete: Quads[];
 }

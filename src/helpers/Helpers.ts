@@ -95,6 +95,17 @@ export async function storeUnion(store1: RdfStore, store2: RdfStore): Promise<Rd
     return store;
 }
 
+export async function storeMinus(store1: RdfStore, store2: RdfStore): Promise<RdfStore> {
+    const store = RdfStore.createDefault();
+    for (const quad of store1.getQuads()) {
+        store.addQuad(quad);
+    }
+    for (const quad of store2.getQuads()) {
+        store.removeQuad(quad);
+    }
+    return store;
+}
+
 export async function translateStore(store: RdfStore, from: RDF.NamedNode, to: RDF.NamedNode): Promise<RdfStore> {
     const newStore = RdfStore.createDefault();
     for (const quad of store.getQuads()) {
