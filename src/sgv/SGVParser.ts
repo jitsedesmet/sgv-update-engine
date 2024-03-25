@@ -21,7 +21,7 @@ import {UpdateCondition, UpdateConditionPreferStatic} from "./treeStructure/Upda
 import {SaveCondition, SaveConditionAlwaysStored} from "./treeStructure/SaveCondition";
 import {ResourceDescription, ResourceDescriptionSHACL} from "./treeStructure/ResourceDescription";
 import {GroupStrategy, GroupStrategyURITemplate} from "./treeStructure/GroupStrategy";
-import {getOne} from "../helpers/Helpers";
+import {fileResourceToStore, getOne} from "../helpers/Helpers";
 import {DataFactory} from "rdf-data-factory";
 import {QueryEngine} from "@comunica/query-sparql-file";
 
@@ -32,20 +32,7 @@ export class SGVParser {
     public constructor(public sgvStore: RdfStore) { }
 
     public static async init(podUri: string): Promise<SGVParser>  {
-        const sgvStore = RdfStore.createDefault();
-        for await (const bindings of await myEngine.queryBindings(
-            `select * where { ?s ?p ?o }`,
-            { sources: [`${podUri.trim()}sgv`]}
-        )) {
-            sgvStore.addQuad(
-                DF.quad(
-                    <Quad_Subject>bindings.get('s')!,
-                    <Quad_Predicate>bindings.get('p')!,
-                    <Quad_Object>bindings.get('o')!
-                )
-            )
-        }
-        return new SGVParser(sgvStore);
+        return new SGVParser(await fileResourceToStore(myEngine, `${podUri}sgv`));
     }
 
 

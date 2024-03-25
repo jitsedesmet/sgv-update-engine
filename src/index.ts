@@ -3,7 +3,7 @@ import {InsertDeleteOperation, Parser as SparqlParser, SparqlQuery} from "sparql
 import * as fs from "fs";
 import {SGVParser} from "./sgv/SGVParser";
 import {RootedCanonicalCollection} from "./sgv/treeStructure/StructuredCollection";
-import {OperationParser} from "./helpers/Operationhandler";
+import {OperationParser} from "./Operations/BaseOperationhandler";
 
 const myEngine = new QueryEngine();
 
@@ -13,4 +13,5 @@ async function main(pod: string, query_file: string): Promise<void> {
 }
 
 // main('http://localhost:3000/pods/00000000000000000096/', './INSERT_whole_post.sparql').catch(console.error);
-main('http://localhost:3000/pods/00000000000000000096/', './INSERT_append_tag.sparql').catch(console.error);
+// main('http://localhost:3000/pods/00000000000000000096/', './INSERT_append_tag.sparql').catch(console.error);
+main('http://localhost:3000/pods/00000000000000000096/', './INSERT_where_tag.sparql').catch(console.error);
