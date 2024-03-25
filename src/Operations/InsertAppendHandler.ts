@@ -70,13 +70,7 @@ export class OperationAddToResourceHandler extends BaseOperationhandler {
         } else {
             console.log(`Relocating resource to ${newBaseUri.value}`);
             // Remove the old resource:
-            await this.engine.queryVoid(`
-                DELETE DATA {
-                    ${originalResource.getQuads().map(quad => quadToString(quad)).join('\n')}
-                }
-            `, {
-                sources: [focusedResource.value],
-            });
+            await this.removeStoreFromResource(originalResource, focusedResource);
         }
 
         await this.addStoreToResource(await translateStore(newResource, focusedResource, newBaseUri), newBaseUri);

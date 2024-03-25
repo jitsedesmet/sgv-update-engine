@@ -51,12 +51,17 @@ export abstract class BaseOperationhandler {
     protected async addStoreToResource(store: RdfStore, resource: RDF.NamedNode): Promise<void> {
         await this.engine.queryVoid(`
             INSERT DATA {
-                ${store.getQuads().map(quad => quadToString(DF.quad(
-                    quad.subject,
-                    quad.predicate,
-                    quad.object,
-                    quad.graph,
-                ))).join('\n')}
+                ${store.getQuads().map(quad => quadToString(quad)).join('\n')}
+            }
+        `, {
+            sources: [resource.value],
+        });
+    }
+
+    protected async removeStoreFromResource(store: RdfStore, resource: RDF.NamedNode): Promise<void> {
+        await this.engine.queryVoid(`
+            DELETE DATA {
+                ${store.getQuads().map(quad => quadToString(quad)).join('\n')}
             }
         `, {
             sources: [resource.value],
