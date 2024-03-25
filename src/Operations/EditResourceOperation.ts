@@ -1,7 +1,7 @@
 import {BaseOperationhandler} from "./BaseOperationhandler";
 import * as RDF from "@rdfjs/types";
 import {RdfStore} from "rdf-stores";
-import {fileResourceToStore, getPrunedStore, storeUnion, translateStore} from "../helpers/Helpers";
+import {fileResourceToStore, getPrunedStore, translateStore} from "../helpers/Helpers";
 import {SGVParser} from "../sgv/SGVParser";
 import {DataFactory} from "rdf-data-factory";
 

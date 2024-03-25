@@ -1,9 +1,8 @@
-import {BaseOperationhandler, ParserDeleteType, SgvOperation} from "./BaseOperationhandler";
+import {ParserDeleteType, SgvOperation} from "./BaseOperationhandler";
 import * as RDF from "@rdfjs/types";
 import {RdfStore} from "rdf-stores";
-import {storeFromTriples, storeMinus, storeUnion} from "../helpers/Helpers";
+import {storeFromTriples, storeMinus} from "../helpers/Helpers";
 import {EditResourceOperation} from "./EditResourceOperation";
-import {SGVParser} from "../sgv/SGVParser";
 
 export class OpertionRemoveHandler extends EditResourceOperation {
     public operation: SgvOperation = "remove";

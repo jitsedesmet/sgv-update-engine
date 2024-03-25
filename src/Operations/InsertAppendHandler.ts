@@ -1,8 +1,7 @@
 import * as RDF from "@rdfjs/types";
 import {RdfStore} from "rdf-stores";
-import {SGVParser} from "../sgv/SGVParser";
-import {fileResourceToStore, getPrunedStore, storeFromTriples, storeUnion, translateStore} from "../helpers/Helpers";
-import {BaseOperationhandler, ParserInsertType, SgvOperation} from "./BaseOperationhandler";
+import {storeFromTriples, storeUnion} from "../helpers/Helpers";
+import {ParserInsertType, SgvOperation} from "./BaseOperationhandler";
 import {DataFactory} from "rdf-data-factory";
 import {EditResourceOperation} from "./EditResourceOperation";
 
