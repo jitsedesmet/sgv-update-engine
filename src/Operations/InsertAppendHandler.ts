@@ -1,17 +1,7 @@
-import {QueryEngine} from "@comunica/query-sparql-file";
 import * as RDF from "@rdfjs/types";
 import {RdfStore} from "rdf-stores";
-import {Quad_Predicate} from "@rdfjs/types";
 import {SGVParser} from "../sgv/SGVParser";
-import {RootedCanonicalCollection} from "../sgv/treeStructure/StructuredCollection";
-import {
-    fileResourceToStore,
-    getPrunedStore,
-    quadToString,
-    storeFromTriples,
-    storeUnion,
-    translateStore
-} from "../helpers/Helpers";
+import {fileResourceToStore, getPrunedStore, storeFromTriples, storeUnion, translateStore} from "../helpers/Helpers";
 import {BaseOperationhandler, ParserInsertType, SgvOperation} from "./BaseOperationhandler";
 import {DataFactory} from "rdf-data-factory";
 
