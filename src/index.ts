@@ -2,7 +2,7 @@ import {OperationParser} from "./Operations/OperationParser";
 
 
 async function main(pod: string, query_file: string): Promise<void> {
-    const operation = await new OperationParser(query_file).parse();
+    const operation = await (await OperationParser.fromFile(query_file)).parse();
     await operation.handleOperation(pod);
 }
 
@@ -14,5 +14,5 @@ async function main(pod: string, query_file: string): Promise<void> {
 // main('http://localhost:3000/pods/00000000000000000096/', './DELINS_id.sparql').catch(console.error);
 // main('http://localhost:3000/pods/00000000000000000096/', './DELETE_tags.sparql').catch(console.error);
 // main('http://localhost:3000/pods/00000000000000000096/', './INSERT_where_tag.sparql').catch(console.error);
-// main('http://localhost:3000/pods/00000000000000000096/', './DELETE_DATA_complete.sparql').catch(console.error);
-main('http://localhost:3000/pods/00000000000000000096/', './DELETE_complete.sparql').catch(console.error);
+// main('http://localhost:3000/pods/00000000000000000096/', './DELETE_data_complete.sparql').catch(console.error);
+main('http://localhost:3000/pods/00000000000000000096/', './DELETE_where_complete.sparql').catch(console.error);

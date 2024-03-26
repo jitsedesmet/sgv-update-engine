@@ -6,13 +6,15 @@ import {OperationAddToResourceHandler} from "./InsertAppendHandler";
 import {DataFactory} from "rdf-data-factory";
 import {OperationRemoveHandler} from "./OperationRemoveHandler";
 import {DeleteInsertOperationHandler} from "./DeleteInsertOperationHandler";
+import {getQueryWithoutPrefixes} from "../helpers/Helpers";
 
 const DF = new DataFactory();
 
 export class OperationParser {
     public baseIRI: string;
     public sparqlParser: SparqlParser;
-    constructor(private query_file: string) {
+
+    constructor(private query: string) {
         // Use a uuid_v4 as baseIRI
         this.baseIRI = "file:///8ea79435-ffe1-4357-9010-0970114970ad";
         this.sparqlParser = new Parser({
@@ -20,9 +22,13 @@ export class OperationParser {
         });
     }
 
+    public static async fromFile(query_file: string): Promise<OperationParser> {
+        const query = await fs.promises.readFile(query_file, 'utf8');
+        return new OperationParser(query);
+    }
+
     public async parse(): Promise<BaseOperationhandler> {
-        const query = await fs.promises.readFile(this.query_file, 'utf8');
-        const parsedQuery = this.sparqlParser.parse(query);
+        const parsedQuery = this.sparqlParser.parse(this.query);
 
         if (parsedQuery.type  === 'update') {
             // check if raw insert: INSERT DATA { ... }
@@ -44,11 +50,21 @@ export class OperationParser {
                 if (operation.updateType === 'insertdelete') {
                     return new DeleteInsertOperationHandler(operation, parsedQuery, DF.namedNode("http://localhost:3000/pods/00000000000000000096/posts/2024-05-08#416608218494388"));
                 }
+                if (operation.updateType === 'deletewhere') {
+                    // We rewrite to a delete ... where ... query (insertdelete)
+                    const rawQuery = await getQueryWithoutPrefixes(parsedQuery);
+
+                    const rewrittenQuery = rawQuery.replaceAll(
+                        /^DELETE WHERE \{(.*)\}$/gu,
+                        "DELETE { $1 } WHERE { $1 }"
+                    )
+                    return await new OperationParser(rewrittenQuery).parse();
+                }
             }
             // We have an update to handle
             console.log(parsedQuery);
         } else {
-            return new NonUpdateOperationHandler(query);
+            return new NonUpdateOperationHandler(this.query);
         }
         throw new Error("No operation found");
     }

@@ -2,7 +2,7 @@ import {BaseOperationhandler, ParserInsertDeleteType, SgvOperation} from "./Base
 import {InsertDeleteOperation, Parser, SparqlGenerator, Generator, SparqlQuery} from "sparqljs";
 import {
     fileResourceToStore,
-    getPrunedStore,
+    getPrunedStore, getQueryWithoutPrefixes,
     quadToString,
     storeFromTriples,
     storeMinus,
@@ -28,10 +28,7 @@ export class DeleteInsertOperationHandler extends BaseOperationhandler {
 
     public async handleOperation(pod: string): Promise<void> {
         // We construct the resource we will delete and insert by looking at the where clause in the parsed operation.
-        this.completeQuery.prefixes = {};
-        this.completeQuery.base = undefined;
-
-        const rawQuery = new Generator().stringify(this.completeQuery);
+        const rawQuery = await getQueryWithoutPrefixes(this.completeQuery);
         // Either delete is present, or it is not:
         let rawDelete = "";
         let rawInsert = "";

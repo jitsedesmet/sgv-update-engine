@@ -3,7 +3,7 @@ import type * as RDF from "@rdfjs/types";
 import {Quad_Object, Quad_Predicate, Quad_Subject} from "@rdfjs/types";
 import {QueryEngine} from "@comunica/query-sparql-file";
 import {DataFactory} from "rdf-data-factory";
-import {Triple} from "sparqljs";
+import {Generator, SparqlQuery, Triple} from "sparqljs";
 
 const DF = new DataFactory();
 
@@ -116,5 +116,14 @@ export async function translateStore(store: RdfStore, from: RDF.NamedNode, to: R
         ));
     }
     return newStore;
+}
+
+export async function getQueryWithoutPrefixes(query: SparqlQuery): Promise<string> {
+    const shallowCopy = { ...query };
+
+    shallowCopy.prefixes = {};
+    shallowCopy.base = undefined;
+
+    return new Generator().stringify(shallowCopy);
 }
 
