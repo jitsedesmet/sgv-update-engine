@@ -28,16 +28,30 @@ export class DeleteInsertOperationHandler extends BaseOperationhandler {
 
     public async handleOperation(pod: string): Promise<void> {
         // We construct the resource we will delete and insert by looking at the where clause in the parsed operation.
-        const rawRemovalStore = await storeFromTriples(this.parsedOperation.delete![0].triples);
-
         this.completeQuery.prefixes = {};
         this.completeQuery.base = undefined;
 
         const rawQuery = new Generator().stringify(this.completeQuery);
-        const [rawDelete, rawInsert, rawWhere] = rawQuery.replaceAll(
-            /^DELETE \{(.*)\}\s+INSERT \{(.*)\}\s+WHERE \{(.*)\}$/gu,
-            "$1\t$2\t$3"
-        ).split("\t");
+        // Either delete is present, or it is not:
+        let rawDelete = "";
+        let rawInsert = "";
+        let rawWhere = "";
+        if (this.parsedOperation.delete?.length) {
+            const selection = rawQuery.replaceAll(
+                /^DELETE \{(.*)\}\s+(INSERT \{(.*)\}\s+)?WHERE \{(.*)\}$/gu,
+                "$1\t$3\t$4"
+            ).split("\t");
+            rawDelete = selection[0];
+            rawInsert = selection[1];
+            rawWhere = selection[2];
+        } else {
+            const selection = rawQuery.replaceAll(
+                /^INSERT \{(.*)\}\s+WHERE \{(.*)\}$/gu,
+                "$1\t$2"
+            ).split("\t");
+            rawInsert = selection[0];
+            rawWhere = selection[1];
+        }
 
 
         const resourceStore = await getPrunedStore(
@@ -47,31 +61,35 @@ export class DeleteInsertOperationHandler extends BaseOperationhandler {
 
         // Instantiate the delete clause
         const removalStore = RdfStore.createDefault();
-        for await (const quad of await this.engine.queryQuads(`
-            CONSTRUCT {
-                ${rawDelete}
-            } WHERE {
-                ${rawWhere}
-            }
+        if (rawDelete) {
+            for await (const quad of await this.engine.queryQuads(`
+                CONSTRUCT {
+                    ${rawDelete}
+                } WHERE {
+                    ${rawWhere}
+                }
             `, {
-            sources: [resourceStore],
-        })
-            ) {
-            removalStore.addQuad(quad);
+                sources: [resourceStore],
+            })
+                ) {
+                removalStore.addQuad(quad);
+            }
         }
 
         const additionStore = RdfStore.createDefault();
-        for await (const quad of await this.engine.queryQuads(`
-            CONSTRUCT {
-                ${rawInsert}
-            } WHERE {
-                ${rawWhere}
-            }
+        if (rawInsert) {
+            for await (const quad of await this.engine.queryQuads(`
+                CONSTRUCT {
+                    ${rawInsert}
+                } WHERE {
+                    ${rawWhere}
+                }
             `, {
-            sources: [resourceStore],
-        })
-            ) {
-            additionStore.addQuad(quad);
+                sources: [resourceStore],
+            })
+                ) {
+                additionStore.addQuad(quad);
+            }
         }
 
         const newResource = await storeUnion(
@@ -95,14 +113,23 @@ export class DeleteInsertOperationHandler extends BaseOperationhandler {
 
         if (newBaseUri.equals(this.focussedResource)) {
             console.log("No relocation needed, updating resource in place");
-            await this.engine.queryVoid(`
-                DELETE DATA {
-                    ${removalStore.getQuads().map(quad => quadToString(quad)).join('\n')}
-                };
-                INSERT DATA {
-                    ${additionStore.getQuads().map(quad => quadToString(quad)).join('\n')}
-                }
-            `);
+            let query = "";
+            if (removalStore.size !== 0) {
+                query += `
+                    DELETE DATA {
+                        ${removalStore.getQuads().map(quad => quadToString(quad)).join('\n')}
+                    };
+                `
+            }
+            if (additionStore.size !== 0) {
+                query += `
+                    INSERT DATA {
+                        ${additionStore.getQuads().map(quad => quadToString(quad)).join('\n')}
+                    }
+                `
+            }
+
+            await this.engine.queryVoid(query, {sources: [this.focussedResource.value]});
 
         } else {
             console.log(`Relocating resource to ${newBaseUri.value}`);
