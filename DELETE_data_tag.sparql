@@ -3,5 +3,8 @@ prefix ns1: <http://localhost:3000/www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/>
 DELETE DATA {
     <http://localhost:3000/pods/00000000000000000096/posts/2024-05-08#416608218494388>
         ns1:hasTag <http://localhost:3000/www.ldbc.eu/ldbc_socialnet/1.0/tag/Mountain> .
+};
+INSERT DATA {
+    <http://localhost:3000/pods/00000000000000000096/posts/2024-05-08#416608218494388>
+        ns1:hasTag <http://localhost:3000/www.ldbc.eu/ldbc_socialnet/1.0/tag/Mountain> .
 }
-

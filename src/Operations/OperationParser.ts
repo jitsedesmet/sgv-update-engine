@@ -5,6 +5,7 @@ import {InsertResourceOperationHandler} from "./InsertResourceHandler";
 import {OperationAddToResourceHandler} from "./InsertAppendHandler";
 import {DataFactory} from "rdf-data-factory";
 import {OperationRemoveHandler} from "./OperationRemoveHandler";
+import {DeleteInsertOperationHandler} from "./DeleteInsertOperationHandler";
 
 const DF = new DataFactory();
 
@@ -39,6 +40,9 @@ export class OperationParser {
                 }
                 if (operation.updateType === 'delete') {
                     return new OperationRemoveHandler(operation);
+                }
+                if (operation.updateType === 'insertdelete') {
+                    return new DeleteInsertOperationHandler(operation, parsedQuery, DF.namedNode("http://localhost:3000/pods/00000000000000000096/posts/2024-05-08#416608218494388"));
                 }
             }
             // We have an update to handle

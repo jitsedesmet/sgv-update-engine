@@ -1,4 +1,4 @@
-import {GraphOrDefault, Quads} from "sparqljs";
+import {GraphOrDefault, IriTerm, Pattern, Quads} from "sparqljs";
 import * as RDF from "@rdfjs/types";
 import {QueryEngine} from "@comunica/query-sparql-file";
 import {ParsedSGV} from "../sgv/treeStructure/ParsedSGV";
@@ -9,7 +9,7 @@ import {DataFactory} from "rdf-data-factory";
 
 const DF = new DataFactory();
 
-export type SgvOperation = "non-update" | "insert resource" | "append to resource" | "remove";
+export type SgvOperation = "non-update" | "insert resource" | "append to resource" | "remove" | "delete insert";
 
 export abstract class BaseOperationhandler {
     public abstract operation: SgvOperation;
@@ -96,4 +96,16 @@ export interface ParserDeleteType {
     updateType: "delete";
     graph?: GraphOrDefault;
     delete: Quads[];
+}
+
+export interface ParserInsertDeleteType {
+    updateType: "insertdelete";
+    graph?: GraphOrDefault;
+    insert?: Quads[];
+    delete?: Quads[];
+    using?: {
+default: IriTerm[];
+    named: IriTerm[];
+};
+    where?: Pattern[];
 }

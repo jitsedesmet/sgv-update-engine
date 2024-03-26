@@ -19,7 +19,7 @@ export abstract class EditResourceOperation extends BaseOperationhandler {
     protected abstract getResultingResource(): Promise<RdfStore>;
 
     /**
-     * @return a new store that you should still mak sure exists like that!
+     * @return a new store that you should still make sure exists like that!
      */
     protected async computeAndHandleRelocation(pod: string): Promise<{ store: RdfStore, resource: RDF.NamedNode, didClear: boolean }> {
         const focusedResource = await this.getResourceNode();
