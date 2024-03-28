@@ -1,4 +1,4 @@
-import {InsertDeleteOperation, Parser, SparqlParser} from "sparqljs";
+import {InsertDeleteOperation, Parser, SparqlParser, SparqlQuery} from "sparqljs";
 import fs from "fs";
 import {BaseOperationhandler, NonUpdateOperationHandler} from "./BaseOperationhandler";
 import {InsertResourceOperationHandler} from "./InsertResourceHandler";
@@ -28,7 +28,7 @@ export class OperationParser {
     }
 
     public async parse(): Promise<BaseOperationhandler> {
-        const parsedQuery = this.sparqlParser.parse(this.query);
+        const parsedQuery: SparqlQuery = this.sparqlParser.parse(this.query);
 
         if (parsedQuery.type  === 'update') {
             // check if raw insert: INSERT DATA { ... }

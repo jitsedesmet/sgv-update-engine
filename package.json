@@ -5,13 +5,15 @@
     "@types/rdf-validate-shacl": "^0.4.5",
     "@types/sparqljs": "^3.1.10",
     "@typescript-eslint/eslint-plugin": "^6.4.0",
+    "tinybench": "^2.6.0",
     "ts-node": "^10.9.2",
     "typescript": "*"
   },
   "scripts": {
-    "start": "yarn run build:ts && node dist/index.js",
+    "start": "yarn run build:ts && node dist/src/index.js",
     "dev": "ts-node src/index.ts",
-    "build:ts": "tsc"
+    "build:ts": "tsc",
+    "bench": "yarn run build:ts && node dist/benchmark/bench.js"
   },
   "name": "sgv-comunica",
   "version": "1.0.0",
