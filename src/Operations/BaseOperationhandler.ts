@@ -49,12 +49,14 @@ export abstract class BaseOperationhandler {
     }
 
     protected async addStoreToResource(store: RdfStore, resource: RDF.NamedNode): Promise<void> {
-        await this.engine.queryVoid(`
+        const query = `
             INSERT DATA {
                 ${store.getQuads().map(quad => quadToString(quad)).join('\n')}
             }
-        `, {
+        `;
+        await this.engine.queryVoid(query, {
             sources: [resource.value],
+            destination: resource.value,
         });
     }
 

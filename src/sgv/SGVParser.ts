@@ -1,6 +1,5 @@
 import {ParsedSGV} from "./treeStructure/ParsedSGV";
 import type * as RDF from '@rdfjs/types';
-import {Quad_Object, Quad_Predicate, Quad_Subject} from "@rdfjs/types";
 import {RdfStore} from "rdf-stores";
 import {
     groupStrategyPredicate,
@@ -16,16 +15,14 @@ import {
     typeUpdateConditionPreferStatic,
     updateConditionPredicate
 } from "./consts";
-import {DefinedTriple, RootedCanonicalCollection} from "./treeStructure/StructuredCollection";
+import {RootedCanonicalCollection} from "./treeStructure/StructuredCollection";
 import {UpdateCondition, UpdateConditionPreferStatic} from "./treeStructure/UpdateCondition";
 import {SaveCondition, SaveConditionAlwaysStored} from "./treeStructure/SaveCondition";
 import {ResourceDescription, ResourceDescriptionSHACL} from "./treeStructure/ResourceDescription";
 import {GroupStrategy, GroupStrategyURITemplate} from "./treeStructure/GroupStrategy";
 import {fileResourceToStore, getOne} from "../helpers/Helpers";
-import {DataFactory} from "rdf-data-factory";
 import {QueryEngine} from "@comunica/query-sparql-file";
 
-const DF = new DataFactory();
 const myEngine = new QueryEngine();
 
 export class SGVParser {
@@ -43,12 +40,12 @@ export class SGVParser {
                 if (quad.subject.termType !== "NamedNode" && quad.subject.termType !== "BlankNode") {
                     throw new Error("Expected a NamedNode or BlankNode as subject");
                 }
-                return this.parseCanonicalCollection(<DefinedTriple> quad.subject);
+                return this.parseCanonicalCollection(<RDF.NamedNode> quad.subject);
             })
         }
     }
 
-    private parseCanonicalCollection(container: DefinedTriple): RootedCanonicalCollection {
+    private parseCanonicalCollection(container: RDF.NamedNode): RootedCanonicalCollection {
         const resourceDescription = this.parseResourceDescription(container);
         return {
             type: "Canonical Collection",
@@ -57,7 +54,7 @@ export class SGVParser {
             resourceDescription,
             updateCondition: this.parseUpdateCondition(container, resourceDescription),
             saveCondition: this.parseSaveCondition(container),
-            groupStrategy: this.parseGroupStrategy(container),
+            groupStrategy: this.parseGroupStrategy(container, container),
         }
     }
 
@@ -65,19 +62,20 @@ export class SGVParser {
         return getOne(this.sgvStore, subject, predicate, object);
     }
 
-    private parseGroupStrategy(container: DefinedTriple): GroupStrategy {
+    private parseGroupStrategy(container: RDF.NamedNode, collectionUri: RDF.NamedNode): GroupStrategy {
         const groupStrategy = this.getOne(container, groupStrategyPredicate);
         const type = this.getOne(groupStrategy.object, rdfTypePredicate);
 
         if (type.object.equals(typeGroupStrategyUriTemplate)) {
             return new GroupStrategyURITemplate(
-                this.getOne(groupStrategy.object, groupStrategyUriTemplate).object.value
+                this.getOne(groupStrategy.object, groupStrategyUriTemplate).object.value,
+                collectionUri
             );
         }
         throw new Error("Unknown group strategy");
     }
 
-    private parseResourceDescription(container: DefinedTriple): ResourceDescription {
+    private parseResourceDescription(container: RDF.NamedNode): ResourceDescription {
         const resourceDescription = this.getOne(container, resourceDescriptionPredicate);
         const type = this.getOne(resourceDescription.object, rdfTypePredicate);
 
@@ -91,7 +89,7 @@ export class SGVParser {
     }
 
 
-    private parseSaveCondition(container: DefinedTriple): SaveCondition {
+    private parseSaveCondition(container: RDF.NamedNode): SaveCondition {
         const saveCondition = this.getOne(container, saveConditionPredicate);
         const type = this.getOne(saveCondition.object, rdfTypePredicate);
 
@@ -104,7 +102,7 @@ export class SGVParser {
         throw new Error("Unknown save condition");
     }
 
-    private parseUpdateCondition(container: DefinedTriple, resourceDescription: ResourceDescription): UpdateCondition {
+    private parseUpdateCondition(container: RDF.NamedNode, resourceDescription: ResourceDescription): UpdateCondition {
         const updateCondition = this.getOne(container, updateConditionPredicate);
         const type = this.getOne(updateCondition.object, rdfTypePredicate);
 

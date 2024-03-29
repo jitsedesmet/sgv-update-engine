@@ -1,4 +1,5 @@
 import {RdfStore} from "rdf-stores";
+import type * as RDF from '@rdfjs/types';
 
 /**
  * @deprecated
@@ -34,7 +35,7 @@ export class GroupStrategySPARQLMap implements RawGroupStrategySPARQLMap {
 export class GroupStrategyURITemplate implements RawGroupStrategyURITemplate {
     public type: "URI template" = "URI template";
 
-    public constructor(public template: string) { }
+    public constructor(public template: string, public collectionUri: RDF.NamedNode) { }
 
 
     public async getResourceURI(resourceStore: RdfStore): Promise<string> {
@@ -47,7 +48,7 @@ export class GroupStrategyURITemplate implements RawGroupStrategyURITemplate {
             expansionContext[encodeURIComponent(quad.predicate.value)] = quad.object.value;
         });
 
-        return parseTemplate(this.template).expand(expansionContext);
+        return this.collectionUri.value + parseTemplate(this.template).expand(expansionContext);
     }
 }
 

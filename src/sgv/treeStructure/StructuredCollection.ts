@@ -15,10 +15,8 @@ interface BaseStructuredContainer {
     oneFileOneResource: OneFileOneResource;
 }
 
-export type DefinedTriple = RDF.NamedNode | RDF.BlankNode;
-
 interface Pinpoint {
-    "uri": DefinedTriple;
+    "uri": RDF.NamedNode;
 }
 
 export interface CanonicalCollection extends BaseStructuredContainer {
