@@ -56,14 +56,13 @@ export class ResourceDescriptionSHACL implements RawResourceDescriptionSHACL {
             const report = validator.validate(resourceStore.asDataset());
 
             description.delete(focusNodeLink);
-            for (const result of report.results) {
-                console.log(result.message);
-                console.log(result.sourceShape);
-                console.log(result.term);
-                console.log(result.sourceConstraintComponent);
-                console.log(result.path);
-
-            }
+            // for (const result of report.results) {
+            //     console.log(result.message);
+            //     console.log(result.sourceShape);
+            //     console.log(result.term);
+            //     console.log(result.sourceConstraintComponent);
+            //     console.log(result.path);
+            // }
             allMatch = allMatch && report.conforms;
         }
         return allMatch;

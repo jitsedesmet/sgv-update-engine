@@ -1,7 +1,7 @@
 import * as RDF from "@rdfjs/types";
 import {RdfStore} from "rdf-stores";
 import {storeFromTriples, storeUnion} from "../helpers/Helpers";
-import {ParserInsertType, SgvOperation} from "./BaseOperationhandler";
+import {ParserInsertType, SgvOperation} from "./BaseOperationHandler";
 import {DataFactory} from "rdf-data-factory";
 import {EditResourceOperation} from "./EditResourceOperation";
 
@@ -14,16 +14,16 @@ export class OperationAddToResourceHandler extends EditResourceOperation {
         super()
     }
 
-    protected async getResourceNode(): Promise<RDF.NamedNode> {
+    protected getResourceNode(): RDF.NamedNode {
         return <RDF.NamedNode> this.parsedOperation.insert[0].triples[0].subject;
     }
 
-    private async getInsertResource(): Promise<RdfStore> {
-        return await storeFromTriples(this.parsedOperation.insert[0].triples);
+    private getInsertResource(): RdfStore {
+        return storeFromTriples(this.parsedOperation.insert[0].triples);
     }
 
     protected async getResultingResource(): Promise<RdfStore> {
-        return await storeUnion(await this.getOriginalResource(), await this.getInsertResource());
+        return storeUnion(await this.getOriginalResource(), this.getInsertResource());
     }
 
 

@@ -54,7 +54,7 @@ export async function fileResourceToStore(engine: QueryEngine, resource: string)
     return fileStore;
 }
 
-export async function getPrunedStore(store: RdfStore, focusResource: RDF.NamedNode | RDF.BlankNode): Promise<RdfStore> {
+export function getPrunedStore(store: RdfStore, focusResource: RDF.NamedNode | RDF.BlankNode): RdfStore {
     const resourceStore = RdfStore.createDefault();
     for (const quad of store.getQuads(focusResource)) {
         resourceStore.addQuad(quad);
@@ -72,7 +72,7 @@ export async function getPrunedStore(store: RdfStore, focusResource: RDF.NamedNo
     return resourceStore;
 }
 
-export async function storeFromTriples(triples: Triple[]): Promise<RdfStore> {
+export function storeFromTriples(triples: Triple[]): RdfStore {
     const store = RdfStore.createDefault();
     for (const triple of triples) {
         store.addQuad(DF.quad(
@@ -84,7 +84,7 @@ export async function storeFromTriples(triples: Triple[]): Promise<RdfStore> {
     return store;
 }
 
-export async function storeUnion(store1: RdfStore, store2: RdfStore): Promise<RdfStore> {
+export function storeUnion(store1: RdfStore, store2: RdfStore): RdfStore {
     const store = RdfStore.createDefault();
     for (const quad of store1.getQuads()) {
         store.addQuad(quad);
@@ -95,7 +95,15 @@ export async function storeUnion(store1: RdfStore, store2: RdfStore): Promise<Rd
     return store;
 }
 
-export async function storeMinus(store1: RdfStore, store2: RdfStore): Promise<RdfStore> {
+export function coreStoreUnion(store1: RDF.DatasetCore, store2: RDF.DatasetCore): RDF.DatasetCore {
+    const store = RdfStore.createDefault().asDataset();
+    for (const quad of store2) {
+        store.add(quad);
+    }
+    return store;
+}
+
+export function storeMinus(store1: RdfStore, store2: RdfStore): RdfStore {
     const store = RdfStore.createDefault();
     for (const quad of store1.getQuads()) {
         store.addQuad(quad);
@@ -106,7 +114,7 @@ export async function storeMinus(store1: RdfStore, store2: RdfStore): Promise<Rd
     return store;
 }
 
-export async function translateStore(store: RdfStore, from: RDF.NamedNode, to: RDF.NamedNode): Promise<RdfStore> {
+export function translateStore(store: RdfStore, from: RDF.NamedNode, to: RDF.NamedNode): RdfStore {
     const newStore = RdfStore.createDefault();
     for (const quad of store.getQuads()) {
         newStore.addQuad(DF.quad(
@@ -118,7 +126,7 @@ export async function translateStore(store: RdfStore, from: RDF.NamedNode, to: R
     return newStore;
 }
 
-export async function getQueryWithoutPrefixes(query: SparqlQuery): Promise<string> {
+export function getQueryWithoutPrefixes(query: SparqlQuery): string {
     const shallowCopy = { ...query };
 
     shallowCopy.prefixes = {};

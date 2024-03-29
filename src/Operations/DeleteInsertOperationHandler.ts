@@ -1,4 +1,4 @@
-import {BaseOperationhandler, ParserInsertDeleteType, SgvOperation} from "./BaseOperationhandler";
+import {BaseOperationHandler, ParserInsertDeleteType, SgvOperation} from "./BaseOperationHandler";
 import {InsertDeleteOperation, Parser, SparqlGenerator, Generator, SparqlQuery} from "sparqljs";
 import {
     fileResourceToStore,
@@ -12,23 +12,25 @@ import {RdfStore} from "rdf-stores";
 import * as RDF from "@rdfjs/types";
 import {SGVParser} from "../sgv/SGVParser";
 import {DataFactory} from "rdf-data-factory";
+import {ParsedSGV} from "../sgv/treeStructure/ParsedSGV";
 
 const DF = new DataFactory();
 
-export class DeleteInsertOperationHandler extends BaseOperationhandler {
+export class DeleteInsertOperationHandler extends BaseOperationHandler {
     public operation: SgvOperation = "delete insert";
 
     public constructor(
         private parsedOperation: ParserInsertDeleteType,
         private completeQuery: SparqlQuery,
-        private focussedResource: RDF.NamedNode) {
-        super();
+        private focussedResource: RDF.NamedNode,
+        parsedSgv?: ParsedSGV) {
+        super(parsedSgv);
     }
 
 
     public async handleOperation(pod: string): Promise<void> {
         // We construct the resource we will delete and insert by looking at the where clause in the parsed operation.
-        const rawQuery = await getQueryWithoutPrefixes(this.completeQuery);
+        const rawQuery = getQueryWithoutPrefixes(this.completeQuery);
         // Either delete is present, or it is not:
         let rawDelete = "";
         let rawInsert = "";
@@ -51,7 +53,7 @@ export class DeleteInsertOperationHandler extends BaseOperationhandler {
         }
 
 
-        const resourceStore = await getPrunedStore(
+        const resourceStore = getPrunedStore(
             await fileResourceToStore(this.engine, this.focussedResource.value),
             this.focussedResource
         );
@@ -89,11 +91,11 @@ export class DeleteInsertOperationHandler extends BaseOperationhandler {
             }
         }
 
-        const newResource = await storeUnion(
-            await storeMinus(resourceStore, removalStore),
+        const newResource = storeUnion(
+            storeMinus(resourceStore, removalStore),
             additionStore);
 
-        const parsedSgv = (await SGVParser.init(pod)).parse();
+        const parsedSgv = this.parsedSgv ?? (await SGVParser.init(pod)).parse();
         const currentCollection = this.getContainingCollection(this.focussedResource, parsedSgv);
 
         const wantsRelocation = currentCollection.updateCondition.wantsRelocation(newResource, this.focussedResource);
@@ -109,7 +111,6 @@ export class DeleteInsertOperationHandler extends BaseOperationhandler {
         }
 
         if (newBaseUri.equals(this.focussedResource)) {
-            console.log("No relocation needed, updating resource in place");
             let query = "";
             if (removalStore.size !== 0) {
                 query += `
@@ -129,11 +130,10 @@ export class DeleteInsertOperationHandler extends BaseOperationhandler {
             await this.engine.queryVoid(query, {sources: [this.focussedResource.value]});
 
         } else {
-            console.log(`Relocating resource to ${newBaseUri.value}`);
             // Remove the old resource:
             await this.removeStoreFromResource(resourceStore, this.focussedResource);
 
-            await this.addStoreToResource(await translateStore(
+            await this.addStoreToResource(translateStore(
                 newResource, this.focussedResource, newBaseUri
             ), newBaseUri);
         }

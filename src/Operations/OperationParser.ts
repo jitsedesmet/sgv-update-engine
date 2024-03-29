@@ -1,12 +1,13 @@
 import {InsertDeleteOperation, Parser, SparqlParser, SparqlQuery} from "sparqljs";
 import fs from "fs";
-import {BaseOperationhandler, NonUpdateOperationHandler} from "./BaseOperationhandler";
+import {BaseOperationHandler, NonUpdateOperationHandler} from "./BaseOperationHandler";
 import {InsertResourceOperationHandler} from "./InsertResourceHandler";
 import {OperationAddToResourceHandler} from "./InsertAppendHandler";
 import {DataFactory} from "rdf-data-factory";
 import {OperationRemoveHandler} from "./OperationRemoveHandler";
 import {DeleteInsertOperationHandler} from "./DeleteInsertOperationHandler";
 import {getQueryWithoutPrefixes} from "../helpers/Helpers";
+import {ParsedSGV} from "../sgv/treeStructure/ParsedSGV";
 
 const DF = new DataFactory();
 
@@ -27,7 +28,7 @@ export class OperationParser {
         return new OperationParser(query);
     }
 
-    public async parse(): Promise<BaseOperationhandler> {
+    public async parse(parsedSgv?: ParsedSGV): Promise<BaseOperationHandler> {
         const parsedQuery: SparqlQuery = this.sparqlParser.parse(this.query);
 
         if (parsedQuery.type  === 'update') {
@@ -39,7 +40,7 @@ export class OperationParser {
                 const operation = <InsertDeleteOperation> parsedQuery.updates[0];
                 if (operation.updateType === 'insert') {
                     if (operation.insert.some(quad => quad.triples.some(triple => triple.subject.equals(DF.namedNode(this.baseIRI))))) {
-                        return new InsertResourceOperationHandler(operation, DF.namedNode(this.baseIRI));
+                        return new InsertResourceOperationHandler(operation, DF.namedNode(this.baseIRI), parsedSgv);
                     } else {
                         return new OperationAddToResourceHandler(operation);
                     }
@@ -61,8 +62,6 @@ export class OperationParser {
                     return await new OperationParser(rewrittenQuery).parse();
                 }
             }
-            // We have an update to handle
-            console.log(parsedQuery);
         } else {
             return new NonUpdateOperationHandler(this.query);
         }

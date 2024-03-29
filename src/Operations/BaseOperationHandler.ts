@@ -7,16 +7,14 @@ import {RdfStore} from "rdf-stores";
 import {quadToString} from "../helpers/Helpers";
 import {DataFactory} from "rdf-data-factory";
 
-const DF = new DataFactory();
-
 export type SgvOperation = "non-update" | "insert resource" | "append to resource" | "remove" | "delete insert";
 
-export abstract class BaseOperationhandler {
+export abstract class BaseOperationHandler {
     public abstract operation: SgvOperation;
     public abstract handleOperation(pod: string): Promise<void>;
     protected engine: QueryEngine;
 
-    protected constructor() {
+    protected constructor(protected parsedSgv?: ParsedSGV) {
         this.engine = new QueryEngine();
     }
 
@@ -29,13 +27,13 @@ export abstract class BaseOperationhandler {
             })[0];
     }
 
-    protected async collectionOfResultingResource(parsedSgv: ParsedSGV, resulingResource: RdfStore, resource: RDF.NamedNode): Promise<RootedStructuredCollection> {
+    protected collectionOfResultingResource(parsedSgv: ParsedSGV, resultingResource: RdfStore, resource: RDF.NamedNode): RootedStructuredCollection {
         const matchedCollections = parsedSgv
             .collections
             .filter(collection => {
                 return collection
                     .resourceDescription
-                    .resourceMatchesDescription(resulingResource, resource);
+                    .resourceMatchesDescription(resultingResource, resource);
             });
         if (matchedCollections.length == 0) {
             // TODO: you should ask for a new SGV collection?
@@ -71,7 +69,7 @@ export abstract class BaseOperationhandler {
     }
 }
 
-export class NonUpdateOperationHandler extends BaseOperationhandler {
+export class NonUpdateOperationHandler extends BaseOperationHandler {
     public operation: SgvOperation = "non-update";
 
     public constructor(private query: string) {

@@ -23,18 +23,18 @@ import {GroupStrategy, GroupStrategyURITemplate} from "./treeStructure/GroupStra
 import {fileResourceToStore, getOne} from "../helpers/Helpers";
 import {QueryEngine} from "@comunica/query-sparql-file";
 
-const myEngine = new QueryEngine();
-
 export class SGVParser {
-    public constructor(public sgvStore: RdfStore) { }
+    public constructor(public sgvStore: RdfStore) {
+    }
 
     public static async init(podUri: string): Promise<SGVParser>  {
+        const myEngine = new QueryEngine();
+
         return new SGVParser(await fileResourceToStore(myEngine, `${podUri}sgv`));
     }
 
 
     public parse(): ParsedSGV {
-        console.log(typeCanonicalCollection);
         return {
             collections: this.sgvStore.getQuads(undefined, undefined, typeCanonicalCollection).map(quad => {
                 if (quad.subject.termType !== "NamedNode" && quad.subject.termType !== "BlankNode") {

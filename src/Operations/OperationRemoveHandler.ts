@@ -1,4 +1,4 @@
-import {ParserDeleteType, SgvOperation} from "./BaseOperationhandler";
+import {ParserDeleteType, SgvOperation} from "./BaseOperationHandler";
 import * as RDF from "@rdfjs/types";
 import {RdfStore} from "rdf-stores";
 import {storeFromTriples, storeMinus} from "../helpers/Helpers";
@@ -11,16 +11,16 @@ export class OperationRemoveHandler extends EditResourceOperation {
         super()
     }
 
-    protected async getResourceNode(): Promise<RDF.NamedNode> {
+    protected getResourceNode(): RDF.NamedNode {
         return <RDF.NamedNode> this.parsedOperation.delete[0].triples[0].subject;
     }
 
-    protected async getDeleteResource(): Promise<RdfStore> {
-        return await storeFromTriples(this.parsedOperation.delete[0].triples);
+    protected getDeleteResource(): RdfStore {
+        return storeFromTriples(this.parsedOperation.delete[0].triples);
     }
 
     protected async getResultingResource(): Promise<RdfStore> {
-        return await storeMinus(await this.getOriginalResource(), await this.getDeleteResource());
+        return storeMinus(await this.getOriginalResource(), this.getDeleteResource());
     }
 
     public async handleOperation(pod: string): Promise<void> {
@@ -29,7 +29,7 @@ export class OperationRemoveHandler extends EditResourceOperation {
         if (didClear) {
             await this.addStoreToResource(store, resource);
         } else {
-            const deleteStore = await this.getDeleteResource();
+            const deleteStore = this.getDeleteResource();
             await this.removeStoreFromResource(deleteStore, resource);
         }
     }
