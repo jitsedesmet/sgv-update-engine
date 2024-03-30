@@ -17,7 +17,9 @@ export class OperationParser {
 
     constructor(private query: string) {
         // Use a uuid_v4 as baseIRI
-        this.baseIRI = "file:///8ea79435-ffe1-4357-9010-0970114970ad";
+        const id = Math.floor(Math.random() * 1000000000000000);
+
+        this.baseIRI = `file:///${id}-8ea79435-ffe1-4357-9010-0970114970ad`;
         this.sparqlParser = new Parser({
             baseIRI: this.baseIRI,
         });
@@ -42,17 +44,17 @@ export class OperationParser {
                     if (operation.insert.some(quad => quad.triples.some(triple => triple.subject.equals(DF.namedNode(this.baseIRI))))) {
                         return new InsertResourceOperationHandler(operation, DF.namedNode(this.baseIRI), parsedSgv);
                     } else {
-                        return new OperationAddToResourceHandler(operation);
+                        return new OperationAddToResourceHandler(operation, parsedSgv);
                     }
                 }
                 if (operation.updateType === 'delete') {
-                    return new OperationRemoveHandler(operation);
+                    return new OperationRemoveHandler(operation, parsedSgv);
                 }
                 if (operation.updateType === 'insertdelete') {
                     if (!updatedResource) {
                         throw new Error("Updated resource not provided");
                     }
-                    return new DeleteInsertOperationHandler(operation, parsedQuery, DF.namedNode(updatedResource));
+                    return new DeleteInsertOperationHandler(operation, parsedQuery, DF.namedNode(updatedResource), parsedSgv);
                 }
                 if (operation.updateType === 'deletewhere') {
                     // We rewrite to a delete ... where ... query (insertdelete)

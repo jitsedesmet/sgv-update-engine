@@ -3,12 +3,13 @@ import {RdfStore} from "rdf-stores";
 import {storeFromTriples, storeUnion} from "../helpers/Helpers";
 import {ParserInsertType, SgvOperation} from "./BaseOperationHandler";
 import {EditResourceOperation} from "./EditResourceOperation";
+import {ParsedSGV} from "../sgv/treeStructure/ParsedSGV";
 
 export class OperationAddToResourceHandler extends EditResourceOperation {
     public operation: SgvOperation = "append to resource";
 
-    public constructor(private parsedOperation: ParserInsertType) {
-        super()
+    public constructor(private parsedOperation: ParserInsertType, parsedSgv?: ParsedSGV) {
+        super(parsedSgv)
     }
 
     protected getResourceNode(): RDF.NamedNode {

@@ -59,10 +59,10 @@ export async function fileResourceToStore(engine: QueryEngine, resource: string)
 
 export function getPrunedStore(store: RdfStore, focusResource: RDF.NamedNode | RDF.BlankNode): RdfStore {
     const resourceStore = RdfStore.createDefault();
+    let storeSize = resourceStore.size;
     for (const quad of store.getQuads(focusResource)) {
         resourceStore.addQuad(quad);
     }
-    let storeSize = resourceStore.size;
     while (storeSize !== resourceStore.size) {
         storeSize = resourceStore.size;
         for (const quad of resourceStore.getQuads()) {

@@ -3,12 +3,13 @@ import * as RDF from "@rdfjs/types";
 import {RdfStore} from "rdf-stores";
 import {storeFromTriples, storeMinus} from "../helpers/Helpers";
 import {EditResourceOperation} from "./EditResourceOperation";
+import {ParsedSGV} from "../sgv/treeStructure/ParsedSGV";
 
 export class OperationRemoveHandler extends EditResourceOperation {
     public operation: SgvOperation = "remove";
 
-    public constructor(private parsedOperation: ParserDeleteType) {
-        super()
+    public constructor(private parsedOperation: ParserDeleteType, parsedSgv?: ParsedSGV) {
+        super(parsedSgv);
     }
 
     protected getResourceNode(): RDF.NamedNode {

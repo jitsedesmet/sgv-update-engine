@@ -134,9 +134,11 @@ export class DeleteInsertOperationHandler extends BaseOperationHandler {
             // Remove the old resource:
             await this.removeStoreFromResource(resourceStore, this.focussedResource);
 
-            await this.addStoreToResource(translateStore(
+            const remainingStore = translateStore(
                 newResource, this.focussedResource, newBaseUri
-            ), newBaseUri);
+            );
+
+            await this.addStoreToResource(remainingStore, newBaseUri);
         }
     }
 }
