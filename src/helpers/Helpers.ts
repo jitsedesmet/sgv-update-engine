@@ -45,8 +45,11 @@ export async function fileResourceToStore(engine: QueryEngine, resource: string)
     )) {
         fileStore.addQuad(
             DF.quad(
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 (bindings.get('s')! as Quad_Subject),
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 (bindings.get('p')! as Quad_Predicate),
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 (bindings.get('o')! as Quad_Object)
             )
         )

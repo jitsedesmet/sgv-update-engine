@@ -5,7 +5,6 @@ import {ParsedSGV} from "../sgv/treeStructure/ParsedSGV";
 import {RootedCanonicalCollection, RootedStructuredCollection} from "../sgv/treeStructure/StructuredCollection";
 import {RdfStore} from "rdf-stores";
 import {quadToString} from "../helpers/Helpers";
-import {DataFactory} from "rdf-data-factory";
 
 export type SgvOperation = "non-update" | "insert resource" | "append to resource" | "remove" | "delete insert";
 
