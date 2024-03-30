@@ -23,17 +23,17 @@ export interface RawGroupStrategyURITemplateWithRegex {
 
 
 export class GroupStrategySPARQLMap implements RawGroupStrategySPARQLMap {
-    public type: "SPARQL map" = "SPARQL map";
+    public type = "SPARQL map" as const;
 
     public constructor(public encodeURI: string) { }
 
-    public async getResourceURI(resourceStore: RdfStore): Promise<string> {
+    public getResourceURI(resourceStore: RdfStore): Promise<string> {
         throw new Error();
     }
 }
 
 export class GroupStrategyURITemplate implements RawGroupStrategyURITemplate {
-    public type: "URI template" = "URI template";
+    public type = "URI template" as const;
 
     public constructor(public template: string, public collectionUri: RDF.NamedNode) { }
 
@@ -54,7 +54,7 @@ export class GroupStrategyURITemplate implements RawGroupStrategyURITemplate {
 
 
 export class GroupStrategyURITemplateWithRegex implements RawGroupStrategyURITemplateWithRegex {
-    public type: "URI template with REGEX" = "URI template with REGEX";
+    public type = "URI template with REGEX" as const;
 
     public constructor(public template: string, public regexMatch: string, public regexReplace: string) { }
 

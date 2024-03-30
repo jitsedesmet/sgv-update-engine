@@ -45,9 +45,9 @@ export async function fileResourceToStore(engine: QueryEngine, resource: string)
     )) {
         fileStore.addQuad(
             DF.quad(
-                <Quad_Subject>bindings.get('s')!,
-                <Quad_Predicate>bindings.get('p')!,
-                <Quad_Object>bindings.get('o')!
+                (bindings.get('s')! as Quad_Subject),
+                (bindings.get('p')! as Quad_Predicate),
+                (bindings.get('o')! as Quad_Object)
             )
         )
     }
@@ -77,7 +77,7 @@ export function storeFromTriples(triples: Triple[]): RdfStore {
     for (const triple of triples) {
         store.addQuad(DF.quad(
             triple.subject,
-            <Quad_Predicate> triple.predicate,
+            (triple.predicate as Quad_Predicate),
             triple.object,
         ));
     }

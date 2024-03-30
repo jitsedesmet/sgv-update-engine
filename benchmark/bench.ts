@@ -3,7 +3,7 @@ import {SGVParser} from "../src/sgv/SGVParser";
 import {ParsedSGV} from "../src/sgv/treeStructure/ParsedSGV";
 
 async function insertResource(id: string, pod: string, parsedSgv: ParsedSGV) {
-    const prefixes: string = `
+    const prefixes = `
                 prefix ns1: <http://localhost:3000/www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/>
                 prefix xsd: <http://www.w3.org/2001/XMLSchema#>
             `;

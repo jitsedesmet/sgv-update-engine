@@ -37,7 +37,7 @@ export class OperationParser {
                 // The resource we want to insert is either already present, or should be inserted.
                 // In this DEMO software we assume it is one or the other, and that we the presence of the baseIri is enough to determine this.
                 // We also assume that only one resource is updated in a single query.
-                const operation = <InsertDeleteOperation> parsedQuery.updates[0];
+                const operation = parsedQuery.updates[0] as InsertDeleteOperation;
                 if (operation.updateType === 'insert') {
                     if (operation.insert.some(quad => quad.triples.some(triple => triple.subject.equals(DF.namedNode(this.baseIRI))))) {
                         return new InsertResourceOperationHandler(operation, DF.namedNode(this.baseIRI), parsedSgv);

@@ -40,7 +40,7 @@ export class SGVParser {
                 if (quad.subject.termType !== "NamedNode" && quad.subject.termType !== "BlankNode") {
                     throw new Error("Expected a NamedNode or BlankNode as subject");
                 }
-                return this.parseCanonicalCollection(<RDF.NamedNode> quad.subject);
+                return this.parseCanonicalCollection((quad.subject as RDF.NamedNode));
             })
         }
     }

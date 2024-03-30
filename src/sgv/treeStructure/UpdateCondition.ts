@@ -32,8 +32,7 @@ export interface RawUpdateConditionDisallow {
  * @deprecated
  */
 export class UpdateConditionKeepAndAlwaysWidenIndex implements RawUpdateConditionKeepAndAlwaysWidenIndex {
-    public type: "keep and always widen index" = "keep and always widen index";
-    constructor() { }
+    public type = "keep and always widen index" as const;
     public wantsRelocation(resourceStore: RdfStore, resourceBaseUrl: RDF.NamedNode): boolean {
         throw new Error();
     }
@@ -43,15 +42,14 @@ export class UpdateConditionKeepAndAlwaysWidenIndex implements RawUpdateConditio
  * @deprecated
  */
 export class UpdateConditionKeepAndWidenForDistance implements RawUpdateConditionKeepAndWidenForDistance {
-    public type: "keep and widen for distance" = "keep and widen for distance";
-    constructor() { }
+    public type = "keep and widen for distance" as const;
     public wantsRelocation(resourceStore: RdfStore, resourceBaseUrl: RDF.NamedNode): boolean {
         throw new Error();
     }
 }
 
 export class UpdateConditionPreferStatic implements RawUpdateConditionPreferStatic {
-    public type: "prefer static" = "prefer static";
+    public type = "prefer static" as const;
     constructor(private resourceDescription: ResourceDescription) { }
     public wantsRelocation(resourceStore: RdfStore, resourceBaseUrl: RDF.NamedNode): boolean {
         return !this.resourceDescription.resourceMatchesDescription(resourceStore, resourceBaseUrl);
@@ -59,16 +57,14 @@ export class UpdateConditionPreferStatic implements RawUpdateConditionPreferStat
 }
 
 export class UpdateConditionMoveToBestMatched implements RawUpdateConditionMoveToBestMatched {
-    public type: "move to best matched" = "move to best matched";
-    constructor() { }
+    public type = "move to best matched" as const;
     public wantsRelocation(resourceStore: RdfStore, resourceBaseUrl: RDF.NamedNode): boolean {
         return true;
     }
 }
 
 export class UpdateConditionDisallow implements RawUpdateConditionDisallow {
-    public type: "disallow" = "disallow";
-    constructor() { }
+    public type = "disallow" as const;
     public wantsRelocation(resourceStore: RdfStore, resourceBaseUrl: RDF.NamedNode): boolean {
         throw new Error("Update Condition disallows updates");
     }

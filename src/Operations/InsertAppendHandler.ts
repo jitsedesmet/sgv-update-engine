@@ -2,10 +2,7 @@ import * as RDF from "@rdfjs/types";
 import {RdfStore} from "rdf-stores";
 import {storeFromTriples, storeUnion} from "../helpers/Helpers";
 import {ParserInsertType, SgvOperation} from "./BaseOperationHandler";
-import {DataFactory} from "rdf-data-factory";
 import {EditResourceOperation} from "./EditResourceOperation";
-
-const DF = new DataFactory();
 
 export class OperationAddToResourceHandler extends EditResourceOperation {
     public operation: SgvOperation = "append to resource";
@@ -15,7 +12,7 @@ export class OperationAddToResourceHandler extends EditResourceOperation {
     }
 
     protected getResourceNode(): RDF.NamedNode {
-        return <RDF.NamedNode> this.parsedOperation.insert[0].triples[0].subject;
+        return this.parsedOperation.insert[0].triples[0].subject as RDF.NamedNode;
     }
 
     private getInsertResource(): RdfStore {

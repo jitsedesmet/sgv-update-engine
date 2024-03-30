@@ -1,12 +1,13 @@
 import {BaseOperationHandler, ParserInsertDeleteType, SgvOperation} from "./BaseOperationHandler";
-import {InsertDeleteOperation, Parser, SparqlGenerator, Generator, SparqlQuery} from "sparqljs";
+import {SparqlQuery} from "sparqljs";
 import {
     fileResourceToStore,
-    getPrunedStore, getQueryWithoutPrefixes,
+    getPrunedStore,
+    getQueryWithoutPrefixes,
     quadToString,
-    storeFromTriples,
     storeMinus,
-    storeUnion, translateStore
+    storeUnion,
+    translateStore
 } from "../helpers/Helpers";
 import {RdfStore} from "rdf-stores";
 import * as RDF from "@rdfjs/types";
@@ -106,7 +107,7 @@ export class DeleteInsertOperationHandler extends BaseOperationHandler {
 
         if (wantsRelocation) {
             // Check what collection we should relocate to
-            const collectionToInsertIn = await this.collectionOfResultingResource(parsedSgv, newResource, this.focussedResource);
+            const collectionToInsertIn = this.collectionOfResultingResource(parsedSgv, newResource, this.focussedResource);
             newBaseUri = DF.namedNode(await collectionToInsertIn.groupStrategy.getResourceURI(newResource));
         }
 

@@ -5,9 +5,11 @@
     "@types/rdf-validate-shacl": "^0.4.5",
     "@types/sparqljs": "^3.1.10",
     "@typescript-eslint/eslint-plugin": "^6.4.0",
+    "eslint": "^8.57.0",
     "tinybench": "^2.6.0",
     "ts-node": "^10.9.2",
-    "typescript": "*"
+    "typescript": "^5.4.3",
+    "typescript-eslint": "^7.4.0"
   },
   "scripts": {
     "start": "yarn run build:ts && node dist/src/index.js",

@@ -40,7 +40,7 @@ export abstract class BaseOperationHandler {
             throw new Error("No matching shape found, cannot update resource!");
         }
 
-        const RootedCanCol = <RootedCanonicalCollection[]> matchedCollections;
+        const RootedCanCol = matchedCollections as RootedCanonicalCollection[];
         return RootedCanCol.filter(collection =>
             collection.saveCondition.wantsGivenCompetitors(RootedCanCol)
         )[0];
@@ -83,10 +83,10 @@ export class NonUpdateOperationHandler extends BaseOperationHandler {
 
     public async handleOperation(pod: string): Promise<void> {
         // Read query: just do it
-        for await (const binding of await this
+        for await (const quad of await this
             .engine
-            .queryBindings(this.query, { sources: [pod] })) {
-            console.log(binding.toString());
+            .queryQuads(this.query, { sources: [pod] })) {
+            console.log(quadToString(quad));
         }
     }
 }

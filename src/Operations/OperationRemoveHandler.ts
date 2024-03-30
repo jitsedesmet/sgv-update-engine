@@ -12,7 +12,7 @@ export class OperationRemoveHandler extends EditResourceOperation {
     }
 
     protected getResourceNode(): RDF.NamedNode {
-        return <RDF.NamedNode> this.parsedOperation.delete[0].triples[0].subject;
+        return this.parsedOperation.delete[0].triples[0].subject as RDF.NamedNode;
     }
 
     protected getDeleteResource(): RdfStore {

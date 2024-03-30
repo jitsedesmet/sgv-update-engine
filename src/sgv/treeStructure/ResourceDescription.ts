@@ -2,7 +2,6 @@ import * as RDF from "@rdfjs/types";
 import {RdfStore} from "rdf-stores";
 import {getOne} from "../../helpers/Helpers";
 import {rdfTypePredicate, shaclNodeShape, shaclTargetNode} from "../consts";
-import {Quad_Subject} from "@rdfjs/types";
 import SHACLValidator from "rdf-validate-shacl";
 import {DataFactory} from "rdf-data-factory";
 
@@ -14,7 +13,7 @@ export interface RawResourceDescriptionSHACL {
 }
 
 export class ResourceDescriptionSHACL implements RawResourceDescriptionSHACL {
-    public type: "SHACL" = "SHACL";
+    public type = "SHACL" as const;
     public descriptions: RDF.DatasetCore[];
 
     public constructor(private sgvStore: RdfStore, shaclShapes: RDF.Quad_Object[]) {
