@@ -28,7 +28,7 @@ export class OperationParser {
         return new OperationParser(query);
     }
 
-    public async parse(parsedSgv?: ParsedSGV): Promise<BaseOperationHandler> {
+    public async parse(parsedSgv?: ParsedSGV, updatedResource?: string): Promise<BaseOperationHandler> {
         const parsedQuery: SparqlQuery = this.sparqlParser.parse(this.query);
 
         if (parsedQuery.type  === 'update') {
@@ -49,17 +49,20 @@ export class OperationParser {
                     return new OperationRemoveHandler(operation);
                 }
                 if (operation.updateType === 'insertdelete') {
-                    return new DeleteInsertOperationHandler(operation, parsedQuery, DF.namedNode("http://localhost:3000/pods/00000000000000000096/posts/2024-05-08#416608218494388"));
+                    if (!updatedResource) {
+                        throw new Error("Updated resource not provided");
+                    }
+                    return new DeleteInsertOperationHandler(operation, parsedQuery, DF.namedNode(updatedResource));
                 }
                 if (operation.updateType === 'deletewhere') {
                     // We rewrite to a delete ... where ... query (insertdelete)
-                    const rawQuery = await getQueryWithoutPrefixes(parsedQuery);
+                    const rawQuery = getQueryWithoutPrefixes(parsedQuery);
 
                     const rewrittenQuery = rawQuery.replaceAll(
                         /^DELETE WHERE \{(.*)\}$/gu,
                         "DELETE { $1 } WHERE { $1 }"
                     )
-                    return await new OperationParser(rewrittenQuery).parse();
+                    return await new OperationParser(rewrittenQuery).parse(parsedSgv, updatedResource);
                 }
             }
         } else {

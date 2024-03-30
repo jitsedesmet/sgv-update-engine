@@ -47,6 +47,9 @@ export abstract class BaseOperationHandler {
     }
 
     protected async addStoreToResource(store: RdfStore, resource: RDF.NamedNode): Promise<void> {
+        if (store.size === 0) {
+            return;
+        }
         const query = `
             INSERT DATA {
                 ${store.getQuads().map(quad => quadToString(quad)).join('\n')}
@@ -54,11 +57,13 @@ export abstract class BaseOperationHandler {
         `;
         await this.engine.queryVoid(query, {
             sources: [resource.value],
-            destination: resource.value,
         });
     }
 
     protected async removeStoreFromResource(store: RdfStore, resource: RDF.NamedNode): Promise<void> {
+        if (store.size === 0) {
+            return;
+        }
         await this.engine.queryVoid(`
             DELETE DATA {
                 ${store.getQuads().map(quad => quadToString(quad)).join('\n')}
