@@ -36,46 +36,36 @@ async function deleteResource(id: string, pod: string, parsedSgv: ParsedSGV) {
 }
 
 async function main() {
-    // const {Bench} = await import('tinybench');
-    //
-    // const bench = new Bench({time: 1_000 * 10, throws: true, iterations: 1});
+    const {Bench} = await import('tinybench');
+
+    const bench = new Bench({time: 1_000 * 10, throws: true});
 
     const parsedSgv = (await SGVParser.init('http://localhost:3000/pods/00000000000000000096/')).parse();
     const pod = 'http://localhost:3000/pods/00000000000000000096/';
 
-    for (let i = 0; i < 10; i++) {
-        // sleep
-        const id = Math.floor(Math.random() * 1000000000000000);
-        await insertResource(id.toString(), pod, parsedSgv);
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        await deleteResource(id.toString(), pod, parsedSgv);
-    }
+    (() => {
+        // get random long id
+        // let id = Math.floor(Math.random() * 1000000000000000);
+        bench
+            .add('insert task sorted by creation date providing SGV', async () => {
+                const id = Math.floor(Math.random() * 1000000000000000);
 
-    await new Promise(resolve => setTimeout(resolve, 1000));
+                try {
+                    await insertResource(id.toString(), pod, parsedSgv);
 
-    // (() => {
-    //     // get random long id
-    //     // let id = Math.floor(Math.random() * 1000000000000000);
-    //     bench
-    //         .add('insert task sorted by creation date providing SGV', async () => {
-    //             const id = Math.floor(Math.random() * 1000000000000000);
-    //
-    //             try {
-    //                 await insertResource(id.toString(), pod, parsedSgv);
-    //
-    //                 // await new Promise(resolve => setTimeout(resolve, 1000));
-    //
-    //                 await deleteResource(id.toString(), pod, parsedSgv);
-    //             } catch (e) {
-    //                 console.error(e);
-    //             }
-    //         });
-    // })();
+                    // await new Promise(resolve => setTimeout(resolve, 1000));
 
-    // await bench.warmup(); // make results more reliable, ref: https://github.com/tinylibs/tinybench/pull/50
-    // await bench.run();
+                    await deleteResource(id.toString(), pod, parsedSgv);
+                } catch (e) {
+                    console.error(e);
+                }
+            });
+    })();
 
-    // console.table(bench.table());
+    await bench.warmup(); // make results more reliable, ref: https://github.com/tinylibs/tinybench/pull/50
+    await bench.run();
+
+    console.table(bench.table());
 }
 
 main().catch(console.error);
