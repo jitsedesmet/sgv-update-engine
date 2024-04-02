@@ -26,12 +26,12 @@ export class OperationParser {
         });
     }
 
-    public static async fromFile(query_file: string): Promise<OperationParser> {
+    public static async fromFile(engine: QueryEngine, query_file: string): Promise<OperationParser> {
         const query = await fs.promises.readFile(query_file, 'utf8');
-        return new OperationParser(new QueryEngine(), query);
+        return new OperationParser(engine, query);
     }
 
-    public async parse(parsedSgv?: ParsedSGV, updatedResource?: string): Promise<BaseOperationHandler> {
+    public async parse(parsedSgv: ParsedSGV, updatedResource?: string): Promise<BaseOperationHandler> {
         const parsedQuery: SparqlQuery = this.sparqlParser.parse(this.query);
 
         if (parsedQuery.type  === 'update') {
@@ -69,7 +69,7 @@ export class OperationParser {
                 }
             }
         } else {
-            return new NonUpdateOperationHandler(this.engine, this.query);
+            return new NonUpdateOperationHandler(this.engine, parsedSgv, this.query);
         }
         throw new Error('No operation found');
     }

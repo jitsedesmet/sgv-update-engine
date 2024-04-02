@@ -9,7 +9,7 @@ import {QueryEngine} from '@comunica/query-sparql-file';
 export class OperationAddToResourceHandler extends EditResourceOperation {
     public operation: SgvOperation = 'append to resource';
 
-    public constructor(engine: QueryEngine, private parsedOperation: ParserInsertType, parsedSgv?: ParsedSGV) {
+    public constructor(engine: QueryEngine, private parsedOperation: ParserInsertType, parsedSgv: ParsedSGV) {
         super(engine, parsedSgv);
     }
 
@@ -26,8 +26,8 @@ export class OperationAddToResourceHandler extends EditResourceOperation {
     }
 
 
-    public async handleOperation(pod: string): Promise<void> {
-        const { store, resource } = await this.computeAndHandleRelocation(pod);
+    public async handleOperation(): Promise<void> {
+        const { store, resource } = await this.computeAndHandleRelocation();
         await this.addStoreToResource(store, resource);
     }
 }

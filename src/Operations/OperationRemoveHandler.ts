@@ -9,7 +9,7 @@ import {QueryEngine} from '@comunica/query-sparql-file';
 export class OperationRemoveHandler extends EditResourceOperation {
     public operation: SgvOperation = 'remove';
 
-    public constructor(engine: QueryEngine, private parsedOperation: ParserDeleteType, parsedSgv?: ParsedSGV) {
+    public constructor(engine: QueryEngine, private parsedOperation: ParserDeleteType, parsedSgv: ParsedSGV) {
         super(engine, parsedSgv);
     }
 
@@ -25,8 +25,8 @@ export class OperationRemoveHandler extends EditResourceOperation {
         return storeMinus(await this.getOriginalResource(), this.getDeleteResource());
     }
 
-    public async handleOperation(pod: string): Promise<void> {
-        const { store, resource, didClear } = await this.computeAndHandleRelocation(pod);
+    public async handleOperation(): Promise<void> {
+        const { store, resource, didClear } = await this.computeAndHandleRelocation();
 
         if (didClear) {
             await this.addStoreToResource(store, resource);

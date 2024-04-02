@@ -21,17 +21,14 @@ export abstract class EditResourceOperation extends BaseOperationHandler {
     /**
      * @return a new store that you should still make sure exists like that!
      */
-    protected async computeAndHandleRelocation(pod: string): Promise<{ store: RdfStore, resource: RDF.NamedNode, didClear: boolean }> {
+    protected async computeAndHandleRelocation(): Promise<{ store: RdfStore, resource: RDF.NamedNode, didClear: boolean }> {
         const focusedResource = this.getResourceNode();
 
         // Evaluate what resource would remain when we insert
         const originalResource = await this.getOriginalResource();
 
-        // Parse SGV
-        const parsedSgv =  this.parsedSgv ?? (await SGVParser.init(pod)).parse();
-
         // Get the Collection the resource is in now.
-        const currentCollection = this.getContainingCollection(focusedResource, parsedSgv);
+        const currentCollection = this.getContainingCollection(focusedResource);
 
         // Validate the newResource store against the shapes
         const newResource = await this.getResultingResource();
@@ -44,7 +41,7 @@ export abstract class EditResourceOperation extends BaseOperationHandler {
 
         if (wantsRelocation) {
             // Check what collection we should relocate to
-            const collectionToInsertIn = this.collectionOfResultingResource(parsedSgv, newResource, focusedResource);
+            const collectionToInsertIn = this.collectionOfResultingResource(newResource, focusedResource);
             newBaseUri = DF.namedNode(await collectionToInsertIn.groupStrategy.getResourceURI(newResource));
         }
 

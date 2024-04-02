@@ -1,8 +1,12 @@
 import {OperationParser} from './Operations/OperationParser';
+import {SGVParser} from './sgv/SGVParser';
+import {QueryEngine} from '@comunica/query-sparql-file';
 
 
 async function main(pod: string, query_file: string): Promise<void> {
-    const operation = await (await OperationParser.fromFile(query_file)).parse();
+    const engine = new QueryEngine();
+    const parsedSgv = await SGVParser.init(engine, pod);
+    const operation = await (await OperationParser.fromFile(engine, query_file)).parse(parsedSgv.parse());
     await operation.handleOperation(pod);
 }
 

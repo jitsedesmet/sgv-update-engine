@@ -17,7 +17,7 @@ export class InsertResourceOperationHandler extends BaseOperationHandler {
         engine: QueryEngine,
         private parsedOperation: ParserInsertType,
         private resource: RDF.NamedNode,
-        parsedSgv?: ParsedSGV) {
+        parsedSgv: ParsedSGV) {
         super(engine, parsedSgv);
     }
 
@@ -25,16 +25,13 @@ export class InsertResourceOperationHandler extends BaseOperationHandler {
         return storeFromTriples(this.parsedOperation.insert[0].triples);
     }
 
-    public async handleOperation(pod: string): Promise<void> {
+    public async handleOperation(): Promise<void> {
         // Construct the type we would insert:
         const triples = this.parsedOperation.insert[0].triples;
         const insertWithBaseUri = this.getResultingResourceStore();
 
-        // Parse SGV
-        const parsedSgv = this.parsedSgv ?? (await SGVParser.init(pod)).parse();
-
         // Validate the resource store against the shapes
-        const collectionToInsertIn = this.collectionOfResultingResource(parsedSgv, insertWithBaseUri, this.resource);
+        const collectionToInsertIn = this.collectionOfResultingResource(insertWithBaseUri, this.resource);
 
         const resultingUri = await collectionToInsertIn.groupStrategy.getResourceURI(insertWithBaseUri);
 

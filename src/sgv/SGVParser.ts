@@ -27,10 +27,8 @@ export class SGVParser {
     public constructor(public sgvStore: RdfStore) {
     }
 
-    public static async init(podUri: string): Promise<SGVParser>  {
-        const myEngine = new QueryEngine();
-
-        return new SGVParser(await fileResourceToStore(myEngine, `${podUri}sgv`));
+    public static async init(engine: QueryEngine, podUri: string): Promise<SGVParser>  {
+        return new SGVParser(await fileResourceToStore(engine, `${podUri}sgv`));
     }
 
 

@@ -39,6 +39,7 @@ export function quadToString(rdf: RDF.Quad): string {
 
 export async function fileResourceToStore(engine: QueryEngine, resource: string): Promise<RdfStore> {
     const fileStore = RdfStore.createDefault();
+    await engine.invalidateHttpCache();
     for await (const bindings of await engine.queryBindings(
         'select * where { ?s ?p ?o }',
         { sources: [resource]}

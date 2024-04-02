@@ -13,21 +13,21 @@ export abstract class BaseOperationHandler {
     public abstract operation: SgvOperation;
     public abstract handleOperation(pod: string): Promise<void>;
 
-    protected constructor(protected engine: QueryEngine, protected parsedSgv?: ParsedSGV) {
+    protected constructor(protected engine: QueryEngine, protected parsedSgv: ParsedSGV) {
 
     }
 
 
-    protected getContainingCollection(focusNode: RDF.NamedNode, parsedSgv: ParsedSGV): RootedStructuredCollection {
-        return parsedSgv
+    protected getContainingCollection(focusNode: RDF.NamedNode): RootedStructuredCollection {
+        return this.parsedSgv
             .collections
             .filter(collection => {
                 return focusNode.value.startsWith(collection.uri.value);
             })[0];
     }
 
-    protected collectionOfResultingResource(parsedSgv: ParsedSGV, resultingResource: RdfStore, resource: RDF.NamedNode): RootedStructuredCollection {
-        const matchedCollections = parsedSgv
+    protected collectionOfResultingResource(resultingResource: RdfStore, resource: RDF.NamedNode): RootedStructuredCollection {
+        const matchedCollections = this.parsedSgv
             .collections
             .filter(collection => {
                 return collection
@@ -93,8 +93,8 @@ export abstract class BaseOperationHandler {
 export class NonUpdateOperationHandler extends BaseOperationHandler {
     public operation: SgvOperation = 'non-update';
 
-    public constructor(engine: QueryEngine, private query: string) {
-        super(engine);
+    public constructor(engine: QueryEngine, parsedSgv: ParsedSGV, private query: string) {
+        super(engine, parsedSgv);
     }
 
     public async handleOperation(pod: string): Promise<void> {

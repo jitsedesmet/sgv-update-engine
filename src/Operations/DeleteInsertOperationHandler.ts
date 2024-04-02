@@ -26,12 +26,12 @@ export class DeleteInsertOperationHandler extends BaseOperationHandler {
         private parsedOperation: ParserInsertDeleteType,
         private completeQuery: SparqlQuery,
         private focussedResource: RDF.NamedNode,
-        parsedSgv?: ParsedSGV) {
+        parsedSgv: ParsedSGV) {
         super(engine, parsedSgv);
     }
 
 
-    public async handleOperation(pod: string): Promise<void> {
+    public async handleOperation(): Promise<void> {
         // We construct the resource we will delete and insert by looking at the where clause in the parsed operation.
         const rawQuery = getQueryWithoutPrefixes(this.completeQuery);
         // Either delete is present, or it is not:
@@ -64,6 +64,7 @@ export class DeleteInsertOperationHandler extends BaseOperationHandler {
         // Instantiate the delete clause
         const removalStore = RdfStore.createDefault();
         if (rawDelete) {
+            await this.engine.invalidateHttpCache();
             for await (const quad of await this.engine.queryQuads(`
                 CONSTRUCT {
                     ${rawDelete}
@@ -80,6 +81,7 @@ export class DeleteInsertOperationHandler extends BaseOperationHandler {
 
         const additionStore = RdfStore.createDefault();
         if (rawInsert) {
+            await this.engine.invalidateHttpCache();
             for await (const quad of await this.engine.queryQuads(`
                 CONSTRUCT {
                     ${rawInsert}
@@ -98,8 +100,7 @@ export class DeleteInsertOperationHandler extends BaseOperationHandler {
             storeMinus(resourceStore, removalStore),
             additionStore);
 
-        const parsedSgv = this.parsedSgv ?? (await SGVParser.init(pod)).parse();
-        const currentCollection = this.getContainingCollection(this.focussedResource, parsedSgv);
+        const currentCollection = this.getContainingCollection(this.focussedResource);
 
         const wantsRelocation = currentCollection.updateCondition.wantsRelocation(newResource, this.focussedResource);
 
@@ -109,7 +110,7 @@ export class DeleteInsertOperationHandler extends BaseOperationHandler {
 
         if (wantsRelocation) {
             // Check what collection we should relocate to
-            const collectionToInsertIn = this.collectionOfResultingResource(parsedSgv, newResource, this.focussedResource);
+            const collectionToInsertIn = this.collectionOfResultingResource(newResource, this.focussedResource);
             newBaseUri = DF.namedNode(await collectionToInsertIn.groupStrategy.getResourceURI(newResource));
         }
 
@@ -130,6 +131,7 @@ export class DeleteInsertOperationHandler extends BaseOperationHandler {
                 `;
             }
 
+            await this.engine.invalidateHttpCache();
             await this.engine.queryVoid(query, {sources: [this.focussedResource.value]});
 
         } else {
