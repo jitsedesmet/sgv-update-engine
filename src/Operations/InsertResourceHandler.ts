@@ -5,6 +5,8 @@ import {storeFromTriples, translateStore} from "../helpers/Helpers";
 import {BaseOperationHandler, ParserInsertType, SgvOperation} from "./BaseOperationHandler";
 import {DataFactory} from "rdf-data-factory";
 import {ParsedSGV} from "../sgv/treeStructure/ParsedSGV";
+import {Quad_Predicate} from "@rdfjs/types";
+import {QueryEngine} from "@comunica/query-sparql-file";
 
 const DF = new DataFactory();
 
@@ -12,10 +14,11 @@ export class InsertResourceOperationHandler extends BaseOperationHandler {
     public operation: SgvOperation = "insert resource";
 
     public constructor(
+        engine: QueryEngine,
         private parsedOperation: ParserInsertType,
         private resource: RDF.NamedNode,
         parsedSgv?: ParsedSGV) {
-        super(parsedSgv);
+        super(engine, parsedSgv);
     }
 
     private getResultingResourceStore(): RdfStore {
@@ -24,6 +27,7 @@ export class InsertResourceOperationHandler extends BaseOperationHandler {
 
     public async handleOperation(pod: string): Promise<void> {
         // Construct the type we would insert:
+        const triples = this.parsedOperation.insert[0].triples;
         const insertWithBaseUri = this.getResultingResourceStore();
 
         // Parse SGV
@@ -35,6 +39,10 @@ export class InsertResourceOperationHandler extends BaseOperationHandler {
         const resultingUri = await collectionToInsertIn.groupStrategy.getResourceURI(insertWithBaseUri);
 
         const resultingResource = DF.namedNode(resultingUri);
-        await this.addStoreToResource(translateStore(insertWithBaseUri, this.resource, resultingResource), resultingResource);
+        await this.addQuadsToResource(triples.map(quad => DF.quad(
+            quad.subject.equals(this.resource) ? resultingResource : quad.subject,
+            quad.predicate as Quad_Predicate,
+            quad.object.equals(this.resource) ? resultingResource : quad.object,
+        )), resultingResource);
     }
 }

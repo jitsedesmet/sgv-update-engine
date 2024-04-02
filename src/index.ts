@@ -12,7 +12,7 @@ async function temp() {
 
 temp().catch(console.error);
 
-// main('http://localhost:3000/pods/00000000000000000096/', './queries/INSERT_whole_post.sparql').catch(console.error);
+main('http://localhost:3000/pods/00000000000000000096/', './queries/INSERT_whole_post.sparql').catch(console.error);
 // main('http://localhost:3000/pods/00000000000000000096/', './queries/INSERT_append_tag.sparql').catch(console.error);
 // main('http://localhost:3000/pods/00000000000000000096/', './queries/INSERT_illegal_append_id.sparql').catch(console.error);
 // main('http://localhost:3000/pods/00000000000000000096/', './queries/DELETE_data_tag.sparql').catch(console.error);

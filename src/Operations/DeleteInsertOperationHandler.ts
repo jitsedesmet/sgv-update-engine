@@ -14,6 +14,7 @@ import * as RDF from "@rdfjs/types";
 import {SGVParser} from "../sgv/SGVParser";
 import {DataFactory} from "rdf-data-factory";
 import {ParsedSGV} from "../sgv/treeStructure/ParsedSGV";
+import {QueryEngine} from "@comunica/query-sparql-file";
 
 const DF = new DataFactory();
 
@@ -21,11 +22,12 @@ export class DeleteInsertOperationHandler extends BaseOperationHandler {
     public operation: SgvOperation = "delete insert";
 
     public constructor(
+        engine: QueryEngine,
         private parsedOperation: ParserInsertDeleteType,
         private completeQuery: SparqlQuery,
         private focussedResource: RDF.NamedNode,
         parsedSgv?: ParsedSGV) {
-        super(parsedSgv);
+        super(engine, parsedSgv);
     }
 
 

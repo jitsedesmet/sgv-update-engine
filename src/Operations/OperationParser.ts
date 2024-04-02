@@ -8,6 +8,7 @@ import {OperationRemoveHandler} from "./OperationRemoveHandler";
 import {DeleteInsertOperationHandler} from "./DeleteInsertOperationHandler";
 import {getQueryWithoutPrefixes} from "../helpers/Helpers";
 import {ParsedSGV} from "../sgv/treeStructure/ParsedSGV";
+import {QueryEngine} from "@comunica/query-sparql-file";
 
 const DF = new DataFactory();
 
@@ -15,7 +16,7 @@ export class OperationParser {
     public baseIRI: string;
     public sparqlParser: SparqlParser;
 
-    constructor(private query: string) {
+    constructor(private engine: QueryEngine, private query: string) {
         // Use a uuid_v4 as baseIRI
         const id = Math.floor(Math.random() * 1000000000000000);
 
@@ -27,7 +28,7 @@ export class OperationParser {
 
     public static async fromFile(query_file: string): Promise<OperationParser> {
         const query = await fs.promises.readFile(query_file, 'utf8');
-        return new OperationParser(query);
+        return new OperationParser(new QueryEngine(), query);
     }
 
     public async parse(parsedSgv?: ParsedSGV, updatedResource?: string): Promise<BaseOperationHandler> {
@@ -42,19 +43,19 @@ export class OperationParser {
                 const operation = parsedQuery.updates[0] as InsertDeleteOperation;
                 if (operation.updateType === 'insert') {
                     if (operation.insert.some(quad => quad.triples.some(triple => triple.subject.equals(DF.namedNode(this.baseIRI))))) {
-                        return new InsertResourceOperationHandler(operation, DF.namedNode(this.baseIRI), parsedSgv);
+                        return new InsertResourceOperationHandler(this.engine, operation, DF.namedNode(this.baseIRI), parsedSgv);
                     } else {
-                        return new OperationAddToResourceHandler(operation, parsedSgv);
+                        return new OperationAddToResourceHandler(this.engine, operation, parsedSgv);
                     }
                 }
                 if (operation.updateType === 'delete') {
-                    return new OperationRemoveHandler(operation, parsedSgv);
+                    return new OperationRemoveHandler(this.engine, operation, parsedSgv);
                 }
                 if (operation.updateType === 'insertdelete') {
                     if (!updatedResource) {
                         throw new Error("Updated resource not provided");
                     }
-                    return new DeleteInsertOperationHandler(operation, parsedQuery, DF.namedNode(updatedResource), parsedSgv);
+                    return new DeleteInsertOperationHandler(this.engine, operation, parsedQuery, DF.namedNode(updatedResource), parsedSgv);
                 }
                 if (operation.updateType === 'deletewhere') {
                     // We rewrite to a delete ... where ... query (insertdelete)
@@ -64,11 +65,11 @@ export class OperationParser {
                         /^DELETE WHERE \{(.*)\}$/gu,
                         "DELETE { $1 } WHERE { $1 }"
                     )
-                    return await new OperationParser(rewrittenQuery).parse(parsedSgv, updatedResource);
+                    return await new OperationParser(this.engine, rewrittenQuery).parse(parsedSgv, updatedResource);
                 }
             }
         } else {
-            return new NonUpdateOperationHandler(this.query);
+            return new NonUpdateOperationHandler(this.engine, this.query);
         }
         throw new Error("No operation found");
     }

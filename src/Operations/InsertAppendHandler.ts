@@ -4,12 +4,13 @@ import {storeFromTriples, storeUnion} from "../helpers/Helpers";
 import {ParserInsertType, SgvOperation} from "./BaseOperationHandler";
 import {EditResourceOperation} from "./EditResourceOperation";
 import {ParsedSGV} from "../sgv/treeStructure/ParsedSGV";
+import {QueryEngine} from "@comunica/query-sparql-file";
 
 export class OperationAddToResourceHandler extends EditResourceOperation {
     public operation: SgvOperation = "append to resource";
 
-    public constructor(private parsedOperation: ParserInsertType, parsedSgv?: ParsedSGV) {
-        super(parsedSgv)
+    public constructor(engine: QueryEngine, private parsedOperation: ParserInsertType, parsedSgv?: ParsedSGV) {
+        super(engine, parsedSgv)
     }
 
     protected getResourceNode(): RDF.NamedNode {

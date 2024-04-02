@@ -5,16 +5,16 @@ import {ParsedSGV} from "../sgv/treeStructure/ParsedSGV";
 import {RootedCanonicalCollection, RootedStructuredCollection} from "../sgv/treeStructure/StructuredCollection";
 import {RdfStore} from "rdf-stores";
 import {quadToString} from "../helpers/Helpers";
+import {Quad} from "@rdfjs/types";
 
 export type SgvOperation = "non-update" | "insert resource" | "append to resource" | "remove" | "delete insert";
 
 export abstract class BaseOperationHandler {
     public abstract operation: SgvOperation;
     public abstract handleOperation(pod: string): Promise<void>;
-    protected engine: QueryEngine;
 
-    protected constructor(protected parsedSgv?: ParsedSGV) {
-        this.engine = new QueryEngine();
+    protected constructor(protected engine: QueryEngine, protected parsedSgv?: ParsedSGV) {
+
     }
 
 
@@ -59,6 +59,20 @@ export abstract class BaseOperationHandler {
         });
     }
 
+    protected async addQuadsToResource(store: Quad[], resource: RDF.NamedNode): Promise<void> {
+        if (store.length === 0) {
+            return;
+        }
+        const query = `
+            INSERT DATA {
+                ${store.map(quad => quadToString(quad)).join('\n')}
+            }
+        `;
+        await this.engine.queryVoid(query, {
+            sources: [resource.value],
+        });
+    }
+
     protected async removeStoreFromResource(store: RdfStore, resource: RDF.NamedNode): Promise<void> {
         if (store.size === 0) {
             return;
@@ -76,8 +90,8 @@ export abstract class BaseOperationHandler {
 export class NonUpdateOperationHandler extends BaseOperationHandler {
     public operation: SgvOperation = "non-update";
 
-    public constructor(private query: string) {
-        super();
+    public constructor(engine: QueryEngine, private query: string) {
+        super(engine);
     }
 
     public async handleOperation(pod: string): Promise<void> {

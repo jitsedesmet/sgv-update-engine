@@ -15,7 +15,8 @@
     "start": "yarn run build:ts && node dist/src/index.js",
     "dev": "ts-node src/index.ts",
     "build:ts": "tsc",
-    "bench": "yarn run build:ts && node dist/benchmark/bench.js"
+    "bench": "yarn run build:ts && node dist/benchmark/bench.js",
+    "dev-bench": "ts-node benchmark/bench.ts"
   },
   "name": "sgv-comunica",
   "version": "1.0.0",
