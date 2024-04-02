@@ -54,6 +54,7 @@ export abstract class BaseOperationHandler {
                 ${store.getQuads().map(quad => quadToString(quad)).join('\n')}
             }
         `;
+        await this.engine.invalidateHttpCache();
         await this.engine.queryVoid(query, {
             sources: [resource.value],
         });
@@ -68,6 +69,7 @@ export abstract class BaseOperationHandler {
                 ${store.map(quad => quadToString(quad)).join('\n')}
             }
         `;
+        await this.engine.invalidateHttpCache();
         await this.engine.queryVoid(query, {
             sources: [resource.value],
         });
@@ -77,6 +79,7 @@ export abstract class BaseOperationHandler {
         if (store.size === 0) {
             return;
         }
+        await this.engine.invalidateHttpCache();
         await this.engine.queryVoid(`
             DELETE DATA {
                 ${store.getQuads().map(quad => quadToString(quad)).join('\n')}

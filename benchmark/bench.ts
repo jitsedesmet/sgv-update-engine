@@ -67,16 +67,25 @@ async function main() {
                     id = Math.floor(Math.random() * 1000000000000000);
                 }
             });
-    });
+    })();
 
-    const id = Math.floor(Math.random() * 1000000000000000);
-    console.log(id);
-    await insertResource(engine, id.toString(), pod, parsedSgv);
-    await engine.queryVoid(`
-        DELETE WHERE { <http://localhost:3000/pods/00000000000000000096/posts/2024-05-08#${id}> ?p ?o . }
-    `, {
-        sources: ['http://localhost:3000/pods/00000000000000000096/posts/2024-05-08']
-    });
+    // let id = Math.floor(Math.random() * 1000000000000000);
+    // console.log(id);
+    // await insertResource(engine, id.toString(), pod, parsedSgv);
+    // await engine.queryVoid(`
+    //     DELETE WHERE { <http://localhost:3000/pods/00000000000000000096/posts/2024-05-08#${id}> ?p ?o . }
+    // `, {
+    //     sources: ['http://localhost:3000/pods/00000000000000000096/posts/2024-05-08']
+    // });
+    //
+    // id = Math.floor(Math.random() * 1000000000000000);
+    // console.log(id);
+    // await insertResource(engine, id.toString(), pod, parsedSgv);
+    // await engine.queryVoid(`
+    //     DELETE WHERE { <http://localhost:3000/pods/00000000000000000096/posts/2024-05-08#${id}> ?p ?o . }
+    // `, {
+    //     sources: ['http://localhost:3000/pods/00000000000000000096/posts/2024-05-08']
+    // });
 
 
     // (() => {
