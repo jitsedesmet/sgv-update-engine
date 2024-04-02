@@ -1,14 +1,14 @@
-import {InsertDeleteOperation, Parser, SparqlParser, SparqlQuery} from "sparqljs";
-import fs from "fs";
-import {BaseOperationHandler, NonUpdateOperationHandler} from "./BaseOperationHandler";
-import {InsertResourceOperationHandler} from "./InsertResourceHandler";
-import {OperationAddToResourceHandler} from "./InsertAppendHandler";
-import {DataFactory} from "rdf-data-factory";
-import {OperationRemoveHandler} from "./OperationRemoveHandler";
-import {DeleteInsertOperationHandler} from "./DeleteInsertOperationHandler";
-import {getQueryWithoutPrefixes} from "../helpers/Helpers";
-import {ParsedSGV} from "../sgv/treeStructure/ParsedSGV";
-import {QueryEngine} from "@comunica/query-sparql-file";
+import {InsertDeleteOperation, Parser, SparqlParser, SparqlQuery} from 'sparqljs';
+import fs from 'fs';
+import {BaseOperationHandler, NonUpdateOperationHandler} from './BaseOperationHandler';
+import {InsertResourceOperationHandler} from './InsertResourceHandler';
+import {OperationAddToResourceHandler} from './InsertAppendHandler';
+import {DataFactory} from 'rdf-data-factory';
+import {OperationRemoveHandler} from './OperationRemoveHandler';
+import {DeleteInsertOperationHandler} from './DeleteInsertOperationHandler';
+import {getQueryWithoutPrefixes} from '../helpers/Helpers';
+import {ParsedSGV} from '../sgv/treeStructure/ParsedSGV';
+import {QueryEngine} from '@comunica/query-sparql-file';
 
 const DF = new DataFactory();
 
@@ -53,7 +53,7 @@ export class OperationParser {
                 }
                 if (operation.updateType === 'insertdelete') {
                     if (!updatedResource) {
-                        throw new Error("Updated resource not provided");
+                        throw new Error('Updated resource not provided');
                     }
                     return new DeleteInsertOperationHandler(this.engine, operation, parsedQuery, DF.namedNode(updatedResource), parsedSgv);
                 }
@@ -63,14 +63,14 @@ export class OperationParser {
 
                     const rewrittenQuery = rawQuery.replaceAll(
                         /^DELETE WHERE \{(.*)\}$/gu,
-                        "DELETE { $1 } WHERE { $1 }"
-                    )
+                        'DELETE { $1 } WHERE { $1 }'
+                    );
                     return await new OperationParser(this.engine, rewrittenQuery).parse(parsedSgv, updatedResource);
                 }
             }
         } else {
             return new NonUpdateOperationHandler(this.engine, this.query);
         }
-        throw new Error("No operation found");
+        throw new Error('No operation found');
     }
 }

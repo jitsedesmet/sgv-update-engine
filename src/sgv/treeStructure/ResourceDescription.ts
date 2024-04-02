@@ -1,19 +1,19 @@
-import * as RDF from "@rdfjs/types";
-import {RdfStore} from "rdf-stores";
-import {getOne} from "../../helpers/Helpers";
-import {rdfTypePredicate, shaclNodeShape, shaclTargetNode} from "../consts";
-import SHACLValidator from "rdf-validate-shacl";
-import {DataFactory} from "rdf-data-factory";
+import * as RDF from '@rdfjs/types';
+import {RdfStore} from 'rdf-stores';
+import {getOne} from '../../helpers/Helpers';
+import {rdfTypePredicate, shaclNodeShape, shaclTargetNode} from '../consts';
+import SHACLValidator from 'rdf-validate-shacl';
+import {DataFactory} from 'rdf-data-factory';
 
 const DF = new DataFactory();
 
 export interface RawResourceDescriptionSHACL {
-    type: "SHACL";
+    type: 'SHACL';
     descriptions: RDF.DatasetCore[];
 }
 
 export class ResourceDescriptionSHACL implements RawResourceDescriptionSHACL {
-    public type = "SHACL" as const;
+    public type = 'SHACL' as const;
     public descriptions: RDF.DatasetCore[];
 
     public constructor(private sgvStore: RdfStore, shaclShapes: RDF.Quad_Object[]) {
@@ -33,7 +33,7 @@ export class ResourceDescriptionSHACL implements RawResourceDescriptionSHACL {
                     }
                 }
             }
-            this.descriptions.push(focusStore.asDataset())
+            this.descriptions.push(focusStore.asDataset());
         }
     }
 

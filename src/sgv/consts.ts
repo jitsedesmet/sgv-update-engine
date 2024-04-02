@@ -1,8 +1,8 @@
-import {DataFactory} from "rdf-data-factory";
+import {DataFactory} from 'rdf-data-factory';
 
-const prefix = "https://thesis.jitsedesmet.be/solution/storage-guidance-vocabulary/";
-const rdfPrefix = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-const shaclPrefix = "http://www.w3.org/ns/shacl#";
+const prefix = 'https://thesis.jitsedesmet.be/solution/storage-guidance-vocabulary/';
+const rdfPrefix = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';
+const shaclPrefix = 'http://www.w3.org/ns/shacl#';
 
 
 const DF = new DataFactory();

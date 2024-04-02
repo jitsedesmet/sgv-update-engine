@@ -1,6 +1,6 @@
-import {ParsedSGV} from "./treeStructure/ParsedSGV";
+import {ParsedSGV} from './treeStructure/ParsedSGV';
 import type * as RDF from '@rdfjs/types';
-import {RdfStore} from "rdf-stores";
+import {RdfStore} from 'rdf-stores';
 import {
     groupStrategyPredicate,
     groupStrategyUriTemplate,
@@ -14,14 +14,14 @@ import {
     typeSaveConditionAlwaysStore,
     typeUpdateConditionPreferStatic,
     updateConditionPredicate
-} from "./consts";
-import {RootedCanonicalCollection} from "./treeStructure/StructuredCollection";
-import {UpdateCondition, UpdateConditionPreferStatic} from "./treeStructure/UpdateCondition";
-import {SaveCondition, SaveConditionAlwaysStored} from "./treeStructure/SaveCondition";
-import {ResourceDescription, ResourceDescriptionSHACL} from "./treeStructure/ResourceDescription";
-import {GroupStrategy, GroupStrategyURITemplate} from "./treeStructure/GroupStrategy";
-import {fileResourceToStore, getOne} from "../helpers/Helpers";
-import {QueryEngine} from "@comunica/query-sparql-file";
+} from './consts';
+import {RootedCanonicalCollection} from './treeStructure/StructuredCollection';
+import {UpdateCondition, UpdateConditionPreferStatic} from './treeStructure/UpdateCondition';
+import {SaveCondition, SaveConditionAlwaysStored} from './treeStructure/SaveCondition';
+import {ResourceDescription, ResourceDescriptionSHACL} from './treeStructure/ResourceDescription';
+import {GroupStrategy, GroupStrategyURITemplate} from './treeStructure/GroupStrategy';
+import {fileResourceToStore, getOne} from '../helpers/Helpers';
+import {QueryEngine} from '@comunica/query-sparql-file';
 
 export class SGVParser {
     public constructor(public sgvStore: RdfStore) {
@@ -37,25 +37,25 @@ export class SGVParser {
     public parse(): ParsedSGV {
         return {
             collections: this.sgvStore.getQuads(undefined, undefined, typeCanonicalCollection).map(quad => {
-                if (quad.subject.termType !== "NamedNode" && quad.subject.termType !== "BlankNode") {
-                    throw new Error("Expected a NamedNode or BlankNode as subject");
+                if (quad.subject.termType !== 'NamedNode' && quad.subject.termType !== 'BlankNode') {
+                    throw new Error('Expected a NamedNode or BlankNode as subject');
                 }
                 return this.parseCanonicalCollection((quad.subject as RDF.NamedNode));
             })
-        }
+        };
     }
 
     private parseCanonicalCollection(container: RDF.NamedNode): RootedCanonicalCollection {
         const resourceDescription = this.parseResourceDescription(container);
         return {
-            type: "Canonical Collection",
+            type: 'Canonical Collection',
             uri: container,
             oneFileOneResource: false,
             resourceDescription,
             updateCondition: this.parseUpdateCondition(container, resourceDescription),
             saveCondition: this.parseSaveCondition(container),
             groupStrategy: this.parseGroupStrategy(container, container),
-        }
+        };
     }
 
     private getOne(subject?: RDF.Quad_Object, predicate?: RDF.Quad_Predicate, object?: RDF.Quad_Subject): RDF.Quad {
@@ -72,7 +72,7 @@ export class SGVParser {
                 collectionUri
             );
         }
-        throw new Error("Unknown group strategy");
+        throw new Error('Unknown group strategy');
     }
 
     private parseResourceDescription(container: RDF.NamedNode): ResourceDescription {
@@ -85,7 +85,7 @@ export class SGVParser {
                 this.sgvStore.getQuads(resourceDescription.object, shaclShapeLink).map(x => x.object)
             );
         }
-        throw new Error("Unknown resource description");
+        throw new Error('Unknown resource description');
     }
 
 
@@ -99,7 +99,7 @@ export class SGVParser {
         if (type.object.equals(typeSaveConditionAlwaysStore)) {
             return new SaveConditionAlwaysStored();
         }
-        throw new Error("Unknown save condition");
+        throw new Error('Unknown save condition');
     }
 
     private parseUpdateCondition(container: RDF.NamedNode, resourceDescription: ResourceDescription): UpdateCondition {
@@ -109,6 +109,6 @@ export class SGVParser {
         if (type.object.equals(typeUpdateConditionPreferStatic)) {
             return new UpdateConditionPreferStatic(resourceDescription);
         }
-        throw new Error("Unknown update condition");
+        throw new Error('Unknown update condition');
     }
 }

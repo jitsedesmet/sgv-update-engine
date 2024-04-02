@@ -2,35 +2,35 @@
  * @deprecated
  */
 export interface ClientControlFree {
-    type: "free";
+    type: 'free';
 }
 
 /**
  * @deprecated
  */
 export interface ClientControlAdditionalAllowed {
-    type: "additional allowed";
+    type: 'additional allowed';
 }
 
 /**
  * @deprecated
  */
 export interface ClientControlAllowedWhenNotPreferred {
-    type: "allowed when not preferred";
+    type: 'allowed when not preferred';
 }
 
 /**
  * @deprecated
  */
 export interface ClientControlAllowedWhenNotClaimed {
-    type: "allowed when not claimed";
+    type: 'allowed when not claimed';
 }
 
 /**
  * @deprecated
  */
 export interface ClientControlNoControl {
-    type: "no control";
+    type: 'no control';
 }
 
 /**

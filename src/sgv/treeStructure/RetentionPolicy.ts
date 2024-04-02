@@ -2,7 +2,7 @@
  * @deprecated
  */
 export interface RetentionPolicyDuration {
-    type: "duration";
+    type: 'duration';
     duration: number;
 }
 

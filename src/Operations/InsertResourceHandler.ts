@@ -1,17 +1,17 @@
-import * as RDF from "@rdfjs/types";
-import {RdfStore} from "rdf-stores";
-import {SGVParser} from "../sgv/SGVParser";
-import {storeFromTriples, translateStore} from "../helpers/Helpers";
-import {BaseOperationHandler, ParserInsertType, SgvOperation} from "./BaseOperationHandler";
-import {DataFactory} from "rdf-data-factory";
-import {ParsedSGV} from "../sgv/treeStructure/ParsedSGV";
-import {Quad_Predicate} from "@rdfjs/types";
-import {QueryEngine} from "@comunica/query-sparql-file";
+import * as RDF from '@rdfjs/types';
+import {Quad_Predicate} from '@rdfjs/types';
+import {RdfStore} from 'rdf-stores';
+import {SGVParser} from '../sgv/SGVParser';
+import {storeFromTriples} from '../helpers/Helpers';
+import {BaseOperationHandler, ParserInsertType, SgvOperation} from './BaseOperationHandler';
+import {DataFactory} from 'rdf-data-factory';
+import {ParsedSGV} from '../sgv/treeStructure/ParsedSGV';
+import {QueryEngine} from '@comunica/query-sparql-file';
 
 const DF = new DataFactory();
 
 export class InsertResourceOperationHandler extends BaseOperationHandler {
-    public operation: SgvOperation = "insert resource";
+    public operation: SgvOperation = 'insert resource';
 
     public constructor(
         engine: QueryEngine,

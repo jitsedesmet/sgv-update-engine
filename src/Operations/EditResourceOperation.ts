@@ -1,9 +1,9 @@
-import {BaseOperationHandler} from "./BaseOperationHandler";
-import * as RDF from "@rdfjs/types";
-import {RdfStore} from "rdf-stores";
-import {fileResourceToStore, getPrunedStore, translateStore} from "../helpers/Helpers";
-import {SGVParser} from "../sgv/SGVParser";
-import {DataFactory} from "rdf-data-factory";
+import {BaseOperationHandler} from './BaseOperationHandler';
+import * as RDF from '@rdfjs/types';
+import {RdfStore} from 'rdf-stores';
+import {fileResourceToStore, getPrunedStore, translateStore} from '../helpers/Helpers';
+import {SGVParser} from '../sgv/SGVParser';
+import {DataFactory} from 'rdf-data-factory';
 
 const DF = new DataFactory();
 

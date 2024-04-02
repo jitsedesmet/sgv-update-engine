@@ -1,9 +1,9 @@
 import type * as RDF from '@rdfjs/types';
-import {ResourceDescription} from "./ResourceDescription";
-import { SaveCondition } from "./SaveCondition";
-import {UpdateCondition} from "./UpdateCondition";
-import {RetentionPolicy} from "./RetentionPolicy";
-import {GroupStrategy} from "./GroupStrategy";
+import {ResourceDescription} from './ResourceDescription';
+import { SaveCondition } from './SaveCondition';
+import {UpdateCondition} from './UpdateCondition';
+import {RetentionPolicy} from './RetentionPolicy';
+import {GroupStrategy} from './GroupStrategy';
 
 export type OneFileOneResource = true | false;
 
@@ -16,11 +16,11 @@ interface BaseStructuredContainer {
 }
 
 interface Pinpoint {
-    "uri": RDF.NamedNode;
+    'uri': RDF.NamedNode;
 }
 
 export interface CanonicalCollection extends BaseStructuredContainer {
-    type: "Canonical Collection";
+    type: 'Canonical Collection';
     resourceDescription: ResourceDescription;
     saveCondition: SaveCondition;
     updateCondition: UpdateCondition;
@@ -30,7 +30,7 @@ export interface CanonicalCollection extends BaseStructuredContainer {
  * @deprecated
  */
 export interface DerivedCollection extends BaseStructuredContainer {
-    type: "Derived Collection";
+    type: 'Derived Collection';
     resourceDescription: ResourceDescription;
     derivedFrom: CanonicalCollection;
 }

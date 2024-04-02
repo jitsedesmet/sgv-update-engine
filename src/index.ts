@@ -1,4 +1,4 @@
-import {OperationParser} from "./Operations/OperationParser";
+import {OperationParser} from './Operations/OperationParser';
 
 
 async function main(pod: string, query_file: string): Promise<void> {

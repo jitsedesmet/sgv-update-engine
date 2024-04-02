@@ -1,5 +1,5 @@
-import {BaseOperationHandler, ParserInsertDeleteType, SgvOperation} from "./BaseOperationHandler";
-import {SparqlQuery} from "sparqljs";
+import {BaseOperationHandler, ParserInsertDeleteType, SgvOperation} from './BaseOperationHandler';
+import {SparqlQuery} from 'sparqljs';
 import {
     fileResourceToStore,
     getPrunedStore,
@@ -8,18 +8,18 @@ import {
     storeMinus,
     storeUnion,
     translateStore
-} from "../helpers/Helpers";
-import {RdfStore} from "rdf-stores";
-import * as RDF from "@rdfjs/types";
-import {SGVParser} from "../sgv/SGVParser";
-import {DataFactory} from "rdf-data-factory";
-import {ParsedSGV} from "../sgv/treeStructure/ParsedSGV";
-import {QueryEngine} from "@comunica/query-sparql-file";
+} from '../helpers/Helpers';
+import {RdfStore} from 'rdf-stores';
+import * as RDF from '@rdfjs/types';
+import {SGVParser} from '../sgv/SGVParser';
+import {DataFactory} from 'rdf-data-factory';
+import {ParsedSGV} from '../sgv/treeStructure/ParsedSGV';
+import {QueryEngine} from '@comunica/query-sparql-file';
 
 const DF = new DataFactory();
 
 export class DeleteInsertOperationHandler extends BaseOperationHandler {
-    public operation: SgvOperation = "delete insert";
+    public operation: SgvOperation = 'delete insert';
 
     public constructor(
         engine: QueryEngine,
@@ -35,22 +35,22 @@ export class DeleteInsertOperationHandler extends BaseOperationHandler {
         // We construct the resource we will delete and insert by looking at the where clause in the parsed operation.
         const rawQuery = getQueryWithoutPrefixes(this.completeQuery);
         // Either delete is present, or it is not:
-        let rawDelete = "";
-        let rawInsert = "";
-        let rawWhere = "";
+        let rawDelete = '';
+        let rawInsert = '';
+        let rawWhere = '';
         if (this.parsedOperation.delete?.length) {
             const selection = rawQuery.replaceAll(
                 /^DELETE \{(.*)\}\s+(INSERT \{(.*)\}\s+)?WHERE \{(.*)\}$/gu,
-                "$1\t$3\t$4"
-            ).split("\t");
+                '$1\t$3\t$4'
+            ).split('\t');
             rawDelete = selection[0];
             rawInsert = selection[1];
             rawWhere = selection[2];
         } else {
             const selection = rawQuery.replaceAll(
                 /^INSERT \{(.*)\}\s+WHERE \{(.*)\}$/gu,
-                "$1\t$2"
-            ).split("\t");
+                '$1\t$2'
+            ).split('\t');
             rawInsert = selection[0];
             rawWhere = selection[1];
         }
@@ -114,20 +114,20 @@ export class DeleteInsertOperationHandler extends BaseOperationHandler {
         }
 
         if (newBaseUri.equals(this.focussedResource)) {
-            let query = "";
+            let query = '';
             if (removalStore.size !== 0) {
                 query += `
                     DELETE DATA {
                         ${removalStore.getQuads().map(quad => quadToString(quad)).join('\n')}
                     };
-                `
+                `;
             }
             if (additionStore.size !== 0) {
                 query += `
                     INSERT DATA {
                         ${additionStore.getQuads().map(quad => quadToString(quad)).join('\n')}
                     }
-                `
+                `;
             }
 
             await this.engine.queryVoid(query, {sources: [this.focussedResource.value]});

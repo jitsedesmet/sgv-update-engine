@@ -1,9 +1,9 @@
-import {RdfStore} from "rdf-stores";
-import type * as RDF from "@rdfjs/types";
-import {Quad_Object, Quad_Predicate, Quad_Subject} from "@rdfjs/types";
-import {QueryEngine} from "@comunica/query-sparql-file";
-import {DataFactory} from "rdf-data-factory";
-import {Generator, SparqlQuery, Triple} from "sparqljs";
+import {RdfStore} from 'rdf-stores';
+import type * as RDF from '@rdfjs/types';
+import {Quad_Object, Quad_Predicate, Quad_Subject} from '@rdfjs/types';
+import {QueryEngine} from '@comunica/query-sparql-file';
+import {DataFactory} from 'rdf-data-factory';
+import {Generator, SparqlQuery, Triple} from 'sparqljs';
 
 const DF = new DataFactory();
 
@@ -40,7 +40,7 @@ export function quadToString(rdf: RDF.Quad): string {
 export async function fileResourceToStore(engine: QueryEngine, resource: string): Promise<RdfStore> {
     const fileStore = RdfStore.createDefault();
     for await (const bindings of await engine.queryBindings(
-        `select * where { ?s ?p ?o }`,
+        'select * where { ?s ?p ?o }',
         { sources: [resource]}
     )) {
         fileStore.addQuad(
@@ -52,7 +52,7 @@ export async function fileResourceToStore(engine: QueryEngine, resource: string)
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 (bindings.get('o')! as Quad_Object)
             )
-        )
+        );
     }
     return fileStore;
 }

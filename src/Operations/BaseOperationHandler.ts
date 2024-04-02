@@ -1,13 +1,13 @@
-import {GraphOrDefault, IriTerm, Pattern, Quads} from "sparqljs";
-import * as RDF from "@rdfjs/types";
-import {QueryEngine} from "@comunica/query-sparql-file";
-import {ParsedSGV} from "../sgv/treeStructure/ParsedSGV";
-import {RootedCanonicalCollection, RootedStructuredCollection} from "../sgv/treeStructure/StructuredCollection";
-import {RdfStore} from "rdf-stores";
-import {quadToString} from "../helpers/Helpers";
-import {Quad} from "@rdfjs/types";
+import {GraphOrDefault, IriTerm, Pattern, Quads} from 'sparqljs';
+import * as RDF from '@rdfjs/types';
+import {QueryEngine} from '@comunica/query-sparql-file';
+import {ParsedSGV} from '../sgv/treeStructure/ParsedSGV';
+import {RootedCanonicalCollection, RootedStructuredCollection} from '../sgv/treeStructure/StructuredCollection';
+import {RdfStore} from 'rdf-stores';
+import {quadToString} from '../helpers/Helpers';
+import {Quad} from '@rdfjs/types';
 
-export type SgvOperation = "non-update" | "insert resource" | "append to resource" | "remove" | "delete insert";
+export type SgvOperation = 'non-update' | 'insert resource' | 'append to resource' | 'remove' | 'delete insert';
 
 export abstract class BaseOperationHandler {
     public abstract operation: SgvOperation;
@@ -36,7 +36,7 @@ export abstract class BaseOperationHandler {
             });
         if (matchedCollections.length == 0) {
             // TODO: you should ask for a new SGV collection?
-            throw new Error("No matching shape found, cannot update resource!");
+            throw new Error('No matching shape found, cannot update resource!');
         }
 
         const RootedCanCol = matchedCollections as RootedCanonicalCollection[];
@@ -88,7 +88,7 @@ export abstract class BaseOperationHandler {
 }
 
 export class NonUpdateOperationHandler extends BaseOperationHandler {
-    public operation: SgvOperation = "non-update";
+    public operation: SgvOperation = 'non-update';
 
     public constructor(engine: QueryEngine, private query: string) {
         super(engine);
@@ -105,19 +105,19 @@ export class NonUpdateOperationHandler extends BaseOperationHandler {
 }
 
 export interface ParserInsertType {
-    updateType: "insert";
+    updateType: 'insert';
     graph?: GraphOrDefault;
     insert: Quads[];
 }
 
 export interface ParserDeleteType {
-    updateType: "delete";
+    updateType: 'delete';
     graph?: GraphOrDefault;
     delete: Quads[];
 }
 
 export interface ParserInsertDeleteType {
-    updateType: "insertdelete";
+    updateType: 'insertdelete';
     graph?: GraphOrDefault;
     insert?: Quads[];
     delete?: Quads[];

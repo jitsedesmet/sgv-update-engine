@@ -7,6 +7,8 @@ module.exports = {
     ],
     rules: {
         "no-unused-vars": "off",
+        "quotes": ["error", "single"],
+        "semi": ["error", "always"],
     },
     // parser: '@typescript-eslint/parser',
     parserOptions: {

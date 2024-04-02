@@ -1,21 +1,21 @@
-import {RdfStore} from "rdf-stores";
+import {RdfStore} from 'rdf-stores';
 import type * as RDF from '@rdfjs/types';
 
 /**
  * @deprecated
  */
 export interface RawGroupStrategySPARQLMap {
-    type: "SPARQL map";
+    type: 'SPARQL map';
     encodeURI: string;
 }
 
 export interface RawGroupStrategyURITemplate {
-    type: "URI template";
+    type: 'URI template';
     template: string;
 }
 
 export interface RawGroupStrategyURITemplateWithRegex {
-    type: "URI template with REGEX";
+    type: 'URI template with REGEX';
     template: string;
     regexMatch: string;
     regexReplace: string;
@@ -23,7 +23,7 @@ export interface RawGroupStrategyURITemplateWithRegex {
 
 
 export class GroupStrategySPARQLMap implements RawGroupStrategySPARQLMap {
-    public type = "SPARQL map" as const;
+    public type = 'SPARQL map' as const;
 
     public constructor(public encodeURI: string) { }
 
@@ -33,13 +33,13 @@ export class GroupStrategySPARQLMap implements RawGroupStrategySPARQLMap {
 }
 
 export class GroupStrategyURITemplate implements RawGroupStrategyURITemplate {
-    public type = "URI template" as const;
+    public type = 'URI template' as const;
 
     public constructor(public template: string, public collectionUri: RDF.NamedNode) { }
 
 
     public async getResourceURI(resourceStore: RdfStore): Promise<string> {
-        const {parseTemplate} = await import("url-template");
+        const {parseTemplate} = await import('url-template');
         type PrimitiveValue = string | number | boolean | null;
 
         const expansionContext: Record<string, PrimitiveValue | PrimitiveValue[] | Record<string, PrimitiveValue | PrimitiveValue[]>> = {};
@@ -54,12 +54,12 @@ export class GroupStrategyURITemplate implements RawGroupStrategyURITemplate {
 
 
 export class GroupStrategyURITemplateWithRegex implements RawGroupStrategyURITemplateWithRegex {
-    public type = "URI template with REGEX" as const;
+    public type = 'URI template with REGEX' as const;
 
     public constructor(public template: string, public regexMatch: string, public regexReplace: string) { }
 
     public async getResourceURI(resourceStore: RdfStore): Promise<string> {
-        const {parseTemplate} = await import("url-template");
+        const {parseTemplate} = await import('url-template');
         type PrimitiveValue = string | number | boolean | null;
 
         const expansionContext: Record<string, PrimitiveValue | PrimitiveValue[] | Record<string, PrimitiveValue | PrimitiveValue[]>> = {};
