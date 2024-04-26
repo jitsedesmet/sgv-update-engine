@@ -2,7 +2,7 @@ import * as RDF from '@rdfjs/types';
 import {Quad_Predicate} from '@rdfjs/types';
 import {RdfStore} from 'rdf-stores';
 import {SGVParser} from '../sgv/SGVParser';
-import {storeFromTriples} from '../helpers/Helpers';
+import {assertVal, storeFromTriples} from '../helpers/Helpers';
 import {BaseOperationHandler, ParserInsertType, SgvOperation} from './BaseOperationHandler';
 import {DataFactory} from 'rdf-data-factory';
 import {ParsedSGV} from '../sgv/treeStructure/ParsedSGV';
@@ -31,7 +31,7 @@ export class InsertResourceOperationHandler extends BaseOperationHandler {
         const insertWithBaseUri = this.getResultingResourceStore();
 
         // Validate the resource store against the shapes
-        const collectionToInsertIn = this.collectionOfResultingResource(insertWithBaseUri, this.resource);
+        const collectionToInsertIn = assertVal(this.collectionOfResultingResource(insertWithBaseUri, this.resource));
 
         const resultingUri = await collectionToInsertIn.groupStrategy.getResourceURI(insertWithBaseUri);
 

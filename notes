@@ -1,0 +1,6 @@
+bespreek zeker het aantal http requests
+
++ LDP bestaat: hoe doen we updates
+lib van tomas mss (zo niet: beschrijf het gebruik van de lib + dat je) + optimize + schrijven
+
+Comunica called naar de server via sparql query, dus het aantal http requests zou wel eens kunnen varieren.

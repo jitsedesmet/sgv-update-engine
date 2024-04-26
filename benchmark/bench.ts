@@ -7,7 +7,7 @@ import {addDeletionBench} from './removal';
 async function main() {
     const {Bench} = await import('tinybench');
 
-    const bench = new Bench({ time: 1_000 * 10, throws: true });
+    const bench = new Bench({ iterations: 100, throws: true });
 
     const engine = new QueryEngine();
     const parsedSgv = (await SGVParser.init(engine, 'http://localhost:3000/pods/00000000000000000096/')).parse();

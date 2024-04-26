@@ -2,8 +2,8 @@ import {ParsedSGV} from './treeStructure/ParsedSGV';
 import type * as RDF from '@rdfjs/types';
 import {RdfStore} from 'rdf-stores';
 import {
-    groupStrategyPredicate,
-    groupStrategyUriTemplate,
+    groupStrategyPredicate, groupStrategyRegexMatch, groupStrategyRegexReplace,
+    groupStrategyUriTemplate, predicateOneFileOneResource,
     rdfTypePredicate,
     resourceDescriptionPredicate,
     saveConditionPredicate,
@@ -15,7 +15,7 @@ import {
     typeUpdateConditionPreferStatic,
     updateConditionPredicate
 } from './consts';
-import {RootedCanonicalCollection} from './treeStructure/StructuredCollection';
+import {CollectionType, RootedCanonicalCollection} from './treeStructure/StructuredCollection';
 import {UpdateCondition, UpdateConditionPreferStatic} from './treeStructure/UpdateCondition';
 import {SaveCondition, SaveConditionAlwaysStored} from './treeStructure/SaveCondition';
 import {ResourceDescription, ResourceDescriptionSHACL} from './treeStructure/ResourceDescription';
@@ -44,14 +44,13 @@ export class SGVParser {
     }
 
     private parseCanonicalCollection(container: RDF.NamedNode): RootedCanonicalCollection {
-        const resourceDescription = this.parseResourceDescription(container);
+        const app = this.sgvStore.getQuads(container, saveConditionPredicate);
         return {
-            type: 'Canonical Collection',
+            type: CollectionType.canonical,
             uri: container,
-            oneFileOneResource: false,
-            resourceDescription,
-            updateCondition: this.parseUpdateCondition(container, resourceDescription),
-            saveCondition: this.parseSaveCondition(container),
+            oneFileOneResource: this.sgvStore.getQuads(container, predicateOneFileOneResource)[0].object.value === 'true',
+            saveConditions: this.sgvStore.getQuads(container, saveConditionPredicate)
+                .map(x => this.parseSaveCondition(x.object as RDF.NamedNode)) as [SaveCondition, ...SaveCondition[]],
             groupStrategy: this.parseGroupStrategy(container, container),
         };
     }
@@ -67,42 +66,48 @@ export class SGVParser {
         if (type.object.equals(typeGroupStrategyUriTemplate)) {
             return new GroupStrategyURITemplate(
                 this.getOne(groupStrategy.object, groupStrategyUriTemplate).object.value,
-                collectionUri
+                collectionUri,
+                this.sgvStore.getQuads(groupStrategy.object, groupStrategyRegexMatch)[0]?.object?.value,
+                this.sgvStore.getQuads(groupStrategy.object, groupStrategyRegexReplace)[0]?.object?.value,
             );
         }
         throw new Error('Unknown group strategy');
     }
 
-    private parseResourceDescription(container: RDF.NamedNode): ResourceDescription {
-        const resourceDescription = this.getOne(container, resourceDescriptionPredicate);
-        const type = this.getOne(resourceDescription.object, rdfTypePredicate);
+    private parseResourceDescription(descriptionSubject: RDF.Quad_Subject): ResourceDescription {
+        const type = this.getOne(descriptionSubject, rdfTypePredicate);
 
         if (type.object.equals(typeResourceDescriptionShacl)) {
             return new ResourceDescriptionSHACL(
                 this.sgvStore,
-                this.sgvStore.getQuads(resourceDescription.object, shaclShapeLink).map(x => x.object)
+                this.getOne(descriptionSubject, shaclShapeLink).object
             );
         }
         throw new Error('Unknown resource description');
     }
 
 
-    private parseSaveCondition(container: RDF.NamedNode): SaveCondition {
-        const saveCondition = this.getOne(container, saveConditionPredicate);
-        const type = this.getOne(saveCondition.object, rdfTypePredicate);
+    private parseSaveCondition(saveCondSubject: RDF.Quad_Subject): SaveCondition {
+        const updateCondition = this.parseUpdateCondition(
+            this.getOne(saveCondSubject, updateConditionPredicate).object as RDF.Quad_Subject
+        );
+
+        const type = this.getOne(saveCondSubject, rdfTypePredicate);
 
         if (type.object.equals(typeSaveConditionAlwaysStore)) {
-            return new SaveConditionAlwaysStored();
+            return new SaveConditionAlwaysStored(updateCondition);
         }
         if (type.object.equals(typeSaveConditionAlwaysStore)) {
-            return new SaveConditionAlwaysStored();
+            return new SaveConditionAlwaysStored(updateCondition);
         }
         throw new Error('Unknown save condition');
     }
 
-    private parseUpdateCondition(container: RDF.NamedNode, resourceDescription: ResourceDescription): UpdateCondition {
-        const updateCondition = this.getOne(container, updateConditionPredicate);
-        const type = this.getOne(updateCondition.object, rdfTypePredicate);
+    private parseUpdateCondition(updateCond: RDF.Quad_Subject): UpdateCondition {
+        const resourceDescription: ResourceDescription = this.parseResourceDescription(
+            this.getOne(updateCond, resourceDescriptionPredicate).object as RDF.Quad_Subject
+        );
+        const type = this.getOne(updateCond, rdfTypePredicate);
 
         if (type.object.equals(typeUpdateConditionPreferStatic)) {
             return new UpdateConditionPreferStatic(resourceDescription);

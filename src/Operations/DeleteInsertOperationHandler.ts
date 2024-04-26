@@ -1,6 +1,7 @@
 import {BaseOperationHandler, ParserInsertDeleteType, SgvOperation} from './BaseOperationHandler';
 import {SparqlQuery} from 'sparqljs';
 import {
+    assertVal,
     fileResourceToStore,
     getPrunedStore,
     getQueryWithoutPrefixes,
@@ -11,7 +12,6 @@ import {
 } from '../helpers/Helpers';
 import {RdfStore} from 'rdf-stores';
 import * as RDF from '@rdfjs/types';
-import {SGVParser} from '../sgv/SGVParser';
 import {DataFactory} from 'rdf-data-factory';
 import {ParsedSGV} from '../sgv/treeStructure/ParsedSGV';
 import {QueryEngine} from '@comunica/query-sparql-file';
@@ -102,7 +102,9 @@ export class DeleteInsertOperationHandler extends BaseOperationHandler {
 
         const currentCollection = this.getContainingCollection(this.focussedResource);
 
-        const wantsRelocation = currentCollection.updateCondition.wantsRelocation(newResource, this.focussedResource);
+        const wantsRelocation = currentCollection.saveConditions
+            .map(condition => condition.updateCondition)
+            .every(condition => condition.wantsRelocation(newResource, this.focussedResource));
 
         let newBaseUri = DF.namedNode(await currentCollection
             .groupStrategy
@@ -110,7 +112,9 @@ export class DeleteInsertOperationHandler extends BaseOperationHandler {
 
         if (wantsRelocation) {
             // Check what collection we should relocate to
-            const collectionToInsertIn = this.collectionOfResultingResource(newResource, this.focussedResource);
+            const collectionToInsertIn = assertVal(
+                this.collectionOfResultingResource(newResource, this.focussedResource)
+            );
             newBaseUri = DF.namedNode(await collectionToInsertIn.groupStrategy.getResourceURI(newResource));
         }
 

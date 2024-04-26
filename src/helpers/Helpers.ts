@@ -42,7 +42,7 @@ export async function fileResourceToStore(engine: QueryEngine, resource: string)
     await engine.invalidateHttpCache();
     for await (const bindings of await engine.queryBindings(
         'select * where { ?s ?p ?o }',
-        { sources: [resource]}
+        {sources: [resource]}
     )) {
         fileStore.addQuad(
             DF.quad(
@@ -131,7 +131,7 @@ export function translateStore(store: RdfStore, from: RDF.NamedNode, to: RDF.Nam
 }
 
 export function getQueryWithoutPrefixes(query: SparqlQuery): string {
-    const shallowCopy = { ...query };
+    const shallowCopy = {...query};
 
     shallowCopy.prefixes = {};
     shallowCopy.base = undefined;
@@ -139,3 +139,10 @@ export function getQueryWithoutPrefixes(query: SparqlQuery): string {
     return new Generator().stringify(shallowCopy);
 }
 
+export function assertVal<T>(val: T | undefined): T {
+    return val ?? (
+        () => {
+            throw new Error('did not work');
+        }
+    )();
+}

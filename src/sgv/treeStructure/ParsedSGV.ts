@@ -1,5 +1,5 @@
-import {RootedStructuredCollection} from './StructuredCollection';
+import {RootedCanonicalCollection} from './StructuredCollection';
 
 export interface ParsedSGV {
-    collections: RootedStructuredCollection[];
+    collections: RootedCanonicalCollection[];
 }

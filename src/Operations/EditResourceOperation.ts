@@ -1,8 +1,7 @@
 import {BaseOperationHandler} from './BaseOperationHandler';
 import * as RDF from '@rdfjs/types';
 import {RdfStore} from 'rdf-stores';
-import {fileResourceToStore, getPrunedStore, translateStore} from '../helpers/Helpers';
-import {SGVParser} from '../sgv/SGVParser';
+import {assertVal, fileResourceToStore, getPrunedStore, translateStore} from '../helpers/Helpers';
 import {DataFactory} from 'rdf-data-factory';
 
 const DF = new DataFactory();
@@ -33,7 +32,9 @@ export abstract class EditResourceOperation extends BaseOperationHandler {
         // Validate the newResource store against the shapes
         const newResource = await this.getResultingResource();
 
-        const wantsRelocation = currentCollection.updateCondition.wantsRelocation(newResource, focusedResource);
+        const wantsRelocation = currentCollection.saveConditions
+            .map(condition => condition.updateCondition)
+            .every(condition => condition.wantsRelocation(newResource, focusedResource));
 
         let newBaseUri = DF.namedNode(await currentCollection
             .groupStrategy
@@ -41,7 +42,9 @@ export abstract class EditResourceOperation extends BaseOperationHandler {
 
         if (wantsRelocation) {
             // Check what collection we should relocate to
-            const collectionToInsertIn = this.collectionOfResultingResource(newResource, focusedResource);
+            const collectionToInsertIn = assertVal(
+                this.collectionOfResultingResource(newResource, focusedResource)
+            );
             newBaseUri = DF.namedNode(await collectionToInsertIn.groupStrategy.getResourceURI(newResource));
         }
 

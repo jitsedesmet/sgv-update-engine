@@ -17,6 +17,8 @@ export const shaclTargetNode = DF.namedNode(shaclTargetNodeUrl);
 // Containers
 export const typeCanonicalCollectionURL = `${prefix}#canonical-collection`;
 export const typeCanonicalCollection = DF.namedNode(typeCanonicalCollectionURL);
+export const predicateOneFileOneResourceURL = `${prefix}#one-file-one-resource`;
+export const predicateOneFileOneResource = DF.namedNode(predicateOneFileOneResourceURL);
 
 // Update conditions
 export const updateConditionPredicateURL = `${prefix}#update-condition`;
@@ -47,4 +49,8 @@ export const typeGroupStrategyUriTemplateURL = `${prefix}#group-strategty-uri-te
 export const typeGroupStrategyUriTemplate = DF.namedNode(typeGroupStrategyUriTemplateURL);
 export const groupStrategyUriTemplateUrl = `${prefix}#uri-template`;
 export const groupStrategyUriTemplate = DF.namedNode(groupStrategyUriTemplateUrl);
+export const groupStrategyRegexMatchUrl = `${prefix}#regex-match`;
+export const groupStrategyRegexMatch = DF.namedNode(groupStrategyRegexMatchUrl);
+export const groupStrategyRegexReplaceUrl = `${prefix}#regex-replace`;
+export const groupStrategyRegexReplace = DF.namedNode(groupStrategyRegexReplaceUrl);
 
