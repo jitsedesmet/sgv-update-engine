@@ -33,9 +33,10 @@ export interface CanonicalCollection extends BaseStructuredContainer {
  */
 export interface DerivedCollection extends BaseStructuredContainer {
     type: CollectionType.derived;
-    resourceDescription: ResourceDescription;
-    derivedFrom: CanonicalCollection;
-    updateConditions: [UpdateCondition, ...UpdateCondition[]];
+    derives: {
+        description: ResourceDescription;
+        source: StructuredCollection
+    }[];
 }
 
 export type RootedCanonicalCollection = CanonicalCollection & Pinpoint;

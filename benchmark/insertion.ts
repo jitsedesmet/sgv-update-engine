@@ -1,27 +1,31 @@
-import {benchmarker, deleteResource, data, insertResource, randomId} from './helpers';
+import {benchmarker, data, deleteResource, insertResource, Pod, PodFragmentation, randomId} from './helpers';
 import {QueryEngine} from '@comunica/query-sparql-file';
-import {ParsedSGV} from '../src/sgv/treeStructure/ParsedSGV';
 
-export function addInsertionBench(bench: benchmarker, engine: QueryEngine, pod: string, parsedSgv: ParsedSGV) {
-    (() => {
+export function addInsertionBench(bench: benchmarker, engine: QueryEngine, pods: Record<string, Pod>) {
+    {
         // get random long id
         let id = randomId();
-        bench
-            .add('insert post sorted by creation date', async () => {
-                await insertResource(engine, id.toString(), pod, parsedSgv);
-            }, {
-                afterEach: async () => {
-                    await deleteResource(engine, id.toString(), pod, parsedSgv);
 
-                    id = randomId();
-                }
-            });
-    })();
+        for (const [description, pod] of Object.entries(pods)) {
+            bench
+                .add(`insert post ${description}`, async () => {
+                        await insertResource(engine, id.toString(), pod.host, pod.sgv);
+                    }, {
+                        afterEach: async () => {
+                            await deleteResource(engine, id.toString(), pod.host, pod.sgv);
 
-    (() => {
+                            id = randomId();
+                        }
+                    }
+                );
+        }
+    }
+
+    {
+        const pod = pods[PodFragmentation.BY_CREATION_DATE];
         // get random long id
         let id = randomId();
-        let url = `http://localhost:3000/pods/00000000000000000096/posts/2024-05-08#${id}`;
+        let url = `${pod.host}posts/2024-05-08#${id}`;
         bench
             .add('insert post RAW', async () => {
                 await engine.invalidateHttpCache();
@@ -34,10 +38,10 @@ export function addInsertionBench(bench: benchmarker, engine: QueryEngine, pod: 
                 });
             }, {
                 afterEach: async () => {
-                    await deleteResource(engine, id.toString(), pod, parsedSgv);
+                    await deleteResource(engine, id.toString(), pod.host, pod.sgv);
                     id = randomId();
-                    url = `http://localhost:3000/pods/00000000000000000096/posts/2024-05-08#${id}`;
+                    url = `${pod.host}posts/2024-05-08#${id}`;
                 }
             });
-    })();
+    }
 }

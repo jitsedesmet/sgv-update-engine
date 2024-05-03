@@ -8,8 +8,9 @@ INSERT DATA {
   <> a ns1:Post ;
     ns1:browserUsed "Chrome" ;
     ns1:content
-      "I want to eat an apple while scavenging for mushrooms in the forest." ;
-    ns1:creationDate "2024-05-08T23:23:56.830000+00:00"^^xsd:dateTime ;
+      "I want to eat an apple." ;
+    ns1:creationDate
+    "2024-05-08T23:23:56.83Z"^^xsd:dateTime ;
     ns1:id "416608218494388"^^xsd:long ;
     ns1:hasCreator card:me ;
     ns1:hasTag tag:Alanis_Morissette, tag:Austria ;

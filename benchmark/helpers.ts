@@ -22,6 +22,18 @@ export interface FnOptions {
     afterAll?: () => void | Promise<void>;
 }
 
+export enum PodFragmentation {
+    BY_CREATION_DATE = 'by creation date',
+    ALL_IN_ONE_FILE = 'all in one file',
+    OWN_FILE = 'own file',
+    BY_CREATION_LOCATION = 'by creation location',
+}
+
+export interface Pod {
+    host: string;
+    sgv: ParsedSGV;
+}
+
 export interface benchmarker {
     add: (title: string, fn: Fn, opts: FnOptions) => void;
 }

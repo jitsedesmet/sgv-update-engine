@@ -1,4 +1,4 @@
-import {benchmarker, deleteResource, data, insertResource, randomId} from './helpers';
+import {benchmarker, deleteResource, insertResource, randomId} from './helpers';
 import {QueryEngine} from '@comunica/query-sparql-file';
 import {ParsedSGV} from '../src/sgv/treeStructure/ParsedSGV';
 
