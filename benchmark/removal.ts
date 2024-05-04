@@ -1,8 +1,8 @@
-import {benchmarker, deleteResource, insertResource, randomId} from './helpers';
+import {Benchmarker, deleteResource, insertResource, randomId} from './helpers';
 import {QueryEngine} from '@comunica/query-sparql-file';
 import {ParsedSGV} from '../src/sgv/treeStructure/ParsedSGV';
 
-export function addDeletionBench(bench: benchmarker, engine: QueryEngine, pod: string, parsedSgv: ParsedSGV) {
+export function addDeletionBench(bench: Benchmarker, engine: QueryEngine, pod: string, parsedSgv: ParsedSGV) {
     (() => {
         let id = randomId();
         bench

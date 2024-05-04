@@ -54,7 +54,7 @@ export class GroupStrategyURITemplate extends GroupStrategy implements RawGroupS
         const preRegex = parseTemplate(this.template).expand(expansionContext);
 
         if (this.regexMatch && this.regexReplace) {
-            return this.collectionUri.value + preRegex.replaceAll(new RegExp(this.regexMatch), this.regexReplace);
+            return this.collectionUri.value + preRegex.replaceAll(new RegExp(this.regexMatch, 'gu'), this.regexReplace);
         }
         return this.collectionUri.value + preRegex;
     }

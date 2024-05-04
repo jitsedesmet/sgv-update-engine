@@ -32,10 +32,11 @@ export enum PodFragmentation {
 export interface Pod {
     host: string;
     sgv: ParsedSGV;
+    updatedResource: (id: string) => string;
 }
 
-export interface benchmarker {
-    add: (title: string, fn: Fn, opts: FnOptions) => void;
+export interface Benchmarker {
+    add: (title: string, fn: Fn, opts?: FnOptions) => void;
 }
 
 export function randomId(): number {
@@ -67,9 +68,12 @@ export async function insertResource(engine: QueryEngine, id: string, pod: strin
     await (await new OperationParser(engine, query).parse(parsedSgv)).handleOperation(pod);
 }
 
-export async function deleteResource(engine: QueryEngine, id: string, pod: string, parsedSgv: ParsedSGV) {
-    const resource = `http://localhost:3000/pods/00000000000000000096/posts/2024-05-08#${id}`;
-    await (await new OperationParser(engine, `
-        DELETE WHERE { <${resource}> ?p ?o . }
-    `).parse(parsedSgv, resource)).handleOperation(pod);
+export async function deleteResource(engine: QueryEngine, pod: string, resource: string, parsedSgv: ParsedSGV) {
+    await engine.queryVoid(`
+        DELETE WHERE {
+            <${resource}> ?p ?o
+        }
+    `, {
+        sources: [resource],
+    });
 }
