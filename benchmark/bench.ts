@@ -1,7 +1,7 @@
 import {SGVParser} from '../src/sgv/SGVParser';
 import {QueryEngine} from '@comunica/query-sparql-file';
 import {addInsertionBench} from './insertion';
-import {deleteResource, insertResource, Pod, PodFragmentation, randomId} from './helpers';
+import {Pod, PodFragmentation} from './helpers';
 
 async function main() {
     const {Bench} = await import('tinybench');

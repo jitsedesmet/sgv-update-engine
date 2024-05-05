@@ -19,9 +19,8 @@ export function addInsertionBench(bench: Benchmarker, engine: QueryEngine, pods:
     {
         for (const [description, pod] of Object.entries(pods)) {
             let id = randomId();
-
             bench
-                .add(`insert post ${description}`, async () => {
+                .add(`insert ${description}: SGV`, async () => {
                         await insertResource(engine, id.toString(), pod.host, pod.sgv);
                     }, {
                         beforeEach: async () => {
@@ -39,29 +38,30 @@ export function addInsertionBench(bench: Benchmarker, engine: QueryEngine, pods:
     }
 
     {
-        const pod = pods[PodFragmentation.BY_CREATION_DATE];
-        let id = randomId();
-        let url = pod.updatedResource(id.toString());
-        bench
-            .add('insert post RAW', async () => {
-                await engine.queryVoid(`
+        for (const [description, pod] of Object.entries(pods)) {
+            let id = randomId();
+            let url = pod.updatedResource(id.toString());
+            bench
+                .add(`insert ${description}: RAW`, async () => {
+                    await engine.queryVoid(`
                     INSERT DATA {
                         ${data(id.toString(), url)}
                     }
                 `, {
-                    sources: [url],
-                });
-            }, {
-                beforeEach: async () => {
-                    await engine.invalidateHttpCache();
-                },
-                afterEach: async () => {
-                    await engine.invalidateHttpCache();
-                    await deleteResource(engine, pod.host, url, pod.sgv);
+                        sources: [url],
+                    });
+                }, {
+                    beforeEach: async () => {
+                        await engine.invalidateHttpCache();
+                    },
+                    afterEach: async () => {
+                        await engine.invalidateHttpCache();
+                        await deleteResource(engine, pod.host, url, pod.sgv);
 
-                    id = randomId();
-                    url = pod.updatedResource(id.toString());
-                }
-            });
+                        id = randomId();
+                        url = pod.updatedResource(id.toString());
+                    }
+                });
+        }
     }
 }
