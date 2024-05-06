@@ -2,6 +2,7 @@ import {SGVParser} from '../src/sgv/SGVParser';
 import {QueryEngine} from '@comunica/query-sparql-file';
 import {addInsertionBench} from './insertion';
 import {Pod, PodFragmentation} from './helpers';
+import {addDeletionBench} from './removal';
 
 async function main() {
     const {Bench} = await import('tinybench');
@@ -37,8 +38,8 @@ async function main() {
         },
     };
 
-    addInsertionBench(bench, engine, pods);
-    // addDeletionBench(bench, engine, pod, parsedSgv);
+    // addInsertionBench(bench, engine, pods);
+    addDeletionBench(bench, engine, pods);
 
     await bench.warmup(); // make results more reliable, ref: https://github.com/tinylibs/tinybench/pull/50
     await bench.run();
