@@ -39,7 +39,7 @@ export function addInsertDataIdBench(bench: Benchmarker, engine: QueryEngine, po
             }
 
             bench
-                .add(`insert where tag ${description}: ${raw ? 'RAW' : 'SGV'}`, fn, {
+                .add(`insert data id ${description}: ${raw ? 'RAW' : 'SGV'}`, fn, {
                         beforeAll: async () => {
                             await engine.invalidateHttpCache();
 

@@ -12,7 +12,7 @@ function getQuery(url: string): string {
     `;
 }
 
-export function addInsertDateTagBench(bench: Benchmarker, engine: QueryEngine, pods: Record<string, Pod>): void {
+export function addInsertDataTagBench(bench: Benchmarker, engine: QueryEngine, pods: Record<string, Pod>): void {
     for (const [description, pod] of Object.entries(pods)) {
         for (const raw of [false, true]) {
             const id = randomId();
@@ -34,7 +34,7 @@ export function addInsertDateTagBench(bench: Benchmarker, engine: QueryEngine, p
             }
 
             bench
-                .add(`insert where tag ${description}: ${raw ? 'RAW' : 'SGV'}`, fn, {
+                .add(`insert data tag ${description}: ${raw ? 'RAW' : 'SGV'}`, fn, {
                         beforeAll: async () => {
                             await engine.invalidateHttpCache();
 

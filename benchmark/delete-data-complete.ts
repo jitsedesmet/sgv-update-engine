@@ -2,7 +2,7 @@ import {Benchmarker, data, Pod, randomId} from './helpers';
 import {QueryEngine} from '@comunica/query-sparql-file';
 import {OperationParser} from '../src/Operations/OperationParser';
 
-function getQuery(id:string, url: string): string {
+function getQuery(id: string, url: string): string {
     return `
         DELETE DATA {
             ${data(id.toString(), url)}

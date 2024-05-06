@@ -35,7 +35,7 @@ export function addDeleteWhereTagsBench(bench: Benchmarker, engine: QueryEngine,
             }
 
             bench
-                .add(`insert where tag ${description}: ${raw ? 'RAW' : 'SGV'}`, fn, {
+                .add(`delete where tags ${description}: ${raw ? 'RAW' : 'SGV'}`, fn, {
                         beforeAll: async () => {
                             await engine.invalidateHttpCache();
 

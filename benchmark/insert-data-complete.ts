@@ -32,7 +32,7 @@ export function addInsertDataCompleteBench(bench: Benchmarker, engine: QueryEngi
             }
 
             bench
-                .add(`insert ${description}: ${raw ? 'RAW' : 'SGV'}`, fn, {
+                .add(`insert data complete ${description}: ${raw ? 'RAW' : 'SGV'}`, fn, {
                         beforeEach: async () => {
                             await engine.invalidateHttpCache();
                         },
