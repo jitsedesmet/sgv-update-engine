@@ -4,16 +4,15 @@ import {OperationParser} from '../src/Operations/OperationParser';
 
 function getQuery(url: string): string {
     return `
-        prefix tag: <http://localhost:3000/www.ldbc.eu/ldbc_socialnet/1.0/tag/>
-        INSERT {
-            <${url}> ?p tag:Cheese
-        } where {
-            <${url}> ?p tag:Austria
+        prefix ns1: <http://localhost:3000/www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/>
+        prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+        INSERT DATA {
+            <${url}> ns1:id "416608218494389"^^xsd:long ; .
         }
     `;
 }
 
-export function addInsertWhereTagBench(bench: Benchmarker, engine: QueryEngine, pods: Record<string, Pod>): void {
+export function addInsertDataIdBench(bench: Benchmarker, engine: QueryEngine, pods: Record<string, Pod>) {
     for (const [description, pod] of Object.entries(pods)) {
         for (const raw of [false, true]) {
             const id = randomId();
@@ -23,8 +22,13 @@ export function addInsertWhereTagBench(bench: Benchmarker, engine: QueryEngine, 
 
             if (raw) {
                 fn = async () => {
-                    await (await new OperationParser(engine, getQuery(url))
-                        .parse(pod.sgv, url)).handleOperation(pod.host);
+                    try {
+                        await (await new OperationParser(engine, getQuery(url))
+                            .parse(pod.sgv, url)).handleOperation(pod.host);
+                    } catch {
+                        return;
+                    }
+                    throw new Error('Expected an error');
                 };
             } else {
                 fn = async () => {
@@ -66,10 +70,10 @@ export function addInsertWhereTagBench(bench: Benchmarker, engine: QueryEngine, 
                             await engine.invalidateHttpCache();
 
                             await engine.queryVoid(`
+                                prefix ns1: <http://localhost:3000/www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/>
+                                prefix xsd: <http://www.w3.org/2001/XMLSchema#>
                                 DELETE DATA {
-                                    <${url}>
-                                    <http://localhost:3000/www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/hasTag>
-                                    <http://localhost:3000/www.ldbc.eu/ldbc_socialnet/1.0/tag/Cheese> .
+                                    <${url}> ns1:id "416608218494389"^^xsd:long ; .
                                 }
                             `, {
                                 sources: [url],

@@ -2,13 +2,16 @@ import {Benchmarker, data, Pod, randomId} from './helpers';
 import {QueryEngine} from '@comunica/query-sparql-file';
 import {OperationParser} from '../src/Operations/OperationParser';
 
-function getQuery(url: string): string {
+function getQuery(id: number, url: string): string {
     return `
-        prefix tag: <http://localhost:3000/www.ldbc.eu/ldbc_socialnet/1.0/tag/>
-        INSERT {
-            <${url}> ?p tag:Cheese
+        prefix ns1: <http://localhost:3000/www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/>
+        prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+        DELETE {
+            ?id ns1:id "${id.toString()}"^^xsd:long .
+        } INSERT {
+            ?id ns1:id "${(id + 1).toString()}"^^xsd:long .
         } where {
-            <${url}> ?p tag:Austria
+            BIND(<${url}> as ?id)
         }
     `;
 }
@@ -23,12 +26,12 @@ export function addInsertWhereTagBench(bench: Benchmarker, engine: QueryEngine, 
 
             if (raw) {
                 fn = async () => {
-                    await (await new OperationParser(engine, getQuery(url))
+                    await (await new OperationParser(engine, getQuery(id, url))
                         .parse(pod.sgv, url)).handleOperation(pod.host);
                 };
             } else {
                 fn = async () => {
-                    await engine.queryVoid(getQuery(url), {
+                    await engine.queryVoid(getQuery(id, url), {
                         sources: [url],
                     });
                 };
@@ -66,10 +69,13 @@ export function addInsertWhereTagBench(bench: Benchmarker, engine: QueryEngine, 
                             await engine.invalidateHttpCache();
 
                             await engine.queryVoid(`
-                                DELETE DATA {
-                                    <${url}>
-                                    <http://localhost:3000/www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/hasTag>
-                                    <http://localhost:3000/www.ldbc.eu/ldbc_socialnet/1.0/tag/Cheese> .
+                                prefix ns1: <http://localhost:3000/www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/>
+                                prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+                                DELETE {
+                                    <${url}> ns1:id "${(id + 1).toString()}"^^xsd:long .
+                                } INSERT {
+                                    <${url}> ns1:id "${(id).toString()}"^^xsd:long .
+                                }
                                 }
                             `, {
                                 sources: [url],

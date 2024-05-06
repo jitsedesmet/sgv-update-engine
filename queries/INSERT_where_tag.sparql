@@ -1,8 +1,8 @@
-prefix ns1: <http://localhost:3000/www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/>
 prefix tag: <http://localhost:3000/www.ldbc.eu/ldbc_socialnet/1.0/tag/>
+prefix res: <http://localhost:3000/pods/00000000000000000096/posts/2024-05-08#>
 
 INSERT {
-    ?id ns1:hasTag tag:Cheese
+    res:416608218494388 ?p tag:Cheese
 } where {
-    ?id ns1:hasTag tag:Austria
+    res:416608218494388 ?p tag:Austria
 }

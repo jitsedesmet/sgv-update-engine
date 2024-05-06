@@ -4,16 +4,16 @@ import {OperationParser} from '../src/Operations/OperationParser';
 
 function getQuery(url: string): string {
     return `
-        prefix tag: <http://localhost:3000/www.ldbc.eu/ldbc_socialnet/1.0/tag/>
-        INSERT {
-            <${url}> ?p tag:Cheese
+        prefix ns1: <http://localhost:3000/www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/>
+        DELETE {
+            <${url}> ns1:hasTag ?x
         } where {
-            <${url}> ?p tag:Austria
+            <${url}> ns1:hasTag ?x
         }
     `;
 }
 
-export function addInsertWhereTagBench(bench: Benchmarker, engine: QueryEngine, pods: Record<string, Pod>): void {
+export function addDeleteWhereTagsBench(bench: Benchmarker, engine: QueryEngine, pods: Record<string, Pod>): void {
     for (const [description, pod] of Object.entries(pods)) {
         for (const raw of [false, true]) {
             const id = randomId();
@@ -66,10 +66,11 @@ export function addInsertWhereTagBench(bench: Benchmarker, engine: QueryEngine, 
                             await engine.invalidateHttpCache();
 
                             await engine.queryVoid(`
-                                DELETE DATA {
+                                INSERT DATA {
                                     <${url}>
                                     <http://localhost:3000/www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/hasTag>
-                                    <http://localhost:3000/www.ldbc.eu/ldbc_socialnet/1.0/tag/Cheese> .
+                                    <http://localhost:3000/www.ldbc.eu/ldbc_socialnet/1.0/tag/Alanis_Morissette> ;
+                                    <http://localhost:3000/www.ldbc.eu/ldbc_socialnet/1.0/tag/Austria> .
                                 }
                             `, {
                                 sources: [url],

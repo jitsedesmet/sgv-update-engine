@@ -2,7 +2,7 @@ import {Benchmarker, data, Pod, randomId} from './helpers';
 import {QueryEngine} from '@comunica/query-sparql-file';
 import {OperationParser} from '../src/Operations/OperationParser';
 
-export function addInsertionBench(bench: Benchmarker, engine: QueryEngine, pods: Record<string, Pod>) {
+export function addInsertDataCompleteBench(bench: Benchmarker, engine: QueryEngine, pods: Record<string, Pod>) {
     for (const [description, pod] of Object.entries(pods)) {
         for (const raw of [false, true]) {
             let id = randomId();

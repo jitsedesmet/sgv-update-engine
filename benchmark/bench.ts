@@ -1,8 +1,10 @@
 import {SGVParser} from '../src/sgv/SGVParser';
 import {QueryEngine} from '@comunica/query-sparql-file';
-import {addInsertionBench} from './insertion';
+import {addInsertDataCompleteBench} from './insert-data-complete';
 import {Pod, PodFragmentation} from './helpers';
-import {addDeletionBench} from './removal';
+import {addDeleteDataCompleteBench} from './delete-data-complete';
+import {addInsertDataIdBench} from './insert-data-id';
+import {addInsertWhereTagBench} from './insert-where-tag';
 
 async function main() {
     const {Bench} = await import('tinybench');
@@ -38,8 +40,10 @@ async function main() {
         },
     };
 
-    // addInsertionBench(bench, engine, pods);
-    addDeletionBench(bench, engine, pods);
+    // addInsertDataCompleteBench(bench, engine, pods);
+    // addDeleteDataCompleteBench(bench, engine, pods);
+    // addInsertWhereTagBench(bench, engine, pods);
+    addInsertDataIdBench(bench, engine, pods);
 
     await bench.warmup(); // make results more reliable, ref: https://github.com/tinylibs/tinybench/pull/50
     await bench.run();
