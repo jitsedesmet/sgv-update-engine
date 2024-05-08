@@ -1,0 +1,6 @@
+SELECT ?s ?p ?o
+WHERE {
+  BIND (<https://brechtvdv.github.io/Article-Live-Open-Data-Interfaces/> AS ?id)
+  BIND (?id AS ?s)
+  ?s ?p ?o
+}

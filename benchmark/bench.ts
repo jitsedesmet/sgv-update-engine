@@ -1,16 +1,16 @@
 import {SGVParser} from '../src/sgv/SGVParser';
 import {QueryEngine} from '@comunica/query-sparql-file';
-import {addInsertDataCompleteBench} from './insert-data-complete';
 import {Pod, PodFragmentation} from './helpers';
-import {addInsertDataIdBench} from './insert-data-id';
-import {addInsertWhereTagBench} from './insert-where-tag';
-import {addInsertDataTagBench} from './insert-data-tag';
-import {addDeleteInsertIdBench} from './delins-id';
 import {addDeleteWhereCompleteBench} from './delete-where-complete';
-import {addDeleteWhereTagsBench} from './delete-where-tags';
-import {addDeleteDataIdBench} from './delete-data-id';
+import { addDeleteDataCompleteBench } from './delete-data-complete';
+import { addInsertWhereTagBench } from './insert-where-tag';
+import { addInsertDataIdBench } from './insert-data-id';
+import { addInsertDataTagBench } from './insert-data-tag';
+import { addDeleteInsertIdBench } from './delins-id';
+import { addInsertDataCompleteBench } from './insert-data-complete';
+import {addDeleteDataIdBench } from './delete-data-id';
+import { addDeleteWhereTagsBench } from './delete-where-tags';
 import {addDeleteDataTagBench} from './delete-data-tag';
-import {addDeleteDataCompleteBench} from './delete-data-complete';
 
 async function main() {
     const {Bench} = await import('tinybench');
@@ -47,15 +47,15 @@ async function main() {
     };
 
     addInsertDataCompleteBench(bench, engine, pods);
-    // addDeleteDataCompleteBench(bench, engine, pods);
-    // addInsertWhereTagBench(bench, engine, pods);
-    // addInsertDataIdBench(bench, engine, pods);
-    // addInsertDataTagBench(bench, engine, pods);
-    // addDeleteInsertIdBench(bench, engine, pods);
-    // addDeleteWhereCompleteBench(bench, engine, pods);
-    // addDeleteWhereTagsBench(bench, engine, pods);
-    // addDeleteDataIdBench(bench, engine, pods);
-    // addDeleteDataTagBench(bench, engine, pods);
+    addDeleteDataCompleteBench(bench, engine, pods);
+    addInsertWhereTagBench(bench, engine, pods);
+    addInsertDataIdBench(bench, engine, pods);
+    addInsertDataTagBench(bench, engine, pods);
+    addDeleteInsertIdBench(bench, engine, pods);
+    addDeleteWhereCompleteBench(bench, engine, pods);
+    addDeleteWhereTagsBench(bench, engine, pods);
+    addDeleteDataIdBench(bench, engine, pods);
+    addDeleteDataTagBench(bench, engine, pods);
 
 
     await bench.warmup(); // make results more reliable, ref: https://github.com/tinylibs/tinybench/pull/50

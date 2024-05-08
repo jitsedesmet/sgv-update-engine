@@ -23,14 +23,14 @@ export function addInsertWhereTagBench(bench: Benchmarker, engine: QueryEngine, 
 
             if (raw) {
                 fn = async () => {
-                    await (await new OperationParser(engine, getQuery(url))
-                        .parse(pod.sgv, url)).handleOperation(pod.host);
-                };
-            } else {
-                fn = async () => {
                     await engine.queryVoid(getQuery(url), {
                         sources: [url],
                     });
+                };
+            } else {
+                fn = async () => {
+                    await (await new OperationParser(engine, getQuery(url))
+                        .parse(pod.sgv, url)).handleOperation(pod.host);
                 };
             }
 

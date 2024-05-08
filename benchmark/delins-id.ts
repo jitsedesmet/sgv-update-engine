@@ -26,14 +26,14 @@ export function addDeleteInsertIdBench(bench: Benchmarker, engine: QueryEngine, 
 
             if (raw) {
                 fn = async () => {
-                    await (await new OperationParser(engine, getQuery(id, url))
-                        .parse(pod.sgv, url)).handleOperation(pod.host);
-                };
-            } else {
-                fn = async () => {
                     await engine.queryVoid(getQuery(id, url), {
                         sources: [url],
                     });
+                };
+            } else {
+                fn = async () => {
+                    await (await new OperationParser(engine, getQuery(id, url))
+                        .parse(pod.sgv, url)).handleOperation(pod.host);
                 };
             }
 
@@ -62,21 +62,28 @@ export function addDeleteInsertIdBench(bench: Benchmarker, engine: QueryEngine, 
                                 sources: [url],
                             });
                         },
-                        beforeEach: async () => {
-                            await engine.invalidateHttpCache();
-                        },
                         afterEach: async () => {
                             await engine.invalidateHttpCache();
 
                             await engine.queryVoid(`
-                                prefix ns1: <http://localhost:3000/www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/>
-                                prefix xsd: <http://www.w3.org/2001/XMLSchema#>
-                                DELETE {
-                                    <${url}> ns1:id "${(id + 1).toString()}"^^xsd:long .
-                                } INSERT {
-                                    <${url}> ns1:id "${(id).toString()}"^^xsd:long .
-                                }
-                                }
+                                DELETE WHERE {
+                                    <${pod.updatedResource((id +1).toString())}> ?p ?o .
+                                };
+                                DELETE WHERE {
+                                    <${url}> ?p ?o .
+                                };
+                            `, {
+                                sources: [url],
+                            });
+
+                            await engine.invalidateHttpCache();
+
+                            await engine.invalidateHttpCache();
+
+                            await engine.queryVoid(`
+                            INSERT DATA {
+                                ${data(id.toString(), url)}
+                            }
                             `, {
                                 sources: [url],
                             });

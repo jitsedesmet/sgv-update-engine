@@ -23,14 +23,14 @@ export function addDeleteWhereTagsBench(bench: Benchmarker, engine: QueryEngine,
 
             if (raw) {
                 fn = async () => {
-                    await (await new OperationParser(engine, getQuery(url))
-                        .parse(pod.sgv, url)).handleOperation(pod.host);
-                };
-            } else {
-                fn = async () => {
                     await engine.queryVoid(getQuery(url), {
                         sources: [url],
                     });
+                };
+            } else {
+                fn = async () => {
+                    await (await new OperationParser(engine, getQuery(url))
+                        .parse(pod.sgv, url)).handleOperation(pod.host);
                 };
             }
 
@@ -69,7 +69,10 @@ export function addDeleteWhereTagsBench(bench: Benchmarker, engine: QueryEngine,
                                 INSERT DATA {
                                     <${url}>
                                     <http://localhost:3000/www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/hasTag>
-                                    <http://localhost:3000/www.ldbc.eu/ldbc_socialnet/1.0/tag/Alanis_Morissette> ;
+                                    <http://localhost:3000/www.ldbc.eu/ldbc_socialnet/1.0/tag/Alanis_Morissette> .
+                                    
+                                    <${url}>
+                                    <http://localhost:3000/www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/hasTag>
                                     <http://localhost:3000/www.ldbc.eu/ldbc_socialnet/1.0/tag/Austria> .
                                 }
                             `, {

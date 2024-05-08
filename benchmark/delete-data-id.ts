@@ -22,14 +22,19 @@ export function addDeleteDataIdBench(bench: Benchmarker, engine: QueryEngine, po
 
             if (raw) {
                 fn = async () => {
-                    await (await new OperationParser(engine, getQuery(id.toString(), url))
-                        .parse(pod.sgv, url)).handleOperation(pod.host);
-                };
-            } else {
-                fn = async () => {
                     await engine.queryVoid(getQuery(id.toString(), url), {
                         sources: [url],
                     });
+                };
+            } else {
+                fn = async () => {
+                    try {
+                        await (await new OperationParser(engine, getQuery(id.toString(), url))
+                            .parse(pod.sgv, url)).handleOperation(pod.host);
+                    } catch {
+                        return;
+                    }
+                    throw new Error('Should have thrown an error');
                 };
             }
 

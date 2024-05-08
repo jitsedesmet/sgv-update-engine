@@ -22,6 +22,12 @@ export function addInsertDataIdBench(bench: Benchmarker, engine: QueryEngine, po
 
             if (raw) {
                 fn = async () => {
+                    await engine.queryVoid(getQuery(url), {
+                        sources: [url],
+                    });
+                };
+            } else {
+                fn = async () => {
                     try {
                         await (await new OperationParser(engine, getQuery(url))
                             .parse(pod.sgv, url)).handleOperation(pod.host);
@@ -29,12 +35,6 @@ export function addInsertDataIdBench(bench: Benchmarker, engine: QueryEngine, po
                         return;
                     }
                     throw new Error('Expected an error');
-                };
-            } else {
-                fn = async () => {
-                    await engine.queryVoid(getQuery(url), {
-                        sources: [url],
-                    });
                 };
             }
 
