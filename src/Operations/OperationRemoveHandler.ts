@@ -26,13 +26,13 @@ export class OperationRemoveHandler extends EditResourceOperation {
     }
 
     public async handleOperation(): Promise<void> {
-        const { store, resource, didClear } = await this.computeAndHandleRelocation();
+        const { store, resource, didClear, finalizeOperation } = await this.computeAndHandleRelocation();
 
         if (didClear) {
-            await this.addStoreToResource(store, resource);
+            await Promise.all([finalizeOperation, this.addStoreToResource(store, resource)]);
         } else {
             const deleteStore = this.getDeleteResource();
-            await this.removeStoreFromResource(deleteStore, resource);
+            await Promise.all([finalizeOperation, this.removeStoreFromResource(deleteStore, resource)]);
         }
     }
 }

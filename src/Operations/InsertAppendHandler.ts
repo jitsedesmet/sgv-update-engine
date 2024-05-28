@@ -27,7 +27,7 @@ export class OperationAddToResourceHandler extends EditResourceOperation {
 
 
     public async handleOperation(): Promise<void> {
-        const { store, resource } = await this.computeAndHandleRelocation();
-        await this.addStoreToResource(store, resource);
+        const { store, resource, finalizeOperation } = await this.computeAndHandleRelocation();
+        await Promise.all([finalizeOperation, this.addStoreToResource(store, resource)]);
     }
 }

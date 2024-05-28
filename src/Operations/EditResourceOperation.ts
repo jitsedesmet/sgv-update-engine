@@ -20,7 +20,7 @@ export abstract class EditResourceOperation extends BaseOperationHandler {
     /**
      * @return a new store that you should still make sure exists like that!
      */
-    protected async computeAndHandleRelocation(): Promise<{ store: RdfStore, resource: RDF.NamedNode, didClear: boolean }> {
+    protected async computeAndHandleRelocation(): Promise<{ store: RdfStore, resource: RDF.NamedNode, didClear: boolean, finalizeOperation: Promise<void> }> {
         const focusedResource = this.getResourceNode();
 
         // Evaluate what resource would remain when we insert
@@ -48,18 +48,20 @@ export abstract class EditResourceOperation extends BaseOperationHandler {
             newBaseUri = DF.namedNode(await collectionToInsertIn.groupStrategy.getResourceURI(newResource));
         }
 
+        let finalizeOperation = Promise.resolve();
         if (newBaseUri.equals(focusedResource)) {
             // console.log("No relocation needed, updating resource in place");
         } else {
             // console.log(`Relocating resource to ${newBaseUri.value}`);
             // Remove the old resource:
-            await this.removeStoreFromResource(originalResource, focusedResource);
+            finalizeOperation = this.removeStoreFromResource(originalResource, focusedResource);
         }
 
         return {
             store: translateStore(newResource, focusedResource, newBaseUri),
             resource: newBaseUri,
             didClear: !newBaseUri.equals(focusedResource),
+            finalizeOperation,
         };
     }
 }
