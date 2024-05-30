@@ -46,16 +46,16 @@ async function main() {
         },
     };
 
-    addInsertDataCompleteBench(bench, engine, pods);
-    addDeleteDataCompleteBench(bench, engine, pods);
-    addInsertWhereTagBench(bench, engine, pods);
-    addInsertDataIdBench(bench, engine, pods);
-    addInsertDataTagBench(bench, engine, pods);
+    // addInsertDataCompleteBench(bench, engine, pods);
+    // addDeleteDataCompleteBench(bench, engine, pods);
+    // addInsertWhereTagBench(bench, engine, pods);
+    // addInsertDataIdBench(bench, engine, pods);
+    // addInsertDataTagBench(bench, engine, pods);
     addDeleteInsertIdBench(bench, engine, pods);
-    addDeleteWhereCompleteBench(bench, engine, pods);
-    addDeleteWhereTagsBench(bench, engine, pods);
-    addDeleteDataIdBench(bench, engine, pods);
-    addDeleteDataTagBench(bench, engine, pods);
+    // addDeleteWhereCompleteBench(bench, engine, pods);
+    // addDeleteWhereTagsBench(bench, engine, pods);
+    // addDeleteDataIdBench(bench, engine, pods);
+    // addDeleteDataTagBench(bench, engine, pods);
 
 
     await bench.warmup(); // make results more reliable, ref: https://github.com/tinylibs/tinybench/pull/50

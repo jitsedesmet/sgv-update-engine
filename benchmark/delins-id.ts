@@ -26,9 +26,25 @@ export function addDeleteInsertIdBench(bench: Benchmarker, engine: QueryEngine, 
 
             if (raw) {
                 fn = async () => {
-                    await engine.queryVoid(getQuery(id, url), {
-                        sources: [url],
-                    });
+                    await engine.invalidateHttpCache();
+                    const queryDelete = `
+                            DELETE DATA {
+                                ${data(id.toString(), url)}
+                            }
+                            `;
+
+                    await Promise.all([
+                        engine.queryVoid(queryDelete, {
+                            sources: [url],
+                        }),
+                        engine.queryVoid(`
+                            INSERT DATA {
+                                ${data((id + 1).toString(), url)}
+                            }
+                            `, {
+                            sources: [url],
+                        }),
+                    ])
                 };
             } else {
                 fn = async () => {
