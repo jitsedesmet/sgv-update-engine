@@ -3,9 +3,9 @@ prefix xsd: <http://www.w3.org/2001/XMLSchema#>
 prefix res: <http://localhost:3000/pods/00000000000000000096/posts/2024-05-08#>
 
 DELETE {
-    ?id ns1:id "416608218494388"^^xsd:long .
+    ?id ns1:creationDate   "2024-05-08T23:23:56.83Z"^^xsd:dateTime .
 } INSERT {
-      ?id ns1:id "416608218494389"^^xsd:long .
+    ?id ns1:creationDate "2024-06-20T23:23:56.83Z"^^xsd:dateTime .
 } where {
     BIND(res:416608218494388 as ?id)
 }
