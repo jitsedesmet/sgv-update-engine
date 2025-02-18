@@ -29,7 +29,7 @@ export function addDeleteDataTagBench(bench: Benchmarker, engine: QueryEngine, p
             } else {
                 fn = async () => {
                     await (await new OperationParser(engine, getQuery(url))
-                        .parse(pod.sgv, url)).handleOperation(pod.host);
+                        .parse(pod.sgv)).handleOperation(pod.host);
                 };
             }
 

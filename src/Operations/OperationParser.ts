@@ -12,6 +12,9 @@ import {QueryEngine} from '@comunica/query-sparql-file';
 
 const DF = new DataFactory();
 
+/**
+ * Parses a query amd can use a given engine to prepare the operation.
+ */
 export class OperationParser {
     public baseIRI: string;
     public sparqlParser: SparqlParser;
@@ -31,7 +34,11 @@ export class OperationParser {
         return new OperationParser(engine, query);
     }
 
-    public async parse(parsedSgv: ParsedSGV, updatedResource?: string): Promise<BaseOperationHandler> {
+  /**
+   * Actually parse the query, in the context of some parsed SGV.
+   * Returns a query plan (kinda)
+   */
+  public async parse(parsedSgv: ParsedSGV): Promise<BaseOperationHandler> {
         const parsedQuery: SparqlQuery = this.sparqlParser.parse(this.query);
 
         if (parsedQuery.type  === 'update') {
@@ -52,10 +59,7 @@ export class OperationParser {
                     return new OperationRemoveHandler(this.engine, operation, parsedSgv);
                 }
                 if (operation.updateType === 'insertdelete') {
-                    if (!updatedResource) {
-                        throw new Error('Updated resource not provided');
-                    }
-                    return new DeleteInsertOperationHandler(this.engine, operation, parsedQuery, DF.namedNode(updatedResource), parsedSgv);
+                    return new DeleteInsertOperationHandler(this.engine, operation, parsedQuery, parsedSgv);
                 }
                 if (operation.updateType === 'deletewhere') {
                     // We rewrite to a delete ... where ... query (insertdelete)
@@ -65,7 +69,7 @@ export class OperationParser {
                         /^DELETE WHERE \{(.*)\}$/gu,
                         'DELETE { $1 } WHERE { $1 }'
                     );
-                    return await new OperationParser(this.engine, rewrittenQuery).parse(parsedSgv, updatedResource);
+                    return await new OperationParser(this.engine, rewrittenQuery).parse(parsedSgv);
                 }
             }
         } else {

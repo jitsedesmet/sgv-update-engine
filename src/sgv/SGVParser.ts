@@ -23,12 +23,15 @@ import {GroupStrategy, GroupStrategyURITemplate} from './treeStructure/GroupStra
 import {fileResourceToStore, getOne} from '../helpers/Helpers';
 import {QueryEngine} from '@comunica/query-sparql-file';
 
+/**
+ * Transforms a pods SGV to a structured representation
+ */
 export class SGVParser {
-    public constructor(public sgvStore: RdfStore) {
+    public constructor(public pod: string, public sgvStore: RdfStore) {
     }
 
     public static async init(engine: QueryEngine, podUri: string): Promise<SGVParser>  {
-        return new SGVParser(await fileResourceToStore(engine, `${podUri}sgv`));
+        return new SGVParser(podUri, await fileResourceToStore(engine, `${podUri}sgv`));
     }
 
 

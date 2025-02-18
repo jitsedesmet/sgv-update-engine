@@ -1,16 +1,7 @@
 import {SGVParser} from '../src/sgv/SGVParser';
 import {QueryEngine} from '@comunica/query-sparql-file';
 import {Pod, PodFragmentation} from './helpers';
-import {addDeleteWhereCompleteBench} from './delete-where-complete';
-import { addDeleteDataCompleteBench } from './delete-data-complete';
-import { addInsertWhereTagBench } from './insert-where-tag';
-import { addInsertDataIdBench } from './insert-data-id';
-import { addInsertDataTagBench } from './insert-data-tag';
-import { addDeleteInsertIdBench } from './delins-id';
-import { addInsertDataCompleteBench } from './insert-data-complete';
-import {addDeleteDataIdBench } from './delete-data-id';
-import { addDeleteWhereTagsBench } from './delete-where-tags';
-import {addDeleteDataTagBench} from './delete-data-tag';
+import {addDeleteInsertIdBench} from './delins-id';
 
 async function main() {
     const {Bench} = await import('tinybench');

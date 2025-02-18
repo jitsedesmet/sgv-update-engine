@@ -1,14 +1,14 @@
 import {BaseOperationHandler, ParserInsertDeleteType, SgvOperation} from './BaseOperationHandler';
 import {SparqlQuery} from 'sparqljs';
 import {
-    assertVal,
-    fileResourceToStore,
-    getPrunedStore,
-    getQueryWithoutPrefixes,
-    quadToString,
-    storeMinus,
-    storeUnion,
-    translateStore
+  assertVal,
+  fileResourceToStore,
+  getPrunedStore,
+  getQueryWithoutPrefixes, getRootResources,
+  quadToString,
+  storeMinus,
+  storeUnion,
+  translateStore
 } from '../helpers/Helpers';
 import {RdfStore} from 'rdf-stores';
 import * as RDF from '@rdfjs/types';
@@ -25,13 +25,68 @@ export class DeleteInsertOperationHandler extends BaseOperationHandler {
         engine: QueryEngine,
         private parsedOperation: ParserInsertDeleteType,
         private completeQuery: SparqlQuery,
-        private focussedResource: RDF.NamedNode,
         parsedSgv: ParsedSGV) {
         super(engine, parsedSgv);
     }
 
+    public async findAlteredResource(pod: string, rawDelete: string | undefined, rawInsert: string | undefined, rawWhere: string): Promise<RDF.NamedNode> {
+      // Where can we expect posts?
+      const posts = RdfStore.createDefault();
+      const postDirLocation = this.parsedSgv.collections.filter(collection => collection.uri.value.indexOf('posts') !== -1)[0].uri;
 
-    public async handleOperation(): Promise<void> {
+      const postsLocations: string[] = [];
+
+      for await (const quad of await this.engine.queryQuads('CONSTRUCT WHERE { ?s ?p ?o }', {
+          sources: [postDirLocation.value]
+      })) {
+        if (quad.predicate.equals(DF.namedNode('http://www.w3.org/ns/ldp#contains'))) {
+          postsLocations.push(quad.object.value);
+        }
+        posts.addQuad(quad);
+      }
+
+      if (postsLocations.length !== 0) {
+        posts.removeMatches();
+        for await (const quad of await this.engine.queryQuads('CONSTRUCT WHERE { ?s ?p ?o }', {
+          sources: postsLocations as [string, ...string[]]
+        })) {
+          posts.addQuad(quad);
+        }
+      }
+
+      const postsIds = getRootResources(posts);
+
+      const removalStore = RdfStore.createDefault();
+      const additionStore = RdfStore.createDefault();
+
+      if (rawDelete) {
+        for await (const quad of await this.engine.queryQuads(`CONSTRUCT { ${rawDelete} } WHERE { ${rawWhere} }`, {
+          sources: [posts]
+        })) {
+          removalStore.addQuad(quad);
+        }
+      }
+      if (rawInsert) {
+        for await (const quad of await this.engine.queryQuads(`CONSTRUCT { ${rawInsert} } WHERE { ${rawWhere} }`, {
+          sources: [posts]
+        })) {
+          additionStore.addQuad(quad);
+        }
+      }
+
+      const newResource = storeUnion(
+        additionStore, removalStore
+      );
+
+      // This only works when not nesting properties
+      const focussedResource = getRootResources(newResource)[0];
+
+
+      return focussedResource;
+    }
+
+
+    public override async handleOperation(pod: string): Promise<void> {
         // We construct the resource we will delete and insert by looking at the where clause in the parsed operation.
         const rawQuery = getQueryWithoutPrefixes(this.completeQuery);
         // Either delete is present, or it is not:
@@ -56,25 +111,23 @@ export class DeleteInsertOperationHandler extends BaseOperationHandler {
         }
 
 
+        const focussedResource = await this.findAlteredResource(pod, rawDelete, rawInsert, rawWhere);
+
+        if (!focussedResource) {
+          return;
+        }
         const resourceStore = getPrunedStore(
-            await fileResourceToStore(this.engine, this.focussedResource.value),
-            this.focussedResource
+            await fileResourceToStore(this.engine, focussedResource.value),
+            focussedResource
         );
 
         // Instantiate the delete clause
         const removalStore = RdfStore.createDefault();
         if (rawDelete) {
             await this.engine.invalidateHttpCache();
-            for await (const quad of await this.engine.queryQuads(`
-                CONSTRUCT {
-                    ${rawDelete}
-                } WHERE {
-                    ${rawWhere}
-                }
-            `, {
+            for await (const quad of await this.engine.queryQuads(`CONSTRUCT { ${rawDelete} } WHERE { ${rawWhere} }`, {
                 sources: [resourceStore],
-            })
-                ) {
+            })) {
                 removalStore.addQuad(quad);
             }
         }
@@ -82,16 +135,9 @@ export class DeleteInsertOperationHandler extends BaseOperationHandler {
         const additionStore = RdfStore.createDefault();
         if (rawInsert) {
             await this.engine.invalidateHttpCache();
-            for await (const quad of await this.engine.queryQuads(`
-                CONSTRUCT {
-                    ${rawInsert}
-                } WHERE {
-                    ${rawWhere}
-                }
-            `, {
+            for await (const quad of await this.engine.queryQuads(`CONSTRUCT { ${rawInsert} } WHERE { ${rawWhere} }`, {
                 sources: [resourceStore],
-            })
-                ) {
+            })) {
                 additionStore.addQuad(quad);
             }
         }
@@ -100,11 +146,11 @@ export class DeleteInsertOperationHandler extends BaseOperationHandler {
             storeMinus(resourceStore, removalStore),
             additionStore);
 
-        const currentCollection = this.getContainingCollection(this.focussedResource);
+        const currentCollection = this.getContainingCollection(focussedResource);
 
         const wantsRelocation = currentCollection.saveConditions
             .map(condition => condition.updateCondition)
-            .every(condition => condition.wantsRelocation(newResource, this.focussedResource));
+            .every(condition => condition.wantsRelocation(newResource, focussedResource));
 
         let newBaseUri = DF.namedNode(await currentCollection
             .groupStrategy
@@ -113,12 +159,12 @@ export class DeleteInsertOperationHandler extends BaseOperationHandler {
         if (wantsRelocation) {
             // Check what collection we should relocate to
             const collectionToInsertIn = assertVal(
-                this.collectionOfResultingResource(newResource, this.focussedResource)
+                this.collectionOfResultingResource(newResource, focussedResource)
             );
             newBaseUri = DF.namedNode(await collectionToInsertIn.groupStrategy.getResourceURI(newResource));
         }
 
-        if (newBaseUri.equals(this.focussedResource)) {
+        if (newBaseUri.equals(focussedResource)) {
             let query = '';
             if (removalStore.size !== 0) {
                 query += `
@@ -136,16 +182,16 @@ export class DeleteInsertOperationHandler extends BaseOperationHandler {
             }
 
             await this.engine.invalidateHttpCache();
-            await this.engine.queryVoid(query, {sources: [this.focussedResource.value]});
+            await this.engine.queryVoid(query, {sources: [focussedResource.value]});
 
         } else {
             const remainingStore = translateStore(
-                newResource, this.focussedResource, newBaseUri
+                newResource, focussedResource, newBaseUri
             );
 
             // Remove the old resource and create new at once!:
             await Promise.all([
-                this.removeStoreFromResource(resourceStore, this.focussedResource),
+                this.removeStoreFromResource(resourceStore, focussedResource),
                 this.addStoreToResource(remainingStore, newBaseUri)
             ]);
         }

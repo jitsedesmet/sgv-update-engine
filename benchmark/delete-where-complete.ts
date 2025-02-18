@@ -27,7 +27,7 @@ export function addDeleteWhereCompleteBench(bench: Benchmarker, engine: QueryEng
             } else {
                 fn = async () => {
                     await (await new OperationParser(engine, getQuery(url))
-                        .parse(pod.sgv, url)).handleOperation(pod.host);
+                        .parse(pod.sgv)).handleOperation(pod.host);
                 };
             }
 

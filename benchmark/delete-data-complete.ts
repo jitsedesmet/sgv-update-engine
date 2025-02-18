@@ -27,7 +27,7 @@ export function addDeleteDataCompleteBench(bench: Benchmarker, engine: QueryEngi
             } else {
                 fn = async () => {
                     await (await new OperationParser(engine, getQuery(id.toString(), url))
-                        .parse(pod.sgv, url)).handleOperation(pod.host);
+                        .parse(pod.sgv)).handleOperation(pod.host);
                 };
             }
 

@@ -12,7 +12,11 @@ A Docker image is available to run the SolidBench server with SGV described pods
 ## Step by Step
 
 The first thing to is get a SolidBench server running with SGV described solid pods.
-For ease of use, a dockerFile has been made available.
+For ease of use, a docker image has been made available has been made available.
+
+```bash
+docker run -p 3000:3000 ghcr.io/jitsedesmet/solidbench-sgv:latest
+```
 
 After running the SolidBench instance, you will see the pods being served at `http://localhost:3000/pods/`.
 

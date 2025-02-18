@@ -1,6 +1,4 @@
-import {QueryEngine} from '@comunica/query-sparql-file';
 import {ParsedSGV} from '../src/sgv/treeStructure/ParsedSGV';
-import {OperationParser} from '../src/Operations/OperationParser';
 
 export type Fn = () => void | Promise<void>;
 export interface FnOptions {

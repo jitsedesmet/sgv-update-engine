@@ -44,12 +44,12 @@ export function addDeleteInsertIdBench(bench: Benchmarker, engine: QueryEngine, 
                             `, {
                             sources: [url],
                         }),
-                    ])
+                    ]);
                 };
             } else {
                 fn = async () => {
                     await (await new OperationParser(engine, getQuery(id, url))
-                        .parse(pod.sgv, url)).handleOperation(pod.host);
+                        .parse(pod.sgv)).handleOperation(pod.host);
                 };
             }
 

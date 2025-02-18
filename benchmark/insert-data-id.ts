@@ -30,7 +30,7 @@ export function addInsertDataIdBench(bench: Benchmarker, engine: QueryEngine, po
                 fn = async () => {
                     try {
                         await (await new OperationParser(engine, getQuery(url))
-                            .parse(pod.sgv, url)).handleOperation(pod.host);
+                            .parse(pod.sgv)).handleOperation(pod.host);
                     } catch {
                         return;
                     }

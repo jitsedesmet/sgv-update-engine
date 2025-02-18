@@ -76,6 +76,18 @@ export function getPrunedStore(store: RdfStore, focusResource: RDF.NamedNode | R
     return resourceStore;
 }
 
+export function getRootResources(store: RdfStore): RDF.NamedNode[] {
+  const resources: Set<string> = new Set<string>();
+  for (const quad of store.getQuads()) {
+    if (quad.subject.termType === 'NamedNode') {
+      resources.add(quad.subject.value);
+    }
+  }
+  return [...resources.values()]
+    .map(x => DF.namedNode(x))
+    .filter(root => store.getQuads(null, null, root).length === 0);
+}
+
 export function storeFromTriples(triples: Triple[]): RdfStore {
     const store = RdfStore.createDefault();
     for (const triple of triples) {

@@ -30,7 +30,7 @@ export function addInsertWhereTagBench(bench: Benchmarker, engine: QueryEngine, 
             } else {
                 fn = async () => {
                     await (await new OperationParser(engine, getQuery(url))
-                        .parse(pod.sgv, url)).handleOperation(pod.host);
+                        .parse(pod.sgv)).handleOperation(pod.host);
                 };
             }
 
