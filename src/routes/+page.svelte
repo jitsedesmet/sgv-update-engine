@@ -24,10 +24,11 @@
 <TripleBrowser source={source} />
 
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&family=Rubik+Iso&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Audiowide&family=Funnel+Display:wght@300..800&display=swap');
     h1 {
         text-align: center;
-        font-family: "Rubik Iso", serif;
+        font-family: "Audiowide", serif;
+        font-style: normal;
         font-size: 3em;
         font-weight: 400;
         margin: 0 0 0.25em 0;
@@ -58,7 +59,6 @@
             list-style: none;
             padding: 6px 16px;
             position: relative;
-            transition: background-color 0.2s cubic-bezier(0.3, 0, 0.5, 1);
             user-select: none;
             -webkit-user-select: none;
             touch-action: manipulation;
