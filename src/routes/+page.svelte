@@ -7,9 +7,6 @@
   import PodSelector from "$lib/ui/components/PodSelector.svelte";
   import DemoGroup from "$lib/ui/components/DemoGroup.svelte";
 
-  const engine = new QueryEngine();
-  const focusPod = 'http://localhost:3000/pods/00000000000000000096/';
-
   let query = $state<string | undefined>(undefined);
   let pod = $derived<string>(page.url.searchParams.get('pod') ?? POD.BY_CREATION);
   let source = $derived<string>(page.url.searchParams.get('source') ?? POD.BY_CREATION);
@@ -22,7 +19,7 @@
 
 <PodSelector pod={pod} />
 
-<Yasge query={query} />
+<Yasge pod={pod} query={query} />
 
 <TripleBrowser source={source} />
 
