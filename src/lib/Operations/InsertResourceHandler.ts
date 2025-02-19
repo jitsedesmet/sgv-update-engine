@@ -1,5 +1,4 @@
-import * as RDF from '@rdfjs/types';
-import {Quad_Predicate} from '@rdfjs/types';
+import type * as RDF from '@rdfjs/types';
 import {RdfStore} from 'rdf-stores';
 import {assertVal, storeFromTriples} from '../helpers/Helpers';
 import {BaseOperationHandler, type ParserInsertType, type SgvOperation} from './BaseOperationHandler';
@@ -37,7 +36,7 @@ export class InsertResourceOperationHandler extends BaseOperationHandler {
         const resultingResource = DF.namedNode(resultingUri);
         await this.addQuadsToResource(triples.map(quad => DF.quad(
             quad.subject.equals(this.resource) ? resultingResource : quad.subject,
-            quad.predicate as Quad_Predicate,
+            quad.predicate as RDF.Quad_Predicate,
             quad.object.equals(this.resource) ? resultingResource : quad.object,
         )), resultingResource);
     }

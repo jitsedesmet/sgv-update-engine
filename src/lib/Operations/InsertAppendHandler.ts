@@ -1,4 +1,4 @@
-import * as RDF from '@rdfjs/types';
+import type * as RDF from '@rdfjs/types';
 import {RdfStore} from 'rdf-stores';
 import {storeFromTriples, storeUnion} from '../helpers/Helpers';
 import type {ParserInsertType, SgvOperation} from './BaseOperationHandler';

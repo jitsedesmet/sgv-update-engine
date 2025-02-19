@@ -1,5 +1,5 @@
 import {ResourceDescription} from './ResourceDescription';
-import * as RDF from '@rdfjs/types';
+import type * as RDF from '@rdfjs/types';
 import {RdfStore} from 'rdf-stores';
 
 export enum UpdateConditionType {

@@ -1,5 +1,5 @@
 import type {ParserDeleteType, SgvOperation} from './BaseOperationHandler';
-import * as RDF from '@rdfjs/types';
+import type * as RDF from '@rdfjs/types';
 import {RdfStore} from 'rdf-stores';
 import {storeFromTriples, storeMinus} from '../helpers/Helpers';
 import {EditResourceOperation} from './EditResourceOperation';

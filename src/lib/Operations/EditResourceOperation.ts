@@ -1,5 +1,5 @@
 import {BaseOperationHandler} from './BaseOperationHandler';
-import * as RDF from '@rdfjs/types';
+import type * as RDF from '@rdfjs/types';
 import {RdfStore} from 'rdf-stores';
 import {assertVal, fileResourceToStore, getPrunedStore, translateStore} from '../helpers/Helpers';
 import {DataFactory} from 'rdf-data-factory';

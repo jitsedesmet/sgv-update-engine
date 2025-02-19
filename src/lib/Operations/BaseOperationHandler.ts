@@ -1,5 +1,5 @@
 import type {GraphOrDefault, IriTerm, Pattern, Quads} from 'sparqljs';
-import * as RDF from '@rdfjs/types';
+import type * as RDF from '@rdfjs/types';
 import type {Quad} from '@rdfjs/types';
 import {QueryEngine} from '@comunica/query-sparql-file';
 import type {ParsedSGV} from '../sgv/treeStructure/ParsedSGV';

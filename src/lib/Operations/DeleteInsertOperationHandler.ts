@@ -11,7 +11,7 @@ import {
   translateStore
 } from '../helpers/Helpers';
 import {RdfStore} from 'rdf-stores';
-import * as RDF from '@rdfjs/types';
+import type * as RDF from '@rdfjs/types';
 import {DataFactory} from 'rdf-data-factory';
 import type {ParsedSGV} from '../sgv/treeStructure/ParsedSGV';
 import {QueryEngine} from '@comunica/query-sparql-file';

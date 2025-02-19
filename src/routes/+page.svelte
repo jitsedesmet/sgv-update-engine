@@ -1,40 +1,74 @@
 <script lang="ts">
   import {QueryEngine} from "@comunica/query-sparql-file";
-  import {SgvEngine} from "$lib/index";
+  import Yasge from "$lib/ui/components/Yasge.svelte";
+  import {page} from "$app/state";
+  import {POD} from "$lib/ui/pods";
+  import TripleBrowser from "$lib/ui/components/TripleBrowser.svelte";
+  import PodSelector from "$lib/ui/components/PodSelector.svelte";
+  import DemoGroup from "$lib/ui/components/DemoGroup.svelte";
 
   const engine = new QueryEngine();
   const focusPod = 'http://localhost:3000/pods/00000000000000000096/';
-  async function doPost() {
-    const sgvEngine = await SgvEngine.init(engine, focusPod);
-    const query = `
-    prefix ns1: <http://localhost:3000/www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/>
-prefix xsd: <http://www.w3.org/2001/XMLSchema#>
-prefix card: <http://localhost:3000/pods/00000000000000000096/profile/card#>
-prefix tag: <http://localhost:3000/www.ldbc.eu/ldbc_socialnet/1.0/tag/>
-PREFIX resource: <http://localhost:3000/dbpedia.org/resource/>
 
-INSERT DATA {
-  <> a ns1:Post ;
-    ns1:browserUsed "Chrome" ;
-    ns1:content
-      "I want to eat an apple." ;
-    ns1:creationDate
-    "2024-05-08T23:23:56.83Z"^^xsd:dateTime ;
-    ns1:id "416608218494388"^^xsd:long ;
-    ns1:hasCreator card:me ;
-    ns1:hasTag tag:Alanis_Morissette, tag:Austria ;
-    ns1:isLocatedIn resource:China ;
-    ns1:locationIP "1.83.28.23" .
-}
-    `
-    await sgvEngine.performOperation(query);
-  }
-
-
+  let query = $state<string | undefined>(undefined);
+  let pod = $derived<string>(page.url.searchParams.get('pod') ?? POD.BY_CREATION);
+  let source = $derived<string>(page.url.searchParams.get('source') ?? POD.BY_CREATION);
 
 </script>
 
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
+<h1>Storage Guidance Vocab. Engine</h1>
 
-<button onclick={() => doPost()}>Perfomm post</button>
+<DemoGroup bind:query={query} />
+
+<PodSelector pod={pod} />
+
+<Yasge query={query} />
+
+<a href={source}>open source</a>
+
+
+<TripleBrowser source={source} />
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&family=Rubik+Iso&display=swap');
+    h1 {
+        text-align: center;
+        font-family: "Rubik Iso", serif;
+        font-size: 3em;
+        font-weight: 400;
+    }
+    :global {
+        *:not(.yasge *) {
+            font-family: "Funnel Display", serif;
+            font-optical-sizing: auto;
+            font-weight: 300;
+            font-style: normal;
+        }
+        button, select {
+            appearance: none;
+            background-color: #fafbfc;
+            border: 1px solid rgba(27, 31, 35, 0.15);
+            border-radius: 6px;
+            box-shadow:
+                    rgba(27, 31, 35, 0.04) 0 1px 0,
+                    rgba(255, 255, 255, 0.25) 0 1px 0 inset;
+            box-sizing: border-box;
+            color: #24292e;
+            cursor: pointer;
+            display: inline-block;
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 20px;
+            list-style: none;
+            padding: 6px 16px;
+            position: relative;
+            transition: background-color 0.2s cubic-bezier(0.3, 0, 0.5, 1);
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+            vertical-align: middle;
+            white-space: nowrap;
+            word-wrap: break-word;
+        }
+    }
+</style>

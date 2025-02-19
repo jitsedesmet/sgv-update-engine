@@ -1,4 +1,4 @@
-import * as RDF from '@rdfjs/types';
+import type * as RDF from '@rdfjs/types';
 import {RdfStore} from 'rdf-stores';
 import {getOne} from '$lib/helpers/Helpers';
 import {rdfTypePredicate, shaclNodeShape, shaclTargetNode} from '../consts';

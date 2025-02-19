@@ -2,7 +2,7 @@ services:
   solidbench:
     build:
       context: .
-      dockerfile: Dockerfile.db
+      dockerfile: Dockerfile
       network: host
     ports:
       - "3000:3000"
