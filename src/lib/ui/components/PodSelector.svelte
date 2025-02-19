@@ -10,11 +10,19 @@
 </script>
 
 
-<select bind:value={pod} onchange={() => {console.log('routes'); goto(`?source=${pod}&pod=${pod}`)}}>
-    <option value={POD.BY_CREATION}>By Creation Date</option>
-    <option value={POD.BY_LOCATION}>By location</option>
-    <option value={POD.SEPARATE}>Separately</option>
-    <option value={POD.TOGETHER}>Together</option>
-</select>
+<div class="pod-selector">
+    <select bind:value={pod} onchange={() => {console.log('routes'); goto(`?source=${pod}&pod=${pod}`)}}>
+        <option value={POD.BY_CREATION}>By Creation Date</option>
+        <option value={POD.BY_LOCATION}>By location</option>
+        <option value={POD.SEPARATE}>Separately</option>
+        <option value={POD.TOGETHER}>Together</option>
+    </select>
 
-Corresponds to pod: <a href={pod}>{pod}</a>
+    Corresponds to pod: <a href={pod}>{pod}</a>
+</div>
+
+<style>
+    .pod-selector {
+        padding: 10px 0;
+    }
+</style>

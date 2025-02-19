@@ -12,3 +12,14 @@
         <button onclick={() => query = element.query}>{element.name}</button>
     {/each}
 </div>
+
+<style>
+    .demo-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    button {
+        flex: 1 1 0;
+    }
+</style>

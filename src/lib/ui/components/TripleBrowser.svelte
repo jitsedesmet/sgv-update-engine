@@ -1,5 +1,6 @@
 <script lang="ts">
   import {dereferenceTriples} from "$lib/ui/rdfFetch";
+  import Breadcrumbs from "$lib/ui/components/Breadcrumbs.svelte";
 
   interface Props {
     source: string;
@@ -10,6 +11,8 @@
 </script>
 
 <div class="browser">
+    <Breadcrumbs source={source} />
+
     {#await content}
         <p>Loading...</p>
     {:then content}
@@ -30,8 +33,8 @@
 
 <style>
     .browser {
-        height: 500px;
-        width: 1500px;
+        height: 100%;
+        width: calc(100% - 44px);
         border: black 2px solid;
         padding: 10px;
         margin: 10px;

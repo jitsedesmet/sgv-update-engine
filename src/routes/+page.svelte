@@ -24,9 +24,6 @@
 
 <Yasge query={query} />
 
-<a href={source}>open source</a>
-
-
 <TripleBrowser source={source} />
 
 <style>
@@ -44,6 +41,7 @@
             font-weight: 300;
             font-style: normal;
         }
+        a, a:visited, a:hover, a:active { color: #0000ee; }
         button, select {
             appearance: none;
             background-color: #fafbfc;
