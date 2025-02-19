@@ -22,7 +22,9 @@
       const query = yasqe.getValue();
       error = undefined;
       console.log(query);
-      await (await sgvEngine).performOperation(query).catch(err => error = err);
+      const sgvEngine = await SgvEngine.init(engine, pod)
+      console.log(sgvEngine.pod);
+      await sgvEngine.performOperation(query).catch(err => error = err);
     });
     return {
       update({ query: newQuery }) {
@@ -45,7 +47,6 @@
   let { query, pod }: Props = $props();
   let error = $state<string | undefined>(undefined);
   const engine = new QueryEngine();
-  let sgvEngine = $derived(SgvEngine.init(engine, pod));
 </script>
 
 

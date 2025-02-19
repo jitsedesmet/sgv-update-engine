@@ -6,7 +6,7 @@ export async function dereferenceTriples(source: string | undefined): Promise<Ui
   if (!source) {
     return [];
   }
-  const result = await fetch(new URL(source!), {headers: {'Accept': 'application/n-triples'}});
+  const result = await fetch(new URL(source!), {headers: {'Accept': 'application/n-triples'}, cache: "no-cache"});
   const text = await result.text();
   const triples: [string, string, string][] = text
     .split('\n')

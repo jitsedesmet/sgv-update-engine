@@ -6,7 +6,7 @@ import type {ParsedSGV} from './sgv/treeStructure/ParsedSGV';
 
 
 export class SgvEngine {
-  private constructor(private queryEngine: QueryEngine, private pod: string, private parsedSgv: ParsedSGV) {
+  private constructor(private queryEngine: QueryEngine, public pod: string, private parsedSgv: ParsedSGV) {
   }
   public static async init(queryEngine: QueryEngine, pod: string): Promise<SgvEngine> {
     const parsedSgv = (await SGVParser.init(queryEngine, pod)).parse();
