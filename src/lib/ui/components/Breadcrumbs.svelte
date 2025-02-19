@@ -8,11 +8,15 @@
   let crumbs = $derived.by(() => {
     const url = new URL(source);
     const paths = url.pathname.split('/').filter(Boolean);
+    const hasTrailingSlash = url.pathname.endsWith('/');
     const base = url.origin;
 
-    return paths.map((path, index) => {
-      const href = [base, ...paths.slice(0, index + 1), ''].join('/');
-      return {str: path, href};
+    return paths.map((part, index) => {
+      const pathBuilder = [base, ...paths.slice(0, index + 1)];
+      if (hasTrailingSlash || index !== paths.length -1) pathBuilder.push('');
+      const href = pathBuilder.join('/');
+      const route = `?source=${encodeURIComponent(href)}`;
+      return {str: part, href, route };
     });
   })
 </script>
@@ -23,7 +27,7 @@
     </span>
     <span>
         {#each crumbs as crumb}
-            /<a href={crumb.href}>{crumb.str}</a>
+            /<a href={crumb.route}>{crumb.str}</a>
         {/each}
     </span>
     <span>

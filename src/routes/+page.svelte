@@ -33,6 +33,7 @@
         font-family: "Rubik Iso", serif;
         font-size: 3em;
         font-weight: 400;
+        margin: 0 0 0.25em 0;
     }
     :global {
         *:not(.yasge *) {
