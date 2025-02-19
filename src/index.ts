@@ -1,14 +1,29 @@
 import {OperationParser} from './Operations/OperationParser';
 import {SGVParser} from './sgv/SGVParser';
 import {QueryEngine} from '@comunica/query-sparql-file';
+import {ParsedSGV} from './sgv/treeStructure/ParsedSGV';
+import fs from 'fs';
 
 
-async function main(pod: string, query_file: string): Promise<void> {
-    const engine = new QueryEngine();
-    const parsedSgv = await SGVParser.init(engine, pod);
-    const operation = await (await OperationParser.fromFile(engine, query_file))
-        .parse(parsedSgv.parse());
-    await operation.handleOperation(pod);
+export class SgvEngine {
+  private constructor(private queryEngine: QueryEngine, private pod: string, private parsedSgv: ParsedSGV) {
+  }
+  public static async init(queryEngine: QueryEngine, pod: string): Promise<SgvEngine> {
+    const parsedSgv = (await SGVParser.init(queryEngine, pod)).parse();
+    return new SgvEngine(queryEngine, pod, parsedSgv);
+  }
+  public async performOperation(query: string): Promise<void> {
+    const parsedOperation = await new OperationParser(this.queryEngine, query)
+      .parse(this.parsedSgv);
+    await parsedOperation.handleOperation(this.pod);
+  }
+}
+
+async function main(focusPod: string, queryFile: string) {
+  const engine = new QueryEngine();
+  const sgvEngine = await SgvEngine.init(engine, focusPod);
+  const query = await fs.promises.readFile(queryFile, 'utf8');
+  await sgvEngine.performOperation(query);
 }
 
 const printError = (e: Error) => console.error(e);

@@ -1,5 +1,4 @@
 import {InsertDeleteOperation, Parser, SparqlParser, SparqlQuery} from 'sparqljs';
-import fs from 'fs';
 import {BaseOperationHandler, NonUpdateOperationHandler} from './BaseOperationHandler';
 import {InsertResourceOperationHandler} from './InsertResourceHandler';
 import {OperationAddToResourceHandler} from './InsertAppendHandler';
@@ -27,11 +26,6 @@ export class OperationParser {
         this.sparqlParser = new Parser({
             baseIRI: this.baseIRI,
         });
-    }
-
-    public static async fromFile(engine: QueryEngine, query_file: string): Promise<OperationParser> {
-        const query = await fs.promises.readFile(query_file, 'utf8');
-        return new OperationParser(engine, query);
     }
 
   /**

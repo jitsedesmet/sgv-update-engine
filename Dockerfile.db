@@ -47,6 +47,13 @@ COPY --from=ldbc /opt/ldbc_snb_datagen/out /usr/src/app/SolidBench.js/out-snb/
 
 # Generate the fragments
 RUN node bin/solidbench generate --fragmentConfig './fragmenter-config-pod.json'
+#RUN mkdir intersting-pods && \
+#    mv out-fragments/http/localhost_3000/pods/00000000000000000065 intersting-pods/by-creation && \
+#    mv out-fragments/http/localhost_3000/pods/00000000000000000094 intersting-pods/together && \
+#    mv out-fragments/http/localhost_3000/pods/00000000000000000143 intersting-pods/separate && \
+#    mv out-fragments/http/localhost_3000/pods/00000000000000000150 intersting-pods/by-location && \
+#    rm -r out-fragments/http/localhost_3000/pods/* && \
+#    mv intersting-pods/* out-fragments/http/localhost_3000/pods/
 
 FROM node:lts AS runner
 
