@@ -1,26 +1,17 @@
 {
-  "devDependencies": {
-    "@tsconfig/node18": "^18.2.2",
-    "@types/rdf-ext": "^2.5.0",
-    "@types/rdf-validate-shacl": "^0.4.5",
-    "@types/sparqljs": "^3.1.10",
-    "@typescript-eslint/eslint-plugin": "^6.4.0",
-    "eslint": "^8.57.0",
-    "tinybench": "^2.8.0",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.4.3",
-    "typescript-eslint": "^7.4.0"
-  },
+  "name": "my-app",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
   "scripts": {
-    "start": "yarn run build:ts && node dist/src/index.js",
-    "dev": "ts-node src/index.ts",
-    "build:ts": "tsc",
-    "bench": "yarn run build:ts && node dist/benchmark/bench.js",
-    "dev-bench": "ts-node benchmark/bench.ts"
+    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "vite preview",
+    "prepare": "svelte-kit sync || echo ''",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+    "lint": "eslint ."
   },
-  "name": "sgv-comunica",
-  "version": "1.0.0",
-  "license": "MIT",
   "dependencies": {
     "@comunica/query-sparql-file": "^3.1.2",
     "@rdfjs/parser-n3": "^2.0.2",
@@ -30,6 +21,24 @@
     "rdf-validate-shacl": "0.4.5",
     "sparqljs": "^3.7.1",
     "url-template": "^3.1.1"
+  },
+  "devDependencies": {
+    "@types/rdf-ext": "^2.5.0",
+    "@types/rdf-validate-shacl": "^0.4.5",
+    "@types/sparqljs": "^3.1.10",
+    "@eslint/compat": "^1.2.5",
+    "@eslint/js": "^9.18.0",
+    "@sveltejs/adapter-auto": "^4.0.0",
+    "@sveltejs/kit": "^2.16.0",
+    "@sveltejs/vite-plugin-svelte": "^5.0.0",
+    "eslint": "^9.18.0",
+    "eslint-plugin-svelte": "^2.46.1",
+    "globals": "^15.14.0",
+    "svelte": "^5.0.0",
+    "svelte-check": "^4.0.0",
+    "typescript": "^5.0.0",
+    "typescript-eslint": "^8.20.0",
+    "vite": "^6.0.0"
   },
   "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

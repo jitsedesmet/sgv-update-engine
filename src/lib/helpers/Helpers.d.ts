@@ -1,0 +1,17 @@
+import { RdfStore } from 'rdf-stores';
+import type * as RDF from '@rdfjs/types';
+import { QueryEngine } from '@comunica/query-sparql-file';
+import { SparqlQuery, Triple } from 'sparqljs';
+export declare function getOne(sgv: RdfStore, subject?: RDF.Quad_Object, predicate?: RDF.Quad_Predicate, object?: RDF.Quad_Subject): RDF.Quad;
+export declare function termToString(rdf: RDF.Term): string;
+export declare function quadToString(rdf: RDF.Quad): string;
+export declare function fileResourceToStore(engine: QueryEngine, resource: string): Promise<RdfStore>;
+export declare function getPrunedStore(store: RdfStore, focusResource: RDF.NamedNode | RDF.BlankNode): RdfStore;
+export declare function getRootResources(store: RdfStore): RDF.NamedNode[];
+export declare function storeFromTriples(triples: Triple[]): RdfStore;
+export declare function storeUnion(store1: RdfStore, store2: RdfStore): RdfStore;
+export declare function coreStoreUnion(store1: RDF.DatasetCore, store2: RDF.DatasetCore): RDF.DatasetCore;
+export declare function storeMinus(store1: RdfStore, store2: RdfStore): RdfStore;
+export declare function translateStore(store: RdfStore, from: RDF.NamedNode, to: RDF.NamedNode): RdfStore;
+export declare function getQueryWithoutPrefixes(query: SparqlQuery): string;
+export declare function assertVal<T>(val: T | undefined): T;

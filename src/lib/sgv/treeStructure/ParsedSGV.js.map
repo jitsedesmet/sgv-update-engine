@@ -1,0 +1,1 @@
+{"version":3,"file":"ParsedSGV.js","sourceRoot":"","sources":["ParsedSGV.ts"],"names":[],"mappings":"","sourcesContent":["import {RootedCanonicalCollection} from './StructuredCollection';\n\nexport interface ParsedSGV {\n    collections: RootedCanonicalCollection[];\n}\n"]}

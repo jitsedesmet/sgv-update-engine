@@ -4,7 +4,7 @@ This is a query engine that wraps around [Comunica](https://github.com/comunica/
 This query engine is able to consume the Storage Guidance Vocabulary as proposed by Jitse De Smet in [his thesis](https://thesis.jitsedesmet.be/).
 The complete thesis document can be found [online](https://thesis.jitsedesmet.be/solution/report.pdf).
 
-This repository contains both the [source code of the wrapper](/src) and the [benchmarking software](/benchmark).
+This repository contains both the [source code of the wrapper](/src-back) and the [benchmarking software](/benchmark).
 The benchmark assumes that a [SolidBench](https://github.com/SolidBench/SolidBench.js) server is running on `http://localhost:3000`.
 Each pod should contain an SGV description of the data it contains.
 A Docker image is available to run the SolidBench server with SGV described pods.
