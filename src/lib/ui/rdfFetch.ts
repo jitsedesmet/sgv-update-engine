@@ -2,6 +2,10 @@ import {POD_MAP} from "$lib/ui/pods";
 
 export type UiTriple = [{ str: string; href?: string }, { str: string; href?: string }, { str: string; href?: string }, boolean];
 
+function compareTriples(a: [string, string, string], b: [string, string, string]): number {
+  return a[0].localeCompare(b[0]) || a[1].localeCompare(b[1]) || a[2].localeCompare(b[2]);
+}
+
 export async function dereferenceTriples(source: string | undefined, original?: Promise<UiTriple[]>): Promise<UiTriple[]> {
   // Let's fail the original first before actually doing a fetch again.
   const prev = original === undefined ? undefined : await original;
@@ -17,9 +21,7 @@ export async function dereferenceTriples(source: string | undefined, original?: 
     .map(line => <[string, string, string]> (line.match(/^([^ ]+) ([^ ]+) (.*) \./)?.slice(1, 4) ?? ['fail', 'fail', 'fail']));
 
   // Sort triples
-  const sorted = triples
-    .sort((a, b) =>
-      a[0].localeCompare(b[0]) || a[1].localeCompare(b[1]) || a[2].localeCompare(b[2]));
+  const sorted = triples.sort(compareTriples);
 
   const pruneRepeats: [string, string, string][] = [];
   let focusSubj = undefined;
@@ -53,10 +55,10 @@ export async function dereferenceTriples(source: string | undefined, original?: 
   if (prev === undefined) {
     return hrefSeparated;
   }
-  let iterIndex = 0;
+  const precContained = new Set(prev.map(t => [t[0], t[1], t[2]].map(part => part.str).join(' ')));
   for (const [subj, pred, obj] of hrefSeparated) {
-    diffMarked.push([subj, pred, obj, true]);
+    const exists = precContained.has([subj.str, pred.str, obj.str].join(' '));
+    diffMarked.push([subj, pred, obj, !exists]);
   }
-  console.log(diffMarked);
   return diffMarked;
 }

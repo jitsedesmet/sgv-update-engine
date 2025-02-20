@@ -26,6 +26,7 @@
       content = dereferenceTriples(source);
     }
   });
+  let changeCount = $derived.by(async () => (await content).filter(([, , , changed]) => changed).length);
 </script>
 
 {#snippet uriThingy(item: UiTriple[0], markChanged: boolean)}
@@ -37,7 +38,23 @@
 {/snippet}
 
 <div class="browser">
-    <Breadcrumbs source={source} />
+    <div class="header">
+        <Breadcrumbs source={source} />
+
+        {#await Promise.all([content, changeCount])}
+            ?
+        {:then [content, changeCount]}
+            {#if changeCount === 0}
+                <span style="font-weight: bold">
+                    Showing {content.length} triples
+                </span>
+            {:else}
+                <span style="color: rgba(119, 238, 119, 1); font-weight: bold">
+                    Changed {changeCount} triples, Showing {changeCount} triples
+                </span>
+            {/if}
+        {/await}
+    </div>
 
     {#await content}
         <p>Loading...</p>
@@ -66,13 +83,28 @@
         display: grid;
         grid-template-columns: auto auto auto;
     }
+    .header {
+        display: flex;
+        justify-content: space-between;
+    }
 
     @keyframes back {
-      0% { background: rgba(119, 238, 119, 1); }
-      50% { background: rgba(119, 238, 119, 1); }
-      100% { background: rgba(255, 255, 0, 0); }
+      0% {
+          background: rgba(119, 238, 119, 0.5);
+          animation-timing-function: ease-out;
+      }
+      10% {
+          background: rgba(119, 238, 119, 1);
+          animation-timing-function: ease-in;
+      }
+      20% {
+          background: rgba(119, 238, 119, 0.5);
+      }
+      100% {
+          background: rgba(119, 238, 119, 0.5);
+      }
     }
     .markChanged {
-        animation: back 5s forwards ease;
+        animation: back 10s forwards ease;
     }
 </style>
