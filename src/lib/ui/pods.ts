@@ -1,3 +1,5 @@
+import {page} from "$app/state";
+
 export const POD = {
   BY_CREATION: 'http://localhost:3000/pods/00000000000000000065/',
   BY_LOCATION: 'http://localhost:3000/pods/00000000000000000150/',

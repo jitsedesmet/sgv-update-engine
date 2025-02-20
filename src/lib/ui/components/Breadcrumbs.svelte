@@ -1,4 +1,6 @@
 <script lang="ts">
+  import {alterQuery} from "$lib/ui/helpers.svelte";
+
   interface Props {
     source: string;
   }
@@ -15,7 +17,7 @@
       const pathBuilder = [base, ...paths.slice(0, index + 1)];
       if (hasTrailingSlash || index !== paths.length -1) pathBuilder.push('');
       const href = pathBuilder.join('/');
-      const route = `?source=${encodeURIComponent(href)}`;
+      const route = alterQuery('source', href);
       return {str: part, href, route };
     });
   })
@@ -23,7 +25,7 @@
 
 <div class="breadcrumbs">
     <span>
-      Browse Location:
+      Location (local):
     </span>
     <span>
         {#each crumbs as crumb}
@@ -31,7 +33,7 @@
         {/each}
     </span>
     <span>
-        Open Location:
+        Location (external):
     </span>
     <span>
         {#each crumbs as crumb}

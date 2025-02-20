@@ -1,6 +1,7 @@
 <script lang="ts">
   import {dereferenceTriples} from "$lib/ui/rdfFetch";
   import Breadcrumbs from "$lib/ui/components/Breadcrumbs.svelte";
+  import {alterQuery} from "$lib/ui/helpers.svelte";
 
   interface Props {
     source: string;
@@ -23,8 +24,8 @@
         <div class="grid">
             {#each content as line}
                 {#each line as item}
-                    {#if 'href' in item}
-                        <a href={item.href}>{item.str}</a>
+                    {#if 'href' in item && item.href !== undefined}
+                        <a href={alterQuery('source', item.href)}>{item.str}</a>
                     {:else}
                         <div>{item.str}</div>
                     {/if}
