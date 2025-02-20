@@ -1,19 +1,22 @@
 import {POD_MAP} from "$lib/ui/pods";
 
-export type UiTriple = [{ str: string; href?: string }, { str: string; href?: string }, { str: string; href?: string }];
+export type UiTriple = [{ str: string; href?: string }, { str: string; href?: string }, { str: string; href?: string }, boolean];
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export async function dereferenceTriples(source: string | undefined): Promise<UiTriple[]> {
+export async function dereferenceTriples(source: string | undefined, original?: Promise<UiTriple[]>): Promise<UiTriple[]> {
+  // Let's fail the original first before actually doing a fetch again.
+  const prev = original === undefined ? undefined : await original;
   if (!source) {
     return [];
   }
   const result = await fetch(new URL(source!), {headers: {'Accept': 'application/n-triples'}, cache: "no-cache"});
   const text = await result.text();
+  // Split n-triples into triples of string
   const triples: [string, string, string][] = text
     .split('\n')
     .filter(line => line.length > 0)
     .map(line => <[string, string, string]> (line.match(/^([^ ]+) ([^ ]+) (.*) \./)?.slice(1, 4) ?? ['fail', 'fail', 'fail']));
 
+  // Sort triples
   const sorted = triples
     .sort((a, b) =>
       a[0].localeCompare(b[0]) || a[1].localeCompare(b[1]) || a[2].localeCompare(b[2]));
@@ -34,8 +37,8 @@ export async function dereferenceTriples(source: string | undefined): Promise<Ui
     }
   }
 
-  return pruneRepeats
-    .map(triple => <UiTriple>triple.map(part => {
+  const hrefSeparated = pruneRepeats
+    .map(triple => <UiTriple>[...triple.map(part => {
       if (part[0] === '<' && part[part.length - 1] === '>') {
         const href = part.slice(1, -1);
         let str = part;
@@ -45,5 +48,15 @@ export async function dereferenceTriples(source: string | undefined): Promise<Ui
         return {str, href};
       }
       return {str: part};
-    }));
+    }), false]);
+  const diffMarked: UiTriple[] = [];
+  if (prev === undefined) {
+    return hrefSeparated;
+  }
+  let iterIndex = 0;
+  for (const [subj, pred, obj] of hrefSeparated) {
+    diffMarked.push([subj, pred, obj, true]);
+  }
+  console.log(diffMarked);
+  return diffMarked;
 }
