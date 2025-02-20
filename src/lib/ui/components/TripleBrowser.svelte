@@ -37,24 +37,25 @@
     {/if}
 {/snippet}
 
-<div class="browser">
-    <div class="header">
-        <Breadcrumbs source={source} />
+<div class="header">
+    <Breadcrumbs source={source} />
 
-        {#await Promise.all([content, changeCount])}
-            ?
-        {:then [content, changeCount]}
-            {#if changeCount === 0}
+    {#await Promise.all([content, changeCount])}
+        ?
+    {:then [content, changeCount]}
+        {#if changeCount === 0}
                 <span style="font-weight: bold">
                     Showing {content.length} triples
                 </span>
-            {:else}
+        {:else}
                 <span style="color: rgba(119, 238, 119, 1); font-weight: bold">
                     Changed {changeCount} triples, Showing {changeCount} triples
                 </span>
-            {/if}
-        {/await}
-    </div>
+        {/if}
+    {/await}
+</div>
+
+<div class="browser">
 
     {#await content}
         <p>Loading...</p>
@@ -70,22 +71,30 @@
 </div>
 
 <style>
+    .header {
+        display: flex;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        padding: 10px 10px 0 10px;
+        background: white;
+        margin: 0 10px;
+        border: black solid;
+        border-width: 2px 2px 0 2px;
+    }
     .browser {
         height: 100%;
         width: calc(100% - 44px);
-        border: black 2px solid;
-        padding: 10px;
-        margin: 10px;
+        border: black solid;
+        border-width: 0 2px 2px 2px;
+        padding: 0 10px 10px 10px;
+        margin: 0 10px;
         overflow: scroll;
     }
 
     .grid {
         display: grid;
         grid-template-columns: auto auto auto;
-    }
-    .header {
-        display: flex;
-        justify-content: space-between;
     }
 
     @keyframes back {
