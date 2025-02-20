@@ -2,6 +2,7 @@ import {POD_MAP} from "$lib/ui/pods";
 
 export type UiTriple = [{ str: string; href?: string }, { str: string; href?: string }, { str: string; href?: string }];
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function dereferenceTriples(source: string | undefined): Promise<UiTriple[]> {
   if (!source) {
     return [];

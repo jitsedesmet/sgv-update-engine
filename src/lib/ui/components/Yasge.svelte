@@ -25,6 +25,7 @@
       const sgvEngine = await SgvEngine.init(engine, pod)
       console.log(sgvEngine.pod);
       await sgvEngine.performOperation(query).catch(err => error = err);
+      toggle();
     });
     return {
       update({ query: newQuery }) {
@@ -40,11 +41,16 @@
     };
   }
 
+  function toggle() {
+    recompute = !recompute;
+  }
+
   interface Props {
     query: string | undefined;
     pod: string;
+    recompute: boolean;
   }
-  let { query, pod }: Props = $props();
+  let { query, pod, recompute = $bindable() }: Props = $props();
   let error = $state<string | undefined>(undefined);
   const engine = new QueryEngine();
 </script>

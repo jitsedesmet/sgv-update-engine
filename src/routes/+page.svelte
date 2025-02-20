@@ -1,5 +1,4 @@
 <script lang="ts">
-  import {QueryEngine} from "@comunica/query-sparql-file";
   import Yasge from "$lib/ui/components/Yasge.svelte";
   import {page} from "$app/state";
   import {POD} from "$lib/ui/pods";
@@ -10,6 +9,7 @@
   let query = $state<string | undefined>(undefined);
   let pod = $derived<string>(page.url.searchParams.get('pod') ?? POD.BY_CREATION);
   let source = $derived<string>(page.url.searchParams.get('source') ?? POD.BY_CREATION);
+  let recompute = $state<boolean>(false);
 
 </script>
 
@@ -19,9 +19,9 @@
 
 <PodSelector pod={pod} />
 
-<Yasge pod={pod} query={query} />
+<Yasge bind:recompute={recompute} pod={pod} query={query} />
 
-<TripleBrowser source={source} />
+<TripleBrowser recompute={recompute} source={source} />
 
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Audiowide&family=Funnel+Display:wght@300..800&display=swap');

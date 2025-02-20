@@ -4,10 +4,14 @@
 
   interface Props {
     source: string;
+    recompute: boolean;
   }
 
-  let { source }: Props = $props();
-  let content = $derived.by(() => dereferenceTriples(source));
+  let { source, recompute }: Props = $props();
+  let content = $derived.by(() => {
+    const dummy = recompute;
+    return dereferenceTriples(source);
+  });
 </script>
 
 <div class="browser">
