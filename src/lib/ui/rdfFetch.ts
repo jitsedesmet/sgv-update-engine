@@ -55,6 +55,7 @@ export async function dereferenceTriples(source: string | undefined, original?: 
   if (prev === undefined) {
     return hrefSeparated;
   }
+  // TODO: Support subject/ prefix omission!!!
   const precContained = new Set(prev.map(t => [t[0], t[1], t[2]].map(part => part.str).join(' ')));
   for (const [subj, pred, obj] of hrefSeparated) {
     const exists = precContained.has([subj.str, pred.str, obj.str].join(' '));

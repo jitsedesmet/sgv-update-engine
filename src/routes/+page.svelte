@@ -5,6 +5,8 @@
   import TripleBrowser from "$lib/ui/components/TripleBrowser.svelte";
   import PodSelector from "$lib/ui/components/PodSelector.svelte";
   import DemoGroup from "$lib/ui/components/DemoGroup.svelte";
+  import Comunica from "$lib/ui/components/SVG/Comunica.svelte";
+  import Solid from "$lib/ui/components/SVG/Solid.svelte";
 
   let query = $state<string | undefined>(undefined);
   let pod = $derived<string>(page.url.searchParams.get('pod') ?? POD.BY_CREATION);
@@ -13,7 +15,15 @@
 
 </script>
 
-<h1>Storage Guidance Vocab. Engine</h1>
+<div class="header">
+    <svg viewBox="0 0 250 250" height="5em">
+        <Comunica />
+    </svg>
+    <h1>Storage Guidance Vocab. Engine</h1>
+    <svg viewBox="0 0 350 350" height="5em">
+        <Solid />
+    </svg>
+</div>
 
 <DemoGroup bind:query={query} />
 
@@ -34,6 +44,10 @@
         margin: 0 0 0.25em 0;
     }
     :global {
+        .header {
+            display: flex;
+            justify-content: space-between;
+        }
         *:not(.yasge *) {
             font-family: "Funnel Display", serif;
             font-optical-sizing: auto;

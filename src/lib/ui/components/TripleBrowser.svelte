@@ -75,7 +75,7 @@
         display: flex;
         justify-content: space-between;
         position: sticky;
-        top: 0;
+        top: -2px;
         padding: 10px 10px 0 10px;
         background: white;
         margin: 0 10px;

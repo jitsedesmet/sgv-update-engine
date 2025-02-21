@@ -11,6 +11,7 @@
 
 
 <div class="pod-selector">
+    <label for="pod">Fragmentation:</label>
     <select bind:value={pod} onchange={() => {console.log('routes'); goto(`?source=${pod}&pod=${pod}`)}}>
         <option value={POD.BY_CREATION}>By Creation Date</option>
         <option value={POD.BY_LOCATION}>By location</option>
