@@ -49,7 +49,7 @@
                 </span>
         {:else}
                 <span style="color: rgba(119, 238, 119, 1); font-weight: bold">
-                    Changed {changeCount} triples, Showing {changeCount} triples
+                    Changed {changeCount} triples, Showing {content.length} triples
                 </span>
         {/if}
     {/await}
