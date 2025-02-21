@@ -34,6 +34,7 @@
         await sgvEngine.performOperation(query, false);
       } catch (err: unknown) {
         error = (err as Error).message;
+        console.error(err);
       }
       toggle();
     });

@@ -32,17 +32,15 @@ export class DeleteInsertOperationHandler extends BaseOperationHandler {
     public async findAlteredResource(pod: string, rawDelete: string | undefined, rawInsert: string | undefined, rawWhere: string): Promise<RDF.NamedNode> {
       // Where can we expect posts?
       const posts = RdfStore.createDefault();
+
       const postDirLocation = this.parsedSgv.collections.filter(collection => collection.uri.value.indexOf('posts') !== -1)[0].uri;
 
       const postsLocations: string[] = [];
 
-      for await (const quad of await this.engine.queryQuads('CONSTRUCT WHERE { ?s ?p ?o }', {
+      for await (const binding of await this.engine.queryBindings('SELECT ?o WHERE { ?s <http://www.w3.org/ns/ldp#contains> ?o }', {
           sources: [postDirLocation.value]
       })) {
-        if (quad.predicate.equals(DF.namedNode('http://www.w3.org/ns/ldp#contains'))) {
-          postsLocations.push(quad.object.value);
-        }
-        posts.addQuad(quad);
+        postsLocations.push(binding.get('o')!.value);
       }
 
       if (postsLocations.length !== 0) {
@@ -93,15 +91,17 @@ export class DeleteInsertOperationHandler extends BaseOperationHandler {
         let rawWhere = '';
         if (this.parsedOperation.delete?.length) {
             const selection = rawQuery.replaceAll(
-                /^DELETE \{(.*)\}\s+(INSERT \{(.*)\}\s+)?WHERE \{(.*)\}$/gu,
+                /DELETE\s*\{([^}]*)\}\s*(INSERT\s*\{([^}]*)\}\s*)?WHERE\s*\{([^}]*)\}/gui,
                 '$1\t$3\t$4'
             ).split('\t');
             rawDelete = selection[0];
             rawInsert = selection[1];
             rawWhere = selection[2];
+
+            console.log(selection)
         } else {
             const selection = rawQuery.replaceAll(
-                /^INSERT \{(.*)\}\s+WHERE \{(.*)\}$/gu,
+                /INSERT\s*\{([^}]*)\}\s*WHERE\s*\{([^}]*)\}/gui,
                 '$1\t$2'
             ).split('\t');
             rawInsert = selection[0];

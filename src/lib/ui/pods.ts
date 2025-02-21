@@ -25,50 +25,54 @@ PREFIX resource: <http://localhost:3000/dbpedia.org/resource/>
 INSERT DATA {
   <> a ns1:Post ;
     ns1:browserUsed "Chrome" ;
-    ns1:content
-      "I want to eat an apple." ;
-    ns1:creationDate
-    "2024-05-08T23:23:56.83Z"^^xsd:dateTime ;
+    ns1:content "Let's go ESWC!" ;
+    ns1:creationDate "2024-05-26T07:23:56.83Z"^^xsd:dateTime ;
     ns1:id "416608218494388"^^xsd:long ;
     ns1:hasCreator card:me ;
-    ns1:hasTag tag:Alanis_Morissette, tag:Austria ;
-    ns1:isLocatedIn resource:China ;
+    ns1:hasTag tag:Semantic_Web, tag:Portorož ;
+    ns1:isLocatedIn resource:Slovenia ;
     ns1:locationIP "1.83.28.23" .
 }`
 }, {
   name: 'Change CreationDate',
   query: `prefix ns1: <http://localhost:3000/www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/>
 prefix xsd: <http://www.w3.org/2001/XMLSchema#>
-prefix res: <http://localhost:3000/pods/00000000000000000096/posts/2024-05-08#>
 
 DELETE {
-    ?id ns1:creationDate   "2024-05-08T23:23:56.83Z"^^xsd:dateTime .
+    ?id ns1:creationDate "2024-05-26T07:23:56.83Z"^^xsd:dateTime .
 } INSERT {
-    ?id ns1:creationDate "2024-06-20T23:23:56.83Z"^^xsd:dateTime .
-} where {
-    BIND(res:416608218494388 as ?id)
+    ?id ns1:creationDate "2025-06-01T07:23:56.83Z"^^xsd:dateTime .
+} WHERE {
+    ?id ns1:creationDate "2024-05-26T07:23:56.83Z"^^xsd:dateTime .
 }
 ` }, {
-  name: 'append tag',
+  name: 'Insert Data Tag',
   query: `prefix ns1: <http://localhost:3000/www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/>
 prefix tag: <http://localhost:3000/www.ldbc.eu/ldbc_socialnet/1.0/tag/>
-prefix res: <http://localhost:3000/pods/00000000000000000096/posts/2024-06-20#>
+# prefix res: <http://localhost:3000/pods/00000000000000000065/posts/2025-06-01#>
+# prefix res: <http://localhost:3000/pods/00000000000000000150/posts/Slovenia#>
+# prefix res: <http://localhost:3000/pods/00000000000000000143/posts/>
+# prefix res: <http://localhost:3000/pods/00000000000000000094/posts#>
 
 INSERT DATA {
     res:416608218494388  ns1:hasTag tag:Mountain .
 }` }, {
-  name: 'illegal Append Id',
+  name: 'Illegal Append Id',
   query: `prefix ns1: <http://localhost:3000/www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/>
 prefix xsd: <http://www.w3.org/2001/XMLSchema#>
-prefix res: <http://localhost:3000/pods/00000000000000000096/posts/2024-05-08#>
 
-INSERT DATA {
-    res:416608218494388 ns1:id "416608218494389"^^xsd:long ; .
+INSERT {
+    ?resource ns1:id "416608218494389"^^xsd:long ; .
+} WHERE {
+    ?resource ns1:id "416608218494388"^^xsd:long
 }` }, {
   name: 'Delete Data Tag',
   query: `prefix ns1: <http://localhost:3000/www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/>
 prefix tag: <http://localhost:3000/www.ldbc.eu/ldbc_socialnet/1.0/tag/>
-prefix res: <http://localhost:3000/pods/00000000000000000096/posts/2024-06-20#>
+# prefix res: <http://localhost:3000/pods/00000000000000000065/posts/2025-06-01#>
+# prefix res: <http://localhost:3000/pods/00000000000000000150/posts/Slovenia#>
+# prefix res: <http://localhost:3000/pods/00000000000000000143/posts/>
+# prefix res: <http://localhost:3000/pods/00000000000000000094/posts#>
 
 DELETE DATA {
     res:416608218494388 ns1:hasTag tag:Mountain .
@@ -76,63 +80,58 @@ DELETE DATA {
   name: 'Remove Id (Illegal)',
   query: `prefix ns1: <http://localhost:3000/www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/>
 prefix xsd: <http://www.w3.org/2001/XMLSchema#>
-prefix res: <http://localhost:3000/pods/00000000000000000096/posts/2024-06-20#>
 
-DELETE DATA {
-    res:416608218494388 ns1:id "416608218494388"^^xsd:long ; .
+DELETE {
+    ?resource ns1:id "416608218494388"^^xsd:long ; .
+} WHERE {
+    ?resource ns1:id "416608218494388"^^xsd:long
 }` }, {
   name: 'Delete tags',
   query: `prefix ns1: <http://localhost:3000/www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/>
-prefix res: <http://localhost:3000/pods/00000000000000000096/posts/2024-06-20#>
+prefix xsd: <http://www.w3.org/2001/XMLSchema#>
 
 DELETE {
-    res:416608218494388 ns1:hasTag ?x
-} where {
-    res:416608218494388 ns1:hasTag ?x
-}` }, {
-  name: 'Append Tag',
-  query: `prefix ns1: <http://localhost:3000/www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/>
-prefix tag: <http://localhost:3000/www.ldbc.eu/ldbc_socialnet/1.0/tag/>
-prefix res: <http://localhost:3000/pods/00000000000000000096/posts/2024-06-20#>
-
-INSERT DATA {
-    res:416608218494388  ns1:hasTag tag:Mountain .
+    ?resource ns1:hasTag ?tag ;
+} WHERE {
+    ?resource ns1:id "416608218494388"^^xsd:long ;
+              ns1:hasTag ?tag ;
 }` }, {
   name: 'Insert where Tag',
   query: `prefix tag: <http://localhost:3000/www.ldbc.eu/ldbc_socialnet/1.0/tag/>
-prefix res: <http://localhost:3000/pods/00000000000000000096/posts/2024-06-20#>
 
 INSERT {
-    res:416608218494388 ?p tag:High
+    ?resource ?p tag:High
 } where {
-    res:416608218494388 ?p tag:Mountain
+    ?resource ?p tag:Mountain
 }` }, {
   name: 'Delete Where Complete',
-  query: `prefix res: <http://localhost:3000/pods/00000000000000000096/posts/2024-06-20#>
+  query: `prefix ns1: <http://localhost:3000/www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/>
+prefix xsd: <http://www.w3.org/2001/XMLSchema#>
 
 DELETE WHERE {
-  res:416608218494388 ?p ?o
+    ?id ns1:creationDate "2025-06-01T07:23:56.83Z"^^xsd:dateTime ;
+        ?p ?o ;
 }` }, {
   name: 'Delete Data Complete',
   query: `prefix ns1: <http://localhost:3000/www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/>
 prefix xsd: <http://www.w3.org/2001/XMLSchema#>
 prefix card: <http://localhost:3000/pods/00000000000000000096/profile/card#>
 prefix tag: <http://localhost:3000/www.ldbc.eu/ldbc_socialnet/1.0/tag/>
-prefix resource: <http://localhost:3000/dbpedia.org/resource/>
-prefix res: <http://localhost:3000/pods/00000000000000000096/posts/2024-05-08#>
+PREFIX resource: <http://localhost:3000/dbpedia.org/resource/>
+# prefix res: <http://localhost:3000/pods/00000000000000000065/posts/2024-05-26#>
+# prefix res: <http://localhost:3000/pods/00000000000000000150/posts/Slovenia#>
+# prefix res: <http://localhost:3000/pods/00000000000000000143/posts/>
+# prefix res: <http://localhost:3000/pods/00000000000000000094/posts#>
 
 DELETE DATA {
-    res:416608218494388
-        a ns1:Post ;
-        ns1:browserUsed "Chrome" ;
-        ns1:content
-            "I want to eat an apple." ;
-        ns1:creationDate
-            "2024-05-08T23:23:56.83Z"^^xsd:dateTime ;
-        ns1:id "416608218494388"^^xsd:long ;
-        ns1:hasCreator card:me ;
-        ns1:hasTag tag:Alanis_Morissette, tag:Austria ;
-        ns1:isLocatedIn resource:China ;
-        ns1:locationIP "1.83.28.23" .
+  res:416608218494388 a ns1:Post ;
+    ns1:browserUsed "Chrome" ;
+    ns1:content "Let's go ESWC!" ;
+    ns1:creationDate "2024-05-26T07:23:56.83Z"^^xsd:dateTime ;
+    ns1:id "416608218494388"^^xsd:long ;
+    ns1:hasCreator card:me ;
+    ns1:hasTag tag:Semantic_Web, tag:Portorož ;
+    ns1:isLocatedIn resource:Slovenia ;
+    ns1:locationIP "1.83.28.23" .
 }`}
 ];

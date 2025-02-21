@@ -12,7 +12,7 @@
   let pod = $derived<string>(page.url.searchParams.get('pod') ?? POD.BY_CREATION);
   let source = $derived<string>(page.url.searchParams.get('source') ?? POD.BY_CREATION);
   let recompute = $state<boolean>(false);
-  let autoFocus = $state(false);
+  let autoFocus = $state(true);
 
 </script>
 

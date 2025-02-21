@@ -61,7 +61,7 @@ export class OperationParser {
                     const rawQuery = getQueryWithoutPrefixes(parsedQuery);
 
                     const rewrittenQuery = rawQuery.replaceAll(
-                        /^DELETE WHERE \{(.*)\}$/gu,
+                        /DELETE\s+WHERE\s*\{([^}]*)\}/gu,
                         'DELETE { $1 } WHERE { $1 }'
                     );
                     return await new OperationParser(this.engine, rewrittenQuery).parse(parsedSgv);

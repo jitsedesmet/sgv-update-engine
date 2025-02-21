@@ -13,3 +13,4 @@ services:
       network: host
     ports:
       - "3001:3000"
+# Run docker compose rm -f to remove anonymous volumes attached to containers
