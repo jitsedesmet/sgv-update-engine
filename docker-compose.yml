@@ -1,5 +1,6 @@
 services:
   solidbench:
+    image: ghcr.io/jitsedesmet/solidbench-sgv:latest
     build:
       context: .
       dockerfile: database.dockerfile
@@ -7,6 +8,7 @@ services:
     ports:
       - "3000:3000"
   webapp:
+    image: ghcr.io/jitsedesmet/sgv-web-app:latest
     build:
       context: .
       dockerfile: webapp.dockerfile
