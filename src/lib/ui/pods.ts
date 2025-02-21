@@ -81,9 +81,7 @@ DELETE DATA {
   query: `prefix ns1: <http://localhost:3000/www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/>
 prefix xsd: <http://www.w3.org/2001/XMLSchema#>
 
-DELETE {
-    ?resource ns1:id "416608218494388"^^xsd:long ; .
-} WHERE {
+DELETE WHERE {
     ?resource ns1:id "416608218494388"^^xsd:long
 }` }, {
   name: 'Delete tags',

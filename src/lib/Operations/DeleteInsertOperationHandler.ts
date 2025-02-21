@@ -33,14 +33,19 @@ export class DeleteInsertOperationHandler extends BaseOperationHandler {
       // Where can we expect posts?
       const posts = RdfStore.createDefault();
 
-      const postDirLocation = this.parsedSgv.collections.filter(collection => collection.uri.value.indexOf('posts') !== -1)[0].uri;
+      const postDirLocation = this.parsedSgv
+        .collections.filter(collection => collection.uri.value.indexOf('posts') !== -1)[0].uri;
 
+      // get posts locations
       const postsLocations: string[] = [];
-
-      for await (const binding of await this.engine.queryBindings('SELECT ?o WHERE { ?s <http://www.w3.org/ns/ldp#contains> ?o }', {
+      if (postDirLocation.value.slice(-1) !== '/') {
+        postsLocations.push(postDirLocation.value);
+      } else {
+        for await (const binding of await this.engine.queryBindings('SELECT ?o WHERE { ?s <http://www.w3.org/ns/ldp#contains> ?o }', {
           sources: [postDirLocation.value]
-      })) {
-        postsLocations.push(binding.get('o')!.value);
+        })) {
+          postsLocations.push(binding.get('o')!.value);
+        }
       }
 
       if (postsLocations.length !== 0) {
