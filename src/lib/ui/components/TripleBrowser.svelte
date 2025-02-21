@@ -102,18 +102,15 @@
           background: rgba(119, 238, 119, 0.5);
           animation-timing-function: ease-out;
       }
-      10% {
+      50% {
           background: rgba(119, 238, 119, 1);
           animation-timing-function: ease-in;
-      }
-      20% {
-          background: rgba(119, 238, 119, 0.5);
       }
       100% {
           background: rgba(119, 238, 119, 0.5);
       }
     }
     .markChanged {
-        animation: back 10s forwards ease;
+        animation: back 0.5s forwards ease;
     }
 </style>
