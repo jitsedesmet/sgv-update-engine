@@ -1,12 +1,16 @@
 <script lang="ts">
   import {goto} from "$app/navigation";
   import {POD} from "$lib/ui/pods";
+  import Switch from "$lib/ui/components/Switch.svelte";
 
   interface Props {
     pod: string;
+    autoFocus: boolean;
   }
-
-  let {pod}: Props = $props();
+  let {
+    pod,
+    autoFocus = $bindable()
+  }: Props = $props();
 </script>
 
 
@@ -19,11 +23,25 @@
         <option value={POD.TOGETHER}>Together</option>
     </select>
 
-    Corresponds to pod: <a href={pod}>{pod}</a>
+    <span class="pod-link">
+        Corresponds to pod: <a href={pod}>{pod}</a>
+    </span>
+
+    <span class="auto-focus">
+        <Switch label="Auto Focus" bind:checked={autoFocus} />
+    </span>
 </div>
 
 <style>
     .pod-selector {
+        display: flex;
+        flex-wrap: wrap;
         padding: 10px 0;
+    }
+    label, span {
+        margin: auto 5px;
+    }
+    .pod-link {
+        flex-grow: 1;
     }
 </style>

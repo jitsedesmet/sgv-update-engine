@@ -12,6 +12,7 @@
   let pod = $derived<string>(page.url.searchParams.get('pod') ?? POD.BY_CREATION);
   let source = $derived<string>(page.url.searchParams.get('source') ?? POD.BY_CREATION);
   let recompute = $state<boolean>(false);
+  let autoFocus = $state(false);
 
 </script>
 
@@ -27,9 +28,9 @@
 
 <DemoGroup bind:query={query} />
 
-<PodSelector pod={pod} />
+<PodSelector bind:autoFocus={autoFocus} pod={pod} />
 
-<Yasge bind:recompute={recompute} pod={pod} query={query} />
+<Yasge autoFocus={autoFocus} bind:recompute={recompute} pod={pod} query={query} />
 
 <TripleBrowser recompute={recompute} source={source} />
 
@@ -43,11 +44,11 @@
         font-weight: 400;
         margin: 0 0 0.25em 0;
     }
+    .header {
+        display: flex;
+        justify-content: space-between;
+    }
     :global {
-        .header {
-            display: flex;
-            justify-content: space-between;
-        }
         *:not(.yasge *) {
             font-family: "Funnel Display", serif;
             font-optical-sizing: auto;

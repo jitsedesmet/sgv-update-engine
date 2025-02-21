@@ -12,10 +12,10 @@ export class SgvEngine {
     const parsedSgv = (await SGVParser.init(queryEngine, pod)).parse();
     return new SgvEngine(queryEngine, pod, parsedSgv);
   }
-  public async performOperation(query: string): Promise<void> {
+  public async performOperation(query: string): Promise<string[]> {
     const parsedOperation = await new OperationParser(this.queryEngine, query)
       .parse(this.parsedSgv);
-    await parsedOperation.handleOperation(this.pod);
+    return await parsedOperation.handleOperation(this.pod);
   }
 }
 

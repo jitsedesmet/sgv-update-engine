@@ -5,6 +5,8 @@
   import {QueryEngine} from "@comunica/query-sparql-file";
   import {SgvEngine} from "$lib";
   import type {ActionReturn} from "svelte/action";
+  import {goto} from "$app/navigation";
+  import {alterQuery} from "$lib/ui/helpers.svelte";
 
   interface YasgeContext {
     query: string | undefined;
@@ -21,10 +23,15 @@
     yasqe.on('query', async () => {
       const query = yasqe.getValue();
       error = undefined;
-      console.log(query);
       const sgvEngine = await SgvEngine.init(engine, pod)
-      console.log(sgvEngine.pod);
-      await sgvEngine.performOperation(query).catch(err => error = err);
+      try {
+        const [changed] = await sgvEngine.performOperation(query);
+        if (autoFocus && changed) {
+          await goto(alterQuery('source', changed));
+        }
+      } catch (err: unknown) {
+        error = (err as Error).message;
+      }
       toggle();
     });
     return {
@@ -49,8 +56,14 @@
     query: string | undefined;
     pod: string;
     recompute: boolean;
+    autoFocus: boolean;
   }
-  let { query, pod, recompute = $bindable() }: Props = $props();
+  let {
+    query,
+    pod,
+    recompute = $bindable(),
+    autoFocus,
+  }: Props = $props();
   let error = $state<string | undefined>(undefined);
   const engine = new QueryEngine();
 </script>

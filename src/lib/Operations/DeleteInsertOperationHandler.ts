@@ -54,8 +54,6 @@ export class DeleteInsertOperationHandler extends BaseOperationHandler {
         }
       }
 
-      const postsIds = getRootResources(posts);
-
       const removalStore = RdfStore.createDefault();
       const additionStore = RdfStore.createDefault();
 
@@ -86,7 +84,7 @@ export class DeleteInsertOperationHandler extends BaseOperationHandler {
     }
 
 
-    public override async handleOperation(pod: string): Promise<void> {
+    public override async handleOperation(pod: string): Promise<string[]> {
         // We construct the resource we will delete and insert by looking at the where clause in the parsed operation.
         const rawQuery = getQueryWithoutPrefixes(this.completeQuery);
         // Either delete is present, or it is not:
@@ -114,7 +112,7 @@ export class DeleteInsertOperationHandler extends BaseOperationHandler {
         const focussedResource = await this.findAlteredResource(pod, rawDelete, rawInsert, rawWhere);
 
         if (!focussedResource) {
-          return;
+          return [];
         }
         const resourceStore = getPrunedStore(
             await fileResourceToStore(this.engine, focussedResource.value),
@@ -195,5 +193,6 @@ export class DeleteInsertOperationHandler extends BaseOperationHandler {
                 this.addStoreToResource(remainingStore, newBaseUri)
             ]);
         }
+        return [newBaseUri.value];
     }
 }

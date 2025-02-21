@@ -23,7 +23,7 @@ export class InsertResourceOperationHandler extends BaseOperationHandler {
         return storeFromTriples(this.parsedOperation.insert[0].triples);
     }
 
-    public async handleOperation(): Promise<void> {
+    public async handleOperation(): Promise<string[]> {
         // Construct the type we would insert:
         const triples = this.parsedOperation.insert[0].triples;
         const insertWithBaseUri = this.getResultingResourceStore();
@@ -39,5 +39,6 @@ export class InsertResourceOperationHandler extends BaseOperationHandler {
             quad.predicate as RDF.Quad_Predicate,
             quad.object.equals(this.resource) ? resultingResource : quad.object,
         )), resultingResource);
+        return [resultingResource.value];
     }
 }

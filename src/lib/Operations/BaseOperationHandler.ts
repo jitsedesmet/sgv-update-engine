@@ -12,7 +12,7 @@ export type SgvOperation = 'non-update' | 'insert resource' | 'append to resourc
 
 export abstract class BaseOperationHandler {
     public abstract operation: SgvOperation;
-    public abstract handleOperation(pod: string): Promise<void>;
+    public abstract handleOperation(pod: string): Promise<string[]>;
 
     protected constructor(protected engine: QueryEngine, protected parsedSgv: ParsedSGV) {
     }
@@ -113,13 +113,14 @@ export class NonUpdateOperationHandler extends BaseOperationHandler {
         super(engine, parsedSgv);
     }
 
-    public async handleOperation(pod: string): Promise<void> {
+    public async handleOperation(pod: string): Promise<string[]> {
         // Read query: just do it
         for await (const quad of await this
             .engine
             .queryQuads(this.query, { sources: [pod] })) {
             console.log(quadToString(quad));
         }
+        return [];
     }
 }
 

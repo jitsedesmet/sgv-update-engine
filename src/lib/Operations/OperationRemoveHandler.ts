@@ -25,7 +25,7 @@ export class OperationRemoveHandler extends EditResourceOperation {
         return storeMinus(await this.getOriginalResource(), this.getDeleteResource());
     }
 
-    public async handleOperation(): Promise<void> {
+    public async handleOperation(): Promise<string[]> {
         const { store, resource, didClear, finalizeOperation } = await this.computeAndHandleRelocation();
 
         if (didClear) {
@@ -34,5 +34,6 @@ export class OperationRemoveHandler extends EditResourceOperation {
             const deleteStore = this.getDeleteResource();
             await Promise.all([finalizeOperation, this.removeStoreFromResource(deleteStore, resource)]);
         }
+        return [resource.value];
     }
 }
