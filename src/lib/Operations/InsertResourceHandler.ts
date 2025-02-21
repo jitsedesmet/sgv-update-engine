@@ -23,7 +23,7 @@ export class InsertResourceOperationHandler extends BaseOperationHandler {
         return storeFromTriples(this.parsedOperation.insert[0].triples);
     }
 
-    public async handleOperation(): Promise<string[]> {
+    public override async handleOperation(pod: string, dryRun: boolean): Promise<string[]> {
         // Construct the type we would insert:
         const triples = this.parsedOperation.insert[0].triples;
         const insertWithBaseUri = this.getResultingResourceStore();
@@ -34,6 +34,11 @@ export class InsertResourceOperationHandler extends BaseOperationHandler {
         const resultingUri = await collectionToInsertIn.groupStrategy.getResourceURI(insertWithBaseUri);
 
         const resultingResource = DF.namedNode(resultingUri);
+
+        if (dryRun) {
+            return [resultingResource.value];
+        }
+
         await this.addQuadsToResource(triples.map(quad => DF.quad(
             quad.subject.equals(this.resource) ? resultingResource : quad.subject,
             quad.predicate as RDF.Quad_Predicate,

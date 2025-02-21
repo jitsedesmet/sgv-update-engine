@@ -26,8 +26,11 @@ export class OperationAddToResourceHandler extends EditResourceOperation {
     }
 
 
-    public async handleOperation(): Promise<string[]> {
-        const { store, resource, finalizeOperation } = await this.computeAndHandleRelocation();
+    public override async handleOperation(pod: string, dryRun: boolean): Promise<string[]> {
+        const { store, resource, finalizeOperation } = await this.computeAndHandleRelocation(dryRun);
+        if (dryRun) {
+            return [resource.value];
+        }
         await Promise.all([finalizeOperation, this.addStoreToResource(store, resource)]);
         return [resource.value];
     }

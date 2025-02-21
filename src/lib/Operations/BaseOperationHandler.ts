@@ -12,7 +12,7 @@ export type SgvOperation = 'non-update' | 'insert resource' | 'append to resourc
 
 export abstract class BaseOperationHandler {
     public abstract operation: SgvOperation;
-    public abstract handleOperation(pod: string): Promise<string[]>;
+    public abstract handleOperation(pod: string, dryRun: boolean): Promise<string[]>;
 
     protected constructor(protected engine: QueryEngine, protected parsedSgv: ParsedSGV) {
     }

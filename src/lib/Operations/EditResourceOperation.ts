@@ -20,7 +20,7 @@ export abstract class EditResourceOperation extends BaseOperationHandler {
     /**
      * @return a new store that you should still make sure exists like that!
      */
-    protected async computeAndHandleRelocation(): Promise<{ store: RdfStore, resource: RDF.NamedNode, didClear: boolean, finalizeOperation: Promise<void> }> {
+    protected async computeAndHandleRelocation(dryRun: boolean): Promise<{ store: RdfStore, resource: RDF.NamedNode, didClear: boolean, finalizeOperation: Promise<void> }> {
         const focusedResource = this.getResourceNode();
 
         // Evaluate what resource would remain when we insert
@@ -54,7 +54,9 @@ export abstract class EditResourceOperation extends BaseOperationHandler {
         } else {
             // console.log(`Relocating resource to ${newBaseUri.value}`);
             // Remove the old resource:
+          if (!dryRun) {
             finalizeOperation = this.removeStoreFromResource(originalResource, focusedResource);
+          }
         }
 
         return {

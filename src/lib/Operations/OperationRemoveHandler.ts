@@ -25,8 +25,12 @@ export class OperationRemoveHandler extends EditResourceOperation {
         return storeMinus(await this.getOriginalResource(), this.getDeleteResource());
     }
 
-    public async handleOperation(): Promise<string[]> {
-        const { store, resource, didClear, finalizeOperation } = await this.computeAndHandleRelocation();
+    public override async handleOperation(pod: string, dryRun: boolean): Promise<string[]> {
+        const { store, resource, didClear, finalizeOperation } = await this.computeAndHandleRelocation(dryRun);
+
+        if (dryRun) {
+            return [resource.value];
+        }
 
         if (didClear) {
             await Promise.all([finalizeOperation, this.addStoreToResource(store, resource)]);

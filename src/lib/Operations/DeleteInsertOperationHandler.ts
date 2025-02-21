@@ -84,7 +84,7 @@ export class DeleteInsertOperationHandler extends BaseOperationHandler {
     }
 
 
-    public override async handleOperation(pod: string): Promise<string[]> {
+    public override async handleOperation(pod: string, dryRun : boolean): Promise<string[]> {
         // We construct the resource we will delete and insert by looking at the where clause in the parsed operation.
         const rawQuery = getQueryWithoutPrefixes(this.completeQuery);
         // Either delete is present, or it is not:
@@ -160,6 +160,10 @@ export class DeleteInsertOperationHandler extends BaseOperationHandler {
                 this.collectionOfResultingResource(newResource, focussedResource)
             );
             newBaseUri = DF.namedNode(await collectionToInsertIn.groupStrategy.getResourceURI(newResource));
+        }
+
+        if (dryRun) {
+          return [newBaseUri.value];
         }
 
         if (newBaseUri.equals(focussedResource)) {

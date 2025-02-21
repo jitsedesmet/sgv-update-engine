@@ -25,10 +25,13 @@
       error = undefined;
       const sgvEngine = await SgvEngine.init(engine, pod)
       try {
-        const [changed] = await sgvEngine.performOperation(query);
-        if (autoFocus && changed) {
-          await goto(alterQuery('source', changed));
+        if (autoFocus) {
+          const [willChange] = await sgvEngine.performOperation(query, true);
+            if (willChange) {
+                await goto(alterQuery('source', willChange));
+            }
         }
+        await sgvEngine.performOperation(query, false);
       } catch (err: unknown) {
         error = (err as Error).message;
       }
