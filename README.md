@@ -1,42 +1,31 @@
 # SGV Comunica
 
+[**DEMO VIDEO**]()
+
 This is a query engine that wraps around [Comunica](https://github.com/comunica/comunica/).
 This query engine is able to consume the Storage Guidance Vocabulary as proposed by Jitse De Smet in [his thesis](https://thesis.jitsedesmet.be/).
 The complete thesis document can be found [online](https://thesis.jitsedesmet.be/solution/report.pdf).
 
-This repository contains both the [source code of the wrapper](/src-back) and the [benchmarking software](/benchmark).
-The benchmark assumes that a [SolidBench](https://github.com/SolidBench/SolidBench.js) server is running on `http://localhost:3000`.
-Each pod should contain an SGV description of the data it contains.
-A Docker image is available to run the SolidBench server with SGV described pods.
+This repository contains both the [source code of the wrapper](/src/lib/index.ts) and the [webapp](/src/routes).
+The webapp assumes a [SolidBench](https://github.com/SolidBench/SolidBench.js) server with SGV enriched pods is running on `http://localhost:3000`.
+For ease of use, we provide a [docker compose file](./docker-compose.yml) that starts both the required SolidBench server and the webapp.
+The SolidBench server is available at `http://localhost:3000/pods/`, and the webapp is available at `http://localhost:3001/`.
 
-## Step by Step
+## Running demo
 
-The first thing to is get a SolidBench server running with SGV described solid pods.
-For ease of use, a docker image has been made available has been made available.
-
-```bash
-docker run -p 3000:3000 ghcr.io/jitsedesmet/solidbench-sgv:latest
-```
-
-After running the SolidBench instance, you will see the pods being served at `http://localhost:3000/pods/`.
-
-This benchmark now contains 4 different SGV fragmentation strategies, we additionally give an example pod for each strategy:
-1. Sort by creation date: [pod 65](http://localhost:3000/pods/00000000000000000065/)
-2. Sort by location: [pod 150](http://localhost:3000/pods/00000000000000000150/)
-3. Group all posts together (idem for comments): [pod 94](http://localhost:3000/pods/00000000000000000094/)
-4. Each post/ comment has their own HTTP-resource: [pod 143](http://localhost:3000/pods/00000000000000000143/)
-
-
-
-## Installation & Run
+You can run the demo using publicly available images by running the following command in this directory:
 
 ```bash
-yarn install
-yarn start
+docker compose up
 ```
 
-## Benchmarking
+To build the images yourself, you will need to clone this repository and run the following commands:
 
 ```bash
-yarn bench
+git clone git@github.com:jitsedesmet/sgv-update-engine.git
+cd sgv-update-engine
+git checkout demo-eswc
+docker compose up --build
 ```
+
+Now open the webapp at `http://localhost:3001/`.
