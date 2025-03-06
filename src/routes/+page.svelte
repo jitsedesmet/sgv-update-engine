@@ -20,7 +20,7 @@
     <svg viewBox="0 0 250 250" height="5em">
         <Comunica />
     </svg>
-    <h1>Storage Guidance Vocab. Engine</h1>
+    <h1>Storage Guiding Framework</h1>
     <svg viewBox="0 0 350 350" height="5em">
         <Solid />
     </svg>

@@ -4,11 +4,11 @@
 <svg
    width="120mm"
    height="120mm"
-   viewBox="0 0 120 120"
+   viewBox="0 0 119.98018 119.98018"
    version="1.1"
    id="svg1"
    inkscape:version="1.4 (e7c3feb, 2024-10-09)"
-   sodipodi:docname="SGV-logo.svg"
+   sodipodi:docname="favicon.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -23,11 +23,11 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
-     inkscape:zoom="0.50394254"
-     inkscape:cx="486.16653"
-     inkscape:cy="563.55631"
+     inkscape:zoom="1.4142136"
+     inkscape:cx="103.9447"
+     inkscape:cy="213.54625"
      inkscape:window-width="1920"
-     inkscape:window-height="1011"
+     inkscape:window-height="1043"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
@@ -38,17 +38,17 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-42.227869,-23.250406)">
+     transform="translate(-60.210577,-40.821909)">
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50.8px;font-family:Audiowide;-inkscape-font-specification:Audiowide;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#9c0510;fill-opacity:1;stroke-width:0.264583"
-       x="40.687439"
-       y="100.78732"
+       style="font-size:50.8px;line-height:0;font-family:Audiowide;-inkscape-font-specification:Audiowide;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#9c0510;fill-opacity:1;stroke-width:0.264583"
+       x="60.30975"
+       y="118.59696"
        id="text1"><tspan
          sodipodi:role="line"
          id="tspan1"
          style="fill:#9c0510;fill-opacity:1;stroke-width:0.264583"
-         x="40.687439"
-         y="100.78732">SGV</tspan></text>
+         x="60.30975"
+         y="118.59696">SGF</tspan></text>
   </g>
 </svg>
