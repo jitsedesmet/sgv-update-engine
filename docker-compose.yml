@@ -7,12 +7,16 @@ services:
       network: host
     ports:
       - "3000:3000"
+#    command: -b "https://sgf.demo.jitsedesmet.be/css/"
+
   webapp:
     image: ghcr.io/jitsedesmet/sgv-web-app:latest
     build:
       context: .
       dockerfile: webapp.dockerfile
       network: host
+#      args:
+#        BACKEND_URL: https://sgf.demo.jitsedesmet.be/css/
     ports:
       - "3001:3000"
 # Run docker compose rm -f to remove anonymous volumes attached to containers

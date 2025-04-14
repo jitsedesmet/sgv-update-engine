@@ -5,7 +5,10 @@ WORKDIR /var/www/sgv
 COPY package.json yarn.lock ./
 
 RUN yarn install
+
+ARG BACKEND_URL="http://localhost:3000/"
 COPY . .
+RUN echo "export const podBaseUrl = '${BACKEND_URL}'" > src/lib/baseUrl.ts
 RUN yarn run build
 
 

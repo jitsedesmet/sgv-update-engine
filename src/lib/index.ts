@@ -27,7 +27,7 @@ export class SgvEngine {
 // }
 
 // const printError = (e: Error) => console.error(e);
-// const focusPod = 'http://localhost:3000/pods/00000000000000000096/';
+// const focusPod = '${podBaseUrl}pods/00000000000000000096/';
 
 // main(focusPod, './queries/INSERT_whole_post.sparql').catch(printError);
 // main(focusPod, './queries/DELINS_id.sparql').catch(printError);

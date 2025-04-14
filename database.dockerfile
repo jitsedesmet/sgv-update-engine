@@ -64,6 +64,4 @@ WORKDIR /usr/src/app/SolidBench.js
 
 COPY --from=builder /usr/src/app/SolidBench.js/out-fragments/ /usr/src/app/SolidBench.js/out-fragments/
 
-#ENTRYPOINT ["tail", "-f", "/dev/null"]
-CMD ["node", "./bin/solidbench", "serve"]
-
+ENTRYPOINT ["node", "./bin/solidbench", "serve"]
