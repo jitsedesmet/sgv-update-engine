@@ -17,11 +17,11 @@
 </script>
 
 <div class="header">
-    <svg viewBox="0 0 250 250" height="5em">
+    <svg viewBox="0 0 250 250" height="5em" style="flex-shrink: 0; align-self: center">
         <Comunica />
     </svg>
     <h1>Storage Guiding Framework</h1>
-    <svg viewBox="0 0 350 350" height="5em">
+    <svg viewBox="0 0 350 350" height="80px" style="flex-shrink: 0; align-self: center">
         <Solid />
     </svg>
 </div>
