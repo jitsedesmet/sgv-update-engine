@@ -7,23 +7,38 @@
   import DemoGroup from "$lib/ui/components/DemoGroup.svelte";
   import Comunica from "$lib/ui/components/SVG/Comunica.svelte";
   import Solid from "$lib/ui/components/SVG/Solid.svelte";
+  import { innerWidth } from 'svelte/reactivity/window';
 
   let query = $state<string | undefined>(undefined);
   let pod = $derived<string>(page.url.searchParams.get('pod') ?? POD.BY_CREATION);
   let source = $derived<string>(page.url.searchParams.get('source') ?? POD.BY_CREATION);
   let recompute = $state<boolean>(false);
   let autoFocus = $state(true);
+  let screenWidth = $derived(innerWidth.current ?? 600);
+  let smallScreen = $derived<boolean>(screenWidth < 550);
 
 </script>
 
-<div class="header">
+{#snippet comunicaLogo()}
     <svg viewBox="0 0 250 250" height="5em" style="flex-shrink: 0; align-self: center">
         <Comunica />
     </svg>
-    <h1>Storage Guiding Framework</h1>
+{/snippet}
+
+{#snippet solidLogo()}
     <svg viewBox="0 0 350 350" height="80px" style="flex-shrink: 0; align-self: center">
         <Solid />
     </svg>
+{/snippet}
+
+<div class="header">
+    {#if !smallScreen}
+        {@render comunicaLogo()}
+    {/if}
+    <h1>Storage Guiding Framework</h1>
+    {#if !smallScreen}
+        {@render solidLogo()}
+    {/if}
 </div>
 
 <DemoGroup bind:query={query} />
@@ -80,6 +95,13 @@
             vertical-align: middle;
             white-space: nowrap;
             word-wrap: break-word;
+        }
+        .breakable {
+            white-space: pre-wrap; /* CSS3 */
+            white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+            white-space: -pre-wrap; /* Opera 4-6 */
+            white-space: -o-pre-wrap; /* Opera 7 */
+            word-wrap: break-word; /* Internet Explorer 5.5+ */
         }
     }
 </style>

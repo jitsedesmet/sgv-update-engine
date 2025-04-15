@@ -24,29 +24,33 @@
 </script>
 
 <div class="breadcrumbs">
-    <span>
+    <div>
       Location (local):
-    </span>
-    <span>
+    </div>
+    <div>
         {#each crumbs as crumb}
-            /<a href={crumb.route}>{crumb.str}</a>
+            /<a href={crumb.route} class="breakable">{crumb.str}</a>
         {/each}
-    </span>
-    <span>
+    </div>
+    <div>
         Location (external):
-    </span>
-    <span>
+    </div>
+    <div>
         {#each crumbs as crumb}
-            /<a href={crumb.href}>{crumb.str}</a>
+            /<a href={crumb.href} class="breakable">{crumb.str}</a>
         {/each}
-    </span>
+    </div>
 </div>
 
 <style>
     .breadcrumbs {
         padding: 0 0 10px 0;
         display: grid;
-        grid-template-columns: fit-content(200px) auto;
+        grid-template-columns: fit-content(200px) 1fr;
         column-gap: 5px;
+        max-width: 100%;
+    }
+    .breadcrumbs div {
+        min-width: 0;
     }
 </style>

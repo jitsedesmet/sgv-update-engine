@@ -24,7 +24,7 @@
     </select>
 
     <span class="pod-link">
-        Corresponds to pod: <a href={pod}>{pod}</a>
+        Corresponds to pod: <a class="breakable" href={pod}>{pod}</a>
     </span>
 
     <span class="auto-focus">
@@ -43,5 +43,6 @@
     }
     .pod-link {
         flex-grow: 1;
+        max-width: 100%;
     }
 </style>
