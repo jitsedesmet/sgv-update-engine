@@ -5,9 +5,13 @@ services:
       context: .
       dockerfile: database.dockerfile
       network: host
+#      args:
+#        BASE_URL_REPLACE: https:\/\/sgf.demo.jitsedesmet.be\/css
+#        BASE_ESCAPED_URL_REPLACE: https%3A%2F%2Fsgf.demo.jitsedesmet.be%2Fcss
+#        BASE_CSS_FILE_LOCATION: "https/sgf.demo.jitsedesmet.be/css/"
     ports:
       - "3000:3000"
-#    command: -b "https://sgf.demo.jitsedesmet.be/css/"
+#    command: ["-r", "out-fragments/https/sgf.demo.jitsedesmet.be/css/"]
 
   webapp:
     image: ghcr.io/jitsedesmet/sgv-web-app:latest
