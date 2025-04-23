@@ -39,31 +39,31 @@ RUN yarn link rdf-dataset-fragmenter && \
 
 ARG BASE_URL_REPLACE="http:\/\/localhost:3000"
 # https:\/\/sgf.demo.jitsedesmet.be\/css
-ARG BASE_ESCAPED_URL_REPLACE="http%3A%2F%2Flocalhost%3A3000%2F"
+ARG BASE_ESCAPED_URL_REPLACE="http%3A%2F%2Flocalhost%3A3000"
 # https%3A%2F%2Fsgf.demo.jitsedesmet.be%2Fcss
 ARG BASE_CSS_FILE_LOCATION="http/localhost_3000/"
 # https/sgf.demo.jitsedesmet.be/css/
 
 # get the fragment config and out four different fragmentation strategies
 RUN curl -s  'https://raw.githubusercontent.com/jitsedesmet/rdf-dataset-fragmenter.js/refs/heads/feat/shaved-sgv/fragmenter-config-pod.json' \
-      | sed "s/http:\/\/localhost:3000/$BASE_URL_REPLACE/" \
-      | sed "s/http%3A%2F%2Flocalhost%3A3000/$BASE_ESCAPED_URL_REPLACE/" \
+      | sed "s/http:\/\/localhost:3000/$BASE_URL_REPLACE/g" \
+      | sed "s/http%3A%2F%2Flocalhost%3A3000/$BASE_ESCAPED_URL_REPLACE/g" \
     > fragmenter-config-pod.json && \
     curl -s  'https://raw.githubusercontent.com/jitsedesmet/rdf-dataset-fragmenter.js/refs/heads/feat/shaved-sgv/sgv-posts-creationdate.ttl' \
-      | sed "s/http:\/\/localhost:3000/$BASE_URL_REPLACE/" \
-      | sed "s/http%3A%2F%2Flocalhost%3A3000/$BASE_ESCAPED_URL_REPLACE/" \
+      | sed "s/http:\/\/localhost:3000/$BASE_URL_REPLACE/g" \
+      | sed "s/http%3A%2F%2Flocalhost%3A3000/$BASE_ESCAPED_URL_REPLACE/g" \
     > sgv-posts-creationdate.ttl && \
     curl -s  'https://raw.githubusercontent.com/jitsedesmet/rdf-dataset-fragmenter.js/refs/heads/feat/shaved-sgv/sgv-posts-location.ttl' \
-      | sed "s/http:\/\/localhost:3000/$BASE_URL_REPLACE/" \
-      | sed "s/http%3A%2F%2Flocalhost%3A3000/$BASE_ESCAPED_URL_REPLACE/" \
+      | sed "s/http:\/\/localhost:3000/$BASE_URL_REPLACE/g" \
+      | sed "s/http%3A%2F%2Flocalhost%3A3000/$BASE_ESCAPED_URL_REPLACE/g" \
     > sgv-posts-location.ttl && \
     curl -s  'https://raw.githubusercontent.com/jitsedesmet/rdf-dataset-fragmenter.js/refs/heads/feat/shaved-sgv/sgv-posts-one-file.ttl' \
-      | sed "s/http:\/\/localhost:3000/$BASE_URL_REPLACE/" \
-      | sed "s/http%3A%2F%2Flocalhost%3A3000/$BASE_ESCAPED_URL_REPLACE/" \
+      | sed "s/http:\/\/localhost:3000/$BASE_URL_REPLACE/g" \
+      | sed "s/http%3A%2F%2Flocalhost%3A3000/$BASE_ESCAPED_URL_REPLACE/g" \
     > sgv-posts-one-file.ttl && \
     curl -s  'https://raw.githubusercontent.com/jitsedesmet/rdf-dataset-fragmenter.js/refs/heads/feat/shaved-sgv/sgv-posts-per-resource.ttl' \
-      | sed "s/http:\/\/localhost:3000/$BASE_URL_REPLACE/" \
-      | sed "s/http%3A%2F%2Flocalhost%3A3000/$BASE_ESCAPED_URL_REPLACE/" \
+      | sed "s/http:\/\/localhost:3000/$BASE_URL_REPLACE/g" \
+      | sed "s/http%3A%2F%2Flocalhost%3A3000/$BASE_ESCAPED_URL_REPLACE/g" \
     > sgv-posts-per-resource.ttl && \
     mkdir out-validate && mkdir out-validate-params
 
