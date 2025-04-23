@@ -33,11 +33,15 @@
 
 <div class="header">
     {#if !smallScreen}
-        {@render comunicaLogo()}
+        <a href="https://comunica.dev/">
+            {@render comunicaLogo()}
+        </a>
     {/if}
-    <h1>Storage Guiding Framework</h1>
+    <a href="/"><h1>Storage Guiding Framework</h1></a>
     {#if !smallScreen}
-        {@render solidLogo()}
+        <a href="https://solidproject.org/">
+            {@render solidLogo()}
+        </a>
     {/if}
 </div>
 
@@ -51,6 +55,10 @@
 
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Audiowide&family=Funnel+Display:wght@300..800&display=swap');
+    a, a:visited, a:hover, a:active {
+        text-decoration: none;
+        color: inherit;
+    }
     h1 {
         text-align: center;
         font-family: "Audiowide", serif;

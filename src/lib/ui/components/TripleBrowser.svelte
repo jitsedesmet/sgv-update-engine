@@ -31,7 +31,7 @@
 
 {#snippet uriThingy(item: UiTriple[0], markChanged: boolean)}
     {#if 'href' in item && item.href !== undefined}
-        <a class:markChanged={markChanged} href={alterQuery('source', item.href)}>{item.str}</a>
+        <a class:markChanged={markChanged} class="breakable" href={alterQuery('source', item.href)}>{item.str}</a>
     {:else}
         <div class:markChanged={markChanged}>{item.str}</div>
     {/if}
@@ -95,6 +95,8 @@
     .grid {
         display: grid;
         grid-template-columns: auto auto auto;
+        column-gap: 15px;
+        overflow: hidden;
     }
 
     @keyframes back {
