@@ -29,11 +29,11 @@
   let changeCount = $derived.by(async () => (await content).filter(([, , , changed]) => changed).length);
 </script>
 
-{#snippet uriThingy(item: UiTriple[0], markChanged: boolean)}
+{#snippet uriThingy(item: UiTriple[0], markChanged: boolean, rest: object = {})}
     {#if 'href' in item && item.href !== undefined}
-        <a class:markChanged={markChanged} class="breakable" href={alterQuery('source', item.href)}>{item.str}</a>
+        <a {...rest} class:markChanged={markChanged} class="breakable" href={alterQuery('source', item.href)}>{item.str}</a>
     {:else}
-        <div class:markChanged={markChanged}>{item.str}</div>
+        <div {...rest} class:markChanged={markChanged} class="breakable">{item.str}</div>
     {/if}
 {/snippet}
 
@@ -62,9 +62,9 @@
     {:then content}
         <div class="grid">
             {#each content as [subj, pred, obj, changed]}
-                {@render uriThingy(subj, changed)}
-                {@render uriThingy(pred, changed)}
-                {@render uriThingy(obj, changed)}
+                {@render uriThingy(subj, changed, { style: 'padding-right: 8px;'})}
+                {@render uriThingy(pred, changed, { style: 'padding: 0 8px;'})}
+                {@render uriThingy(obj, changed, { style: 'padding-left: 8px; align-content: center;'})}
             {/each}
         </div>
     {/await}
@@ -94,9 +94,7 @@
 
     .grid {
         display: grid;
-        grid-template-columns: auto auto auto;
-        column-gap: 15px;
-        overflow: hidden;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
     @keyframes back {
