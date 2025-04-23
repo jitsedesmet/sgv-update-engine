@@ -57,7 +57,7 @@ prefix tag: <${podBaseUrl}www.ldbc.eu/ldbc_socialnet/1.0/tag/>
 INSERT DATA {
     res:416608218494388  ns1:hasTag tag:Mountain .
 }` }, {
-  name: 'Illegal Append Id',
+  name: 'Append Id (Illegal)',
   query: `prefix ns1: <${podBaseUrl}www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/>
 prefix xsd: <http://www.w3.org/2001/XMLSchema#>
 
