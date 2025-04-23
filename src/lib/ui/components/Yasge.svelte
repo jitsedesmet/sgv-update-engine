@@ -7,6 +7,7 @@
   import type {ActionReturn} from "svelte/action";
   import {goto} from "$app/navigation";
   import {alterQuery} from "$lib/ui/helpers.svelte";
+  import {podBaseUrl} from "$lib/baseUrl";
 
   interface YasgeContext {
     query: string | undefined;
@@ -16,7 +17,7 @@
       editorHeight: '300px',
       requestConfig: {
         method: "GET",
-        endpoint: 'http://localhost:3000/pods/'
+        endpoint: `${podBaseUrl}pods/`
       }
     });
     if (startQuery !== undefined) yasqe.setValue(startQuery);
