@@ -1,4 +1,4 @@
-import {POD_MAP} from "$lib/ui/pods";
+import {prefixes} from "$lib/baseUrl";
 
 export type UiTriple = [{ str: string; href?: string }, { str: string; href?: string }, { str: string; href?: string }, boolean];
 
@@ -44,10 +44,25 @@ export async function dereferenceTriples(source: string | undefined, original?: 
       if (part[0] === '<' && part[part.length - 1] === '>') {
         const href = part.slice(1, -1);
         let str = part;
-        for (const [key, value] of Object.entries(POD_MAP)) {
-          str = str.replace(key, value);
+        for (const [long, short] of Object.entries(prefixes)) {
+          const replaced = str.replace(long, short);
+          if (str !== replaced) {
+            str = replaced.slice(1, -1);
+            break;
+          }
         }
         return {str, href};
+      } else if (part.match(/^".*"\^\^<.*>$/)) {
+        const match = part.match(/^"(.*)"\^\^<(.*)>$/);
+        if (match) {
+          const [val, type] = match.slice(1, 3);
+          for (const [long, short] of Object.entries(prefixes)) {
+            const replaced = type.replace(long, short);
+            if (type !== replaced) {
+              return { str: `"${val}"^^${replaced}` };
+            }
+          }
+        }
       }
       return {str: part};
     }), false]);

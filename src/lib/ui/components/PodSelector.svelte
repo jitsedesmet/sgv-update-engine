@@ -8,7 +8,7 @@
     autoFocus: boolean;
   }
   let {
-    pod,
+    pod = $bindable(),
     autoFocus = $bindable()
   }: Props = $props();
 </script>

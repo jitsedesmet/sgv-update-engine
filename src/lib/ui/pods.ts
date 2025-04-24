@@ -7,16 +7,9 @@ export const POD = {
   TOGETHER: `${podBaseUrl}pods/00000000000000000094/`
 }
 
-export const POD_MAP = {
-  [POD.BY_CREATION]: 'pods/by-creation/',
-  [POD.BY_LOCATION]: 'pods/by-location/',
-  [POD.SEPARATE]: 'pods/separate/',
-  [POD.TOGETHER]: 'pods/together/',
-}
-
 export const demoQueries = [{
   name: 'Insert Post',
-  query: `prefix ns1: <${podBaseUrl}www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/>
+  query: () => `prefix ns1: <${podBaseUrl}www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/>
 prefix xsd: <http://www.w3.org/2001/XMLSchema#>
 prefix card: <${podBaseUrl}pods/00000000000000000096/profile/card#>
 prefix tag: <${podBaseUrl}www.ldbc.eu/ldbc_socialnet/1.0/tag/>
@@ -35,7 +28,7 @@ INSERT DATA {
 }`
 }, {
   name: 'Change CreationDate',
-  query: `prefix ns1: <${podBaseUrl}www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/>
+  query: () => `prefix ns1: <${podBaseUrl}www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/>
 prefix xsd: <http://www.w3.org/2001/XMLSchema#>
 
 DELETE {
@@ -47,18 +40,28 @@ DELETE {
 }
 ` }, {
   name: 'Insert Data Tag',
-  query: `prefix ns1: <${podBaseUrl}www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/>
+  query: (pod: string) => {
+    let res = '';
+    if (POD.BY_CREATION === pod) {
+      res = `${pod}posts/2025-06-01#`;
+    } else if (POD.BY_LOCATION === pod) {
+      res = `${pod}pods/Slovenia#`;
+    } else if (POD.SEPARATE === pod) {
+      res = `${pod}posts/`;
+    } else if (POD.TOGETHER === pod) {
+      res = `${pod}posts#`;
+    }
+    console.log(res, pod)
+    return `prefix ns1: <${podBaseUrl}www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/>
 prefix tag: <${podBaseUrl}www.ldbc.eu/ldbc_socialnet/1.0/tag/>
-# prefix res: <${podBaseUrl}pods/00000000000000000065/posts/2025-06-01#>
-# prefix res: <${podBaseUrl}pods/00000000000000000150/posts/Slovenia#>
-# prefix res: <${podBaseUrl}pods/00000000000000000143/posts/>
-# prefix res: <${podBaseUrl}pods/00000000000000000094/posts#>
+prefix res: <${res}>
 
 INSERT DATA {
     res:416608218494388  ns1:hasTag tag:Mountain .
-}` }, {
+}`
+  } }, {
   name: 'Append Id (Illegal)',
-  query: `prefix ns1: <${podBaseUrl}www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/>
+  query: () => `prefix ns1: <${podBaseUrl}www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/>
 prefix xsd: <http://www.w3.org/2001/XMLSchema#>
 
 INSERT {
@@ -67,25 +70,35 @@ INSERT {
     ?resource ns1:id "416608218494388"^^xsd:long
 }` }, {
   name: 'Delete Data Tag',
-  query: `prefix ns1: <${podBaseUrl}www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/>
+  query: (pod: string) => {
+    let res = '';
+    if (POD.BY_CREATION === pod) {
+      res = `${pod}posts/2025-06-01#`;
+    } else if (POD.BY_LOCATION === pod) {
+      res = `${pod}pods/Slovenia#`;
+    } else if (POD.SEPARATE === pod) {
+      res = `${pod}posts/`;
+    } else if (POD.TOGETHER === pod) {
+      res = `${pod}posts#`;
+    }
+
+    return `prefix ns1: <${podBaseUrl}www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/>
 prefix tag: <${podBaseUrl}www.ldbc.eu/ldbc_socialnet/1.0/tag/>
-# prefix res: <${podBaseUrl}pods/00000000000000000065/posts/2025-06-01#>
-# prefix res: <${podBaseUrl}pods/00000000000000000150/posts/Slovenia#>
-# prefix res: <${podBaseUrl}pods/00000000000000000143/posts/>
-# prefix res: <${podBaseUrl}pods/00000000000000000094/posts#>
+prefix res: <${res}>
 
 DELETE DATA {
     res:416608218494388 ns1:hasTag tag:Mountain .
-}` }, {
+}`
+  } }, {
   name: 'Remove Id (Illegal)',
-  query: `prefix ns1: <${podBaseUrl}www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/>
+  query: () => `prefix ns1: <${podBaseUrl}www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/>
 prefix xsd: <http://www.w3.org/2001/XMLSchema#>
 
 DELETE WHERE {
     ?resource ns1:id "416608218494388"^^xsd:long
 }` }, {
   name: 'Delete tags',
-  query: `prefix ns1: <${podBaseUrl}www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/>
+  query: () => `prefix ns1: <${podBaseUrl}www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/>
 prefix xsd: <http://www.w3.org/2001/XMLSchema#>
 
 DELETE {
@@ -95,7 +108,7 @@ DELETE {
               ns1:hasTag ?tag ;
 }` }, {
   name: 'Insert where Tag',
-  query: `prefix tag: <${podBaseUrl}www.ldbc.eu/ldbc_socialnet/1.0/tag/>
+  query: () => `prefix tag: <${podBaseUrl}www.ldbc.eu/ldbc_socialnet/1.0/tag/>
 
 INSERT {
     ?resource ?p tag:High
@@ -103,7 +116,7 @@ INSERT {
     ?resource ?p tag:Mountain
 }` }, {
   name: 'Delete Where Complete',
-  query: `prefix ns1: <${podBaseUrl}www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/>
+  query: () => `prefix ns1: <${podBaseUrl}www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/>
 prefix xsd: <http://www.w3.org/2001/XMLSchema#>
 
 DELETE WHERE {
@@ -111,15 +124,24 @@ DELETE WHERE {
         ?p ?o ;
 }` }, {
   name: 'Delete Data Complete',
-  query: `prefix ns1: <${podBaseUrl}www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/>
+  query: (pod: string) => {
+    let res = '';
+    if (POD.BY_CREATION === pod) {
+      res = `${pod}posts/2024-05-26#`;
+    } else if (POD.BY_LOCATION === pod) {
+      res = `${pod}pods/Slovenia#`;
+    } else if (POD.SEPARATE === pod) {
+      res = `${pod}posts/`;
+    } else if (POD.TOGETHER === pod) {
+      res = `${pod}posts#`;
+    }
+
+    return `prefix ns1: <${podBaseUrl}www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/>
 prefix xsd: <http://www.w3.org/2001/XMLSchema#>
 prefix card: <${podBaseUrl}pods/00000000000000000096/profile/card#>
 prefix tag: <${podBaseUrl}www.ldbc.eu/ldbc_socialnet/1.0/tag/>
 PREFIX resource: <${podBaseUrl}dbpedia.org/resource/>
-# prefix res: <${podBaseUrl}pods/00000000000000000065/posts/2024-05-26#>
-# prefix res: <${podBaseUrl}pods/00000000000000000150/posts/Slovenia#>
-# prefix res: <${podBaseUrl}pods/00000000000000000143/posts/>
-# prefix res: <${podBaseUrl}pods/00000000000000000094/posts#>
+prefix res: <${res}>
 
 DELETE DATA {
   res:416608218494388 a ns1:Post ;
@@ -131,5 +153,6 @@ DELETE DATA {
     ns1:hasTag tag:Semantic_Web, tag:Portorož ;
     ns1:isLocatedIn resource:Slovenia ;
     ns1:locationIP "1.83.28.23" .
-}`}
+}`
+  }}
 ];

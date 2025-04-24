@@ -2,6 +2,7 @@
   import {dereferenceTriples, type UiTriple} from "$lib/ui/rdfFetch";
   import Breadcrumbs from "$lib/ui/components/Breadcrumbs.svelte";
   import {alterQuery} from "$lib/ui/helpers.svelte";
+  import {prefixes} from "$lib/baseUrl";
 
   interface Props {
     source: string;
@@ -56,6 +57,11 @@
 </div>
 
 <div class="browser">
+    {#each Object.entries(prefixes) as [long, short]}
+        <div>
+            PREFIX {short} {long}
+        </div>
+    {/each}
 
     {#await content}
         <p>Loading...</p>

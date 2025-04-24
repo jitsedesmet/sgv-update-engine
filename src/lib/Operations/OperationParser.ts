@@ -68,7 +68,8 @@ export class OperationParser {
                 }
             }
         } else {
-            return new NonUpdateOperationHandler(this.engine, parsedSgv, this.query);
+            throw new Error('Not an update query, please browse using the triple browser bellow.');
+            // return new NonUpdateOperationHandler(this.engine, parsedSgv, this.query);
         }
         throw new Error('No operation found');
     }

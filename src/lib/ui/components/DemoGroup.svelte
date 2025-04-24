@@ -3,13 +3,14 @@
 
     interface Props {
       query: string | undefined;
+      pod: string;
     }
-    let { query = $bindable() }: Props = $props();
+    let { query = $bindable(), pod }: Props = $props();
 </script>
 
 <div class="demo-group">
     {#each demoQueries as element}
-        <button onclick={() => query = element.query}>{element.name}</button>
+        <button onclick={() => query = element.query(pod)}>{element.name}</button>
     {/each}
 </div>
 
