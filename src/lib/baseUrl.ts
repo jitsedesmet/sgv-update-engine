@@ -7,9 +7,10 @@ export const prefixes: Record<string, string> = {
   ['http://www.w3.org/2000/01/rdf-schema#']: 'rdfs:',
   ['http://www.w3.org/ns/posix/stat#']: 'stat:',
   ['http://purl.org/dc/terms/']: 'dc:',
+  [`${podBaseUrl}www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/`]: 'ldbc-voc:',
+  [`${podBaseUrl}www.ldbc.eu/ldbc_socialnet/1.0/tag/`]: 'ldbc-tag:',
   [`${podBaseUrl}pods/00000000000000000065/`]: 'pod-by-creation:',
   [`${podBaseUrl}pods/00000000000000000150/`]: 'pod-by-location:',
   [`${podBaseUrl}pods/00000000000000000143/`]: 'pod-separate:',
   [`${podBaseUrl}pods/00000000000000000094/`]: 'pod-together:',
-  [`${podBaseUrl}www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/`]: 'ldbc:',
 }

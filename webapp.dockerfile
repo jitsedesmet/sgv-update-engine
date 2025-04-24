@@ -6,9 +6,9 @@ COPY package.json yarn.lock ./
 
 RUN yarn install
 
-ARG BACKEND_URL="http://localhost:3000/"
+ARG BASE_URL_REPLACE="http:\/\/localhost:3000"
 COPY . .
-RUN echo "export const podBaseUrl = '${BACKEND_URL}'" > src/lib/baseUrl.ts
+RUN cat src/lib/baseUrl.ts | sed "s/http:\/\/localhost:3000/${BASE_URL_REPLACE}/g" > src/lib/baseUrl.ts
 RUN yarn run build
 
 
