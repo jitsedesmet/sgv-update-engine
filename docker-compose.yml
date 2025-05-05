@@ -11,6 +11,12 @@ services:
 #        BASE_CSS_FILE_LOCATION: "https/sgf.demo.jitsedesmet.be/css/"
     ports:
       - "3000:3000"
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:3000/"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
 #    command: ["-r", "out-fragments/https/sgf.demo.jitsedesmet.be/css/"]
 
   webapp:

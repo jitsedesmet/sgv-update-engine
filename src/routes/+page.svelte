@@ -1,7 +1,7 @@
 <script lang="ts">
   import Yasge from "$lib/ui/components/Yasge.svelte";
   import {page} from "$app/state";
-  import {POD} from "$lib/ui/pods";
+  import {demoQueries, POD} from "$lib/ui/pods";
   import TripleBrowser from "$lib/ui/components/TripleBrowser.svelte";
   import PodSelector from "$lib/ui/components/PodSelector.svelte";
   import DemoGroup from "$lib/ui/components/DemoGroup.svelte";
@@ -9,9 +9,9 @@
   import Solid from "$lib/ui/components/SVG/Solid.svelte";
   import { innerWidth } from 'svelte/reactivity/window';
 
-  let query = $state<string | undefined>(undefined);
   let pod = $derived<string>(page.url.searchParams.get('pod') ?? POD.BY_CREATION);
   let source = $derived<string>(page.url.searchParams.get('source') ?? POD.BY_CREATION);
+  let query = $state<string | undefined>(demoQueries[0].query(''));
   let recompute = $state<boolean>(false);
   let autoFocus = $state(true);
   let screenWidth = $derived(innerWidth.current ?? 600);
