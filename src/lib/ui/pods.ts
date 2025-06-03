@@ -45,7 +45,7 @@ DELETE {
     if (POD.BY_CREATION === pod) {
       res = `${pod}posts/2025-06-01#`;
     } else if (POD.BY_LOCATION === pod) {
-      res = `${pod}pods/Slovenia#`;
+      res = `${pod}posts/Slovenia#`;
     } else if (POD.SEPARATE === pod) {
       res = `${pod}posts/`;
     } else if (POD.TOGETHER === pod) {
@@ -75,7 +75,7 @@ INSERT {
     if (POD.BY_CREATION === pod) {
       res = `${pod}posts/2025-06-01#`;
     } else if (POD.BY_LOCATION === pod) {
-      res = `${pod}pods/Slovenia#`;
+      res = `${pod}posts/Slovenia#`;
     } else if (POD.SEPARATE === pod) {
       res = `${pod}posts/`;
     } else if (POD.TOGETHER === pod) {
@@ -129,7 +129,7 @@ DELETE WHERE {
     if (POD.BY_CREATION === pod) {
       res = `${pod}posts/2024-05-26#`;
     } else if (POD.BY_LOCATION === pod) {
-      res = `${pod}pods/Slovenia#`;
+      res = `${pod}posts/Slovenia#`;
     } else if (POD.SEPARATE === pod) {
       res = `${pod}posts/`;
     } else if (POD.TOGETHER === pod) {
